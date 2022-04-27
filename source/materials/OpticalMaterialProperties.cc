@@ -345,6 +345,22 @@ namespace opticalprops {
     return mpt;
   }
 
+  /// Epoxy resin of Hamamatsu S13360 MPPC's ///
+  G4MaterialPropertiesTable* HamamatsuEpoxy()
+  {
+    // See hamamatsu.com/content/dam/hamamatsu-photonics/sites/documents/99_SALES_LIBRARY/ssd/s13360-2050ve_etc_kapd1053e.pdf
+    // There's very little data regarding this MPPC window. I am gonna stick to the available data.
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    G4double energy_span[] =  {optPhotMinE_,  optPhotMaxE_};
+    G4double rindex[] =       {1.55        ,  1.55        };
+    G4double abslength[] =    {noAbsLength_,  noAbsLength_};
+
+    mpt->AddProperty("RINDEX",    energy_span, rindex,    2);
+    mpt->AddProperty("ABSLENGTH", energy_span, abslength, 2);
+
+    return mpt;
+  }
 
 
   /// Sapphire ///
@@ -655,7 +671,53 @@ namespace opticalprops {
     return LXe_mpt;
   }
 
+  G4MaterialPropertiesTable* paulucci_LAr()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
 
+    G4double energies_rindex[] = {2.043*eV, 2.2109*eV, 2.3789*eV, 2.5468*eV, 2.7148*eV, 2.8828*eV, 3.0507*eV, 
+                          3.2187*eV, 3.3867*eV, 3.5546*eV, 3.7226*eV, 3.8905*eV, 4.0585*eV, 4.2265*eV, 
+                          4.3944*eV, 4.5624*eV, 4.7303*eV, 4.8983*eV, 5.0663*eV, 5.2342*eV, 5.4022*eV, 
+                          5.5702*eV, 5.7381*eV, 5.9061*eV, 6.074*eV, 6.242*eV, 6.41*eV, 6.5779*eV, 
+                          6.7459*eV, 6.9139*eV, 7.0818*eV, 7.2498*eV, 7.4177*eV, 7.5857*eV, 7.7537*eV, 
+                          7.9216*eV, 8.0896*eV, 8.2575*eV, 8.4255*eV, 8.5935*eV, 8.7614*eV, 8.9294*eV, 
+                          9.0974*eV, 9.2577*eV, 9.3951*eV, 9.5173*eV, 9.6471*eV, 9.7616*eV, 9.8532*eV, 
+                          9.9448*eV, 10.029*eV, 10.097*eV, 10.159*eV, 10.235*eV, 10.288*eV, 10.328*eV, 
+                          10.383*eV, 10.461*eV, 10.475*eV, 10.502*eV};
+
+    G4double rindex[] = {1.2288, 1.233, 1.2332, 1.2344, 1.235, 1.2362, 1.2373, 1.2379, 1.2393, 1.2405, 
+                        1.2414, 1.2432, 1.2441, 1.2452, 1.2471, 1.2495, 1.2511, 1.2527, 1.2548, 1.2571, 
+                        1.2592, 1.2614, 1.2641, 1.2667, 1.2694, 1.2725, 1.2758, 1.2794, 1.2835, 1.2877, 
+                        1.2928, 1.2979, 1.3031, 1.3085, 1.3146, 1.3218, 1.3291, 1.337, 1.3454, 1.3556, 
+                        1.3673, 1.3796, 1.3921, 1.4071, 1.4229, 1.4381, 1.4535, 1.4691, 1.485, 1.4999, 
+                        1.5149, 1.5332, 1.5506, 1.5672, 1.5859, 1.5997, 1.6171, 1.6301, 1.6464, 1.6623};
+
+    mpt->AddProperty("RINDEX", energies_rindex, rindex, 60);
+
+    // Absorption length (ABSLENGTH)
+    G4double energies_abslength[]  = {optPhotMinE_, optPhotMaxE_};
+      
+    G4double abslength[] = {noAbsLength_, noAbsLength_};
+
+    mpt->AddProperty("ABSLENGTH", energies_abslength, abslength, 2);
+
+    return mpt;
+  }
+
+  /// 100% Efficient photon collector ///
+  G4MaterialPropertiesTable* PerfectPhotonCollector()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    std::vector<G4double> energy =          {optPhotMinE_   ,   optPhotMaxE_};
+    std::vector<G4double> efficiency =      {1.             ,   1.          };
+    std::vector<G4double> reflectivity =    {0.             ,   0.          };
+
+    mpt->AddProperty("EFFICIENCY", energy.data(), efficiency.data(), energy.size());
+    mpt->AddProperty("REFLECTIVITY", energy.data(), reflectivity.data(), energy.size());
+
+    return mpt;
+  }
 
   /// Fake Grid ///
   G4MaterialPropertiesTable* FakeGrid(G4double pressure,
@@ -1694,4 +1756,59 @@ namespace opticalprops {
 
     return mpt;
   }
+
+
+
+  /// VIKUITI ///
+  G4MaterialPropertiesTable* VIKUITI()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+    //Info from David Warner 11/2019 talk
+    //It is said that the reflective foils are coated with TPB,
+    //shall we care about this?
+
+    //Reflectivity data taken from https://indico.fnal.gov/event/24273/contributions/188657/attachments/130083/158244/DUNE_60Review1.pdf for 45º curve
+    const G4int entries = 120;
+    G4double energy[]       = {1.0334*eV, 1.0378*eV, 1.0454*eV, 1.0532*eV, 1.0645*eV, 1.0731*eV, 
+                              1.0786*eV, 1.0875*eV, 1.0984*eV, 1.1081*eV, 1.1209*eV, 1.1289*eV, 
+                              1.1415*eV, 1.156*eV, 1.1658*eV, 1.1746*eV, 1.1836*eV, 1.1986*eV, 
+                              1.2126*eV, 1.2222*eV, 1.2304*eV, 1.2424*eV, 1.2531*eV, 1.2721*eV, 
+                              1.2832*eV, 1.2944*eV, 1.3053*eV, 1.3175*eV, 1.3379*eV, 1.3521*eV, 
+                              1.3586*eV, 1.364*eV, 1.3684*eV, 1.3729*eV, 1.3774*eV, 1.3819*eV, 
+                              1.3864*eV, 1.3899*eV, 1.3922*eV, 1.3945*eV, 1.3968*eV, 1.3991*eV, 
+                              1.4015*eV, 1.4038*eV, 1.4062*eV, 1.4086*eV, 1.4109*eV, 1.4133*eV, 
+                              1.4157*eV, 1.4181*eV, 1.4205*eV, 1.4229*eV, 1.4253*eV, 1.4277*eV, 
+                              1.4301*eV, 1.4338*eV, 1.4387*eV, 1.4436*eV, 1.4486*eV, 1.4535*eV, 
+                              1.4611*eV, 1.4725*eV, 1.4905*eV, 1.505*eV, 1.5253*eV, 1.5461*eV, 
+                              1.5703*eV, 1.5864*eV, 1.6014*eV, 1.629*eV, 1.6415*eV, 1.6608*eV, 
+                              1.6805*eV, 1.7006*eV, 1.7213*eV, 1.7424*eV, 1.777*eV, 1.8015*eV, 
+                              1.8321*eV, 1.8553*eV, 1.8811*eV, 1.9064*eV, 1.9324*eV, 1.9625*eV, 
+                              2.0148*eV, 2.0748*eV, 2.1314*eV, 2.1634*eV, 2.1969*eV, 2.2286*eV, 
+                              2.3104*eV, 2.3982*eV, 2.436*eV, 2.4786*eV, 2.5227*eV, 2.6192*eV, 
+                              2.716*eV, 2.8056*eV, 2.9177*eV, 3.0176*eV, 3.1041*eV, 3.1423*eV, 
+                              3.1852*eV, 3.2051*eV, 3.219*eV, 3.2309*eV, 3.2369*eV, 3.2488*eV, 
+                              3.2489*eV, 3.2608*eV, 3.2609*eV, 3.2728*eV, 3.2847*eV, 3.2968*eV, 
+                              3.3083*eV, 3.3088*eV, 3.3216*eV, 3.373*eV, 3.4437*eV, 3.5064*eV};
+                              
+    G4double reflectivity[] = {0.1848, 0.1848, 0.1848, 0.1848, 0.1823, 0.1849, 0.1849, 0.187, 
+                              0.1892, 0.1865, 0.1789, 0.1772, 0.1866, 0.1927, 0.1851, 0.1825, 
+                              0.1835, 0.1963, 0.199, 0.1903, 0.1826, 0.1852, 0.1927, 0.1948, 
+                              0.1895, 0.1965, 0.2045, 0.2077, 0.212, 0.2274, 0.2502, 0.2718, 
+                              0.2925, 0.3165, 0.3421, 0.3701, 0.4013, 0.4269, 0.4445, 0.4653, 
+                              0.4917, 0.5261, 0.5517, 0.5788, 0.6028, 0.6252, 0.646, 0.67, 
+                              0.694, 0.7132, 0.7372, 0.7596, 0.7788, 0.798, 0.8171, 0.8411, 
+                              0.8755, 0.9019, 0.9243, 0.9435, 0.9631, 0.9811, 0.9894, 0.9857, 
+                              0.9852, 0.9852, 0.9852, 0.9788, 0.9797, 0.9853, 0.9869, 0.9885, 
+                              0.9901, 0.9886, 0.9896, 0.9918, 0.9854, 0.9854, 0.9804, 0.9784, 
+                              0.9796, 0.9791, 0.9799, 0.9832, 0.984, 0.9823, 0.9806, 0.9828, 
+                              0.9809, 0.9825, 0.9859, 0.9806, 0.981, 0.9818, 0.9816, 0.986, 
+                              0.9819, 0.9796, 0.9741, 0.9724, 0.9706, 0.9608, 0.9325, 0.9072, 
+                              0.875, 0.839, 0.8166, 0.751, 0.7702, 0.6919, 0.7094, 0.6183, 
+                              0.512, 0.4376, 0.2596, 0.3233, 0.1908, 0.145, 0.1463, 0.1393};
+
+    mpt->AddProperty("REFLECTIVITY", energy, reflectivity, entries);
+    
+    return mpt;
+  }
+
 }
