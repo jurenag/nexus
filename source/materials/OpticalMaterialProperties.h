@@ -26,6 +26,8 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* GlassEpoxy();
 
+  G4MaterialPropertiesTable* HamamatsuEpoxy();
+
   G4MaterialPropertiesTable* FusedSilica();
 
   G4MaterialPropertiesTable* FakeFusedSilica(G4double transparency = .9,
@@ -50,6 +52,10 @@ namespace opticalprops {
                                  G4double e_lifetime=1000.*ms);
 
   G4MaterialPropertiesTable* LXe();
+
+  G4MaterialPropertiesTable* paulucci_LAr();
+  
+  G4MaterialPropertiesTable* PerfectPhotonCollector();
 
   G4MaterialPropertiesTable* FakeGrid(G4double pressure=1.*bar,
                                       G4double temperature=STP_Temperature,
@@ -88,6 +94,8 @@ namespace opticalprops {
   G4MaterialPropertiesTable* Steel();
 
   G4MaterialPropertiesTable* XXX();
+
+  G4MaterialPropertiesTable* VIKUITI();
 
 
   constexpr G4double optPhotMinE_ =  0.2  * eV;
