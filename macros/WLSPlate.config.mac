@@ -1,0 +1,15 @@
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+/Geometry/WLSPlate/LAr true
+
+#/Geometry/WLSPlate/depth    200. cm
+#/Geometry/WLSPlate/height    200. cm
+#/Geometry/WLSPlate/width    200. cm
+
+/control/execute macros/generators/SingleParticleWLSPlate.mac
+
+/nexus/persistency/outputFile nexus.next
