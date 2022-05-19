@@ -708,9 +708,27 @@ namespace opticalprops {
     std::vector<G4double> energy =          {optPhotMinE_   ,   optPhotMaxE_};
     std::vector<G4double> efficiency =      {1.             ,   1.          };
     std::vector<G4double> reflectivity =    {0.             ,   0.          };
+    std::vector<G4double> rindex =          {1.             ,   1.          };
 
-    mpt->AddProperty("EFFICIENCY", energy.data(), efficiency.data(), energy.size());
-    mpt->AddProperty("REFLECTIVITY", energy.data(), reflectivity.data(), energy.size());
+    mpt->AddProperty("EFFICIENCY",      energy.data(), efficiency.data(),   energy.size());
+    mpt->AddProperty("REFLECTIVITY",    energy.data(), reflectivity.data(), energy.size());
+    mpt->AddProperty("RINDEX",          energy.data(), rindex.data(),       energy.size());
+
+    return mpt;
+  }
+
+  G4MaterialPropertiesTable* PerfectPhotonReflector()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    std::vector<G4double> energy =          {optPhotMinE_   ,   optPhotMaxE_};
+    std::vector<G4double> efficiency =      {0.             ,   0.          };
+    std::vector<G4double> reflectivity =    {0.85             ,   0.85          };
+    std::vector<G4double> rindex =          {1.             ,   1.          };
+
+    mpt->AddProperty("EFFICIENCY",      energy.data(), efficiency.data(),   energy.size());
+    mpt->AddProperty("REFLECTIVITY",    energy.data(), reflectivity.data(), energy.size());
+    mpt->AddProperty("RINDEX",          energy.data(), rindex.data(),       energy.size());
 
     return mpt;
   }
