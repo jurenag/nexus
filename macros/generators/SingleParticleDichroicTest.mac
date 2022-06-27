@@ -1,0 +1,16 @@
+## ----------------------------------------------------------------------------
+## nexus | SingleParticle.mac
+##
+## Ancillary macro to define the parameters of the single particle generator.
+##
+## The NEXT Collaboration
+## ----------------------------------------------------------------------------
+
+/Generator/SingleParticle/particle opticalphoton
+/Generator/SingleParticle/min_energy 2.25 eV
+/Generator/SingleParticle/max_energy 3.81 eV
+/Generator/SingleParticle/min_costheta 0.
+/Generator/SingleParticle/max_costheta 1.
+/Generator/SingleParticle/min_phi   0.
+/Generator/SingleParticle/max_phi   6.283185307
+/Generator/SingleParticle/region whatever
