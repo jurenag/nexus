@@ -1,0 +1,14 @@
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+/Geometry/DichroicTest/dichroic_radius      2.   cm
+/Geometry/DichroicTest/dichroic_thickness   1.   mm
+/Geometry/DichroicTest/detector_thickness   5.   mm
+/Geometry/DichroicTest/detector_depth       2.   cm
+
+/control/execute macros/generators/SingleParticleDichroicTest.mac
+
+/nexus/persistency/outputFile TrashCan
