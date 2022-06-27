@@ -1,0 +1,26 @@
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+/Geometry/XArapuca/internal_length          488.    mm
+/Geometry/XArapuca/internal_width           100.    mm
+/Geometry/XArapuca/internal_thickn          8.      mm
+/Geometry/XArapuca/plate_length             487.    mm
+/Geometry/XArapuca/plate_width              93.     mm
+/Geometry/XArapuca/plate_thickn             3.5     mm
+/Geometry/XArapuca/case_thickn              1.      mm
+/Geometry/XArapuca/dichroic_filter_thickn   1.      mm
+/Geometry/XArapuca/gap                      0.5     mm
+/Geometry/XArapuca/num_phsensors            24
+/Geometry/XArapuca/ref_phsensors_supports       true
+/Geometry/XArapuca/double_sided                 true
+/Geometry/XArapuca/collectors_are_reflective    true
+/Geometry/XArapuca/random_generation_vertex     true
+/Geometry/XArapuca/remove_filters               false
+/Geometry/XArapuca/path_to_dichroic_data /home/julio/Documents/backup_capsule/work_stuff/apps/python_apps/dichroic_curve_generator/output/CP450.0CW10.0TAC0.1
+
+/control/execute macros/generators/PTPPhotonGenerator.mac
+
+/nexus/persistency/outputFile TrashCan

@@ -1,0 +1,13 @@
+/control/execute macros/physics/OpticalPhysics.mac
+
+/nexus/RegisterGeometry XArapuca
+
+/nexus/RegisterGenerator PTPPhotonGenerator
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+
+/nexus/RegisterMacro macros/XArapuca.config.mac
