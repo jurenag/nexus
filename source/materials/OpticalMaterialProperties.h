@@ -79,7 +79,11 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* EJ280();
 
+  G4MaterialPropertiesTable* EJ282();
+
   G4MaterialPropertiesTable* EJ286();
+
+  G4MaterialPropertiesTable* G2P_FB118();
 
   G4MaterialPropertiesTable* SCHOTT_B270();
 
