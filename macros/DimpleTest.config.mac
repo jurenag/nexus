@@ -1,0 +1,27 @@
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+/Geometry/DimpleTest/world_radius                               1.  m
+/Geometry/DimpleTest/how_many_dimples                           2
+/Geometry/DimpleTest/gap_in_between_dimples                     1.  mm
+/Geometry/DimpleTest/dimple_type                                cylindrical
+/Geometry/DimpleTest/flat_dimple_width                          2.  mm
+/Geometry/DimpleTest/flat_dimple_depth                          1.  mm
+/Geometry/DimpleTest/curvy_dimple_radius                        1.5  mm
+/Geometry/DimpleTest/length                                     46.5  mm
+/Geometry/DimpleTest/thickn                                     3.5 mm
+/Geometry/DimpleTest/width                                      20.292  mm
+/Geometry/DimpleTest/gap                                        0.5 mm
+/Geometry/DimpleTest/ref_phsensor_support                       true
+/Geometry/DimpleTest/with_board                                 true
+/Geometry/DimpleTest/board_thickn                               2.  mm
+/Geometry/DimpleTest/board_height                               8.  mm
+/Geometry/DimpleTest/with_real_sipm                             false
+/Geometry/DimpleTest/artificial_board_is_efficient_everywhere   true
+
+/control/execute macros/generators/PTPPhotonGenerator.mac
+
+/nexus/persistency/outputFile /home/julio/Documents/nexus/nexus/output/optimization/dimples/TwoCylindricalDimples15
