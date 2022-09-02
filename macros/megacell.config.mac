@@ -1,0 +1,53 @@
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+#---- Parameters used for every configuration ----#
+/Geometry/XArapuca/config_code                  1
+/Geometry/XArapuca/internal_length              600.    mm 
+/Geometry/XArapuca/internal_width               600.    mm
+/Geometry/XArapuca/internal_thickn              8.001   mm
+/Geometry/XArapuca/DFA_thickn                   1.      mm
+/Geometry/XArapuca/frame_width_along_wlsplength 2.85      mm
+/Geometry/XArapuca/frame_width_along_wlspwidth  2.85      mm
+/Geometry/XArapuca/df_no_along_wlsplength       6
+/Geometry/XArapuca/df_no_along_wlspwidth        6
+/Geometry/XArapuca/remove_DFA                   false
+/Geometry/XArapuca/case_thickn                  1.      mm
+/Geometry/XArapuca/num_phsensors                40
+/Geometry/XArapuca/gap                          -1.15   mm
+/Geometry/XArapuca/ref_phsensors_supports       true
+/Geometry/XArapuca/double_sided                 true
+/Geometry/XArapuca/collectors_are_reflective    true
+/Geometry/XArapuca/random_generation_vertex     true
+/Geometry/XArapuca/path_to_dichroic_data /home/julio/Documents/backup_capsule/work_stuff/apps/python_apps/dichroic_curve_generator/output/CP500.0CW10.0TAC0.01
+
+#---- config_code_==1 parameters ----#
+/Geometry/XArapuca/plate_length                 593.    mm
+/Geometry/XArapuca/plate_width                  593.    mm
+/Geometry/XArapuca/plate_thickn                 3.5     mm
+/Geometry/XArapuca/only_sipms_along_long_sides  false
+/Geometry/XArapuca/with_boards                  true
+/Geometry/XArapuca/with_dimples                 true
+/Geometry/XArapuca/dimple_type                  flat
+/Geometry/XArapuca/flat_dimple_width            8.      mm
+/Geometry/XArapuca/flat_dimple_depth            1.2     mm
+/Geometry/XArapuca/curvy_dimple_radius          2.     mm
+
+#---- config_code_==2 parameters ----#
+/Geometry/XArapuca/fibers_number                14
+/Geometry/XArapuca/fiber_planes                 1
+/Geometry/XArapuca/fiber_radius                 3.      mm
+/Geometry/XArapuca/fiber_length                 236.    mm
+/Geometry/XArapuca/along_long_side              true
+
+/control/execute macros/generators/PTPPhotonGenerator.mac
+
+/nexus/persistency/outputFile /home/julio/Documents/nexus/nexus/output/optimization/TrashCan
+
+
+#Typical gap for immersion of sipms within flat dimples: -1.15*mm
+#Old supercells unique DF transverse dimensions  (487. mm x 93. mm)
+#Frame width to match 97mmx97mm DFs: 2.85 mm
