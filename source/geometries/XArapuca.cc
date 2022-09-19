@@ -43,40 +43,42 @@ namespace nexus{
   XArapuca::XArapuca():
   GeometryBase(), 
   ///Get internal reflector cavity dimensions from arxiv.org/abs/1912.09191
-  config_code_                  (1),
-  internal_length_              (488.*mm),    ///X
-  internal_width_               (100.*mm),     ///Z
-  internal_thickn_              (8*mm),     ///Y
-  DFA_thickn_                   (1.*mm),
-  frame_width_along_wlsplength_ (6.*mm),
-  frame_width_along_wlspwidth_  (2.*mm),
-  df_no_along_wlsplength_       (2),
-  df_no_along_wlspwidth_        (3),
-  remove_DFA_                   (false),
-  case_thickn_                  (1.*mm),      ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
-  num_phsensors_                (24),
-  gap_                          (0.5*mm),
-  ref_phsensors_supports_       (true), 
-  double_sided_                 (true),
-  collectors_are_reflective_    (false),
-  random_generation_vertex_     (true),
-  path_to_dichroic_data_        (""),
-  world_extra_thickn_           (100.*cm),
-  plate_length_                 (487.*mm),    ///X
-  plate_width_                  (93.*mm),     ///Z
-  plate_thickn_                 (3.5*mm),     ///Y
-  only_sipms_along_long_sides_  (true),
-  with_boards_                  (true),
-  with_dimples_                 (true),
-  dimple_type_                  ("cylindrical"),
-  flat_dimple_width_            (6.1*mm),
-  flat_dimple_depth_            (2.*mm),
-  curvy_dimple_radius_          (1.5*mm),
-  fibers_no_                    (6),
-  fiber_planes_no_              (1),    
-  fiber_radius_                 (5.*mm),
-  fiber_length_                 (400.*mm),
-  along_long_side_              (true)
+  config_code_                          (1),
+  internal_length_                      (488.*mm),    ///X
+  internal_width_                       (100.*mm),     ///Z
+  internal_thickn_                      (8*mm),     ///Y
+  DFA_thickn_                           (1.*mm),
+  outter_frame_width_along_wlsplength_  (10. *mm),
+  outter_frame_width_along_wlspwidth_   (10. *mm),
+  inner_frames_width_along_wlsplength_  (6.*mm),
+  inner_frames_width_along_wlspwidth_   (2.*mm),
+  df_no_along_wlsplength_               (2),
+  df_no_along_wlspwidth_                (3),
+  remove_DFA_                           (false),
+  case_thickn_                          (1.*mm),      ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
+  num_phsensors_                        (24),
+  gap_                                  (0.5*mm),
+  ref_phsensors_supports_               (true), 
+  double_sided_                         (true),
+  collectors_are_reflective_            (false),
+  random_generation_vertex_             (true),
+  path_to_dichroic_data_                (""),
+  world_extra_thickn_                   (100.*cm),
+  plate_length_                         (487.*mm),    ///X
+  plate_width_                          (93.*mm),     ///Z
+  plate_thickn_                         (3.5*mm),     ///Y
+  only_sipms_along_long_sides_          (true),
+  with_boards_                          (true),
+  with_dimples_                         (true),
+  dimple_type_                          ("cylindrical"),
+  flat_dimple_width_                    (6.1*mm),
+  flat_dimple_depth_                    (2.*mm),
+  curvy_dimple_radius_                  (1.5*mm),
+  fibers_no_                            (6),
+  fiber_planes_no_                      (1),    
+  fiber_radius_                         (5.*mm),
+  fiber_length_                         (400.*mm),
+  along_long_side_                      (true)
   {
     msg_ = new G4GenericMessenger(this, "/Geometry/XArapuca/",
 				"Control commands of geometry XArapuca.");
@@ -115,19 +117,33 @@ namespace nexus{
     dfa_cmd.SetParameterName("DFA_thickn", false);
     dfa_cmd.SetRange("DFA_thickn>0.");
 
-    G4GenericMessenger::Command& fwawl_cmd =
-      msg_->DeclareProperty("frame_width_along_wlsplength", frame_width_along_wlsplength_,
-			    "Width of the DFA frame along the WLS plate length.");
-    fwawl_cmd.SetUnitCategory("Length");
-    fwawl_cmd.SetParameterName("frame_width_along_wlsplength", false);
-    fwawl_cmd.SetRange("frame_width_along_wlsplength>0.");
+    G4GenericMessenger::Command& ofwawl_cmd =
+      msg_->DeclareProperty("outter_frame_width_along_wlsplength", outter_frame_width_along_wlsplength_,
+			    "Width of the outter DFA frame along the WLS plate length.");
+    ofwawl_cmd.SetUnitCategory("Length");
+    ofwawl_cmd.SetParameterName("outter_frame_width_along_wlsplength", false);
+    ofwawl_cmd.SetRange("outter_frame_width_along_wlsplength>0.");
 
-    G4GenericMessenger::Command& fwaww_cmd =
-      msg_->DeclareProperty("frame_width_along_wlspwidth", frame_width_along_wlspwidth_,
-			    "Width of the DFA frame along the WLS plate width.");
-    fwaww_cmd.SetUnitCategory("Length");
-    fwaww_cmd.SetParameterName("frame_width_along_wlspwidth", false);
-    fwaww_cmd.SetRange("frame_width_along_wlspwidth>0.");
+    G4GenericMessenger::Command& ofwaww_cmd =
+      msg_->DeclareProperty("outter_frame_width_along_wlspwidth", outter_frame_width_along_wlspwidth_,
+			    "Width of the outter DFA frame along the WLS plate width.");
+    ofwaww_cmd.SetUnitCategory("Length");
+    ofwaww_cmd.SetParameterName("outter_frame_width_along_wlspwidth", false);
+    ofwaww_cmd.SetRange("outter_frame_width_along_wlspwidth>0.");
+
+    G4GenericMessenger::Command& ifwawl_cmd =
+      msg_->DeclareProperty("inner_frames_width_along_wlsplength", inner_frames_width_along_wlsplength_,
+			    "Width of the inner DFA frames along the WLS plate length.");
+    ifwawl_cmd.SetUnitCategory("Length");
+    ifwawl_cmd.SetParameterName("inner_frames_width_along_wlsplength", false);
+    ifwawl_cmd.SetRange("inner_frames_width_along_wlsplength>0.");
+
+    G4GenericMessenger::Command& ifwaww_cmd =
+      msg_->DeclareProperty("inner_frames_width_along_wlspwidth", inner_frames_width_along_wlspwidth_,
+			    "Width of the inner DFA frames along the WLS plate width.");
+    ifwaww_cmd.SetUnitCategory("Length");
+    ifwaww_cmd.SetParameterName("inner_frames_width_along_wlspwidth", false);
+    ifwaww_cmd.SetRange("inner_frames_width_along_wlspwidth>0.");
 
     G4GenericMessenger::Command& dfnawl_cmd =
       msg_->DeclareProperty("df_no_along_wlsplength", df_no_along_wlsplength_,
@@ -296,9 +312,9 @@ namespace nexus{
     overall_thickn_ = internal_thickn_  + 2*DFA_thickn_;
     overall_width_  = internal_width_   + 2*case_thickn_;
     DFA_length_ = overall_length_;  // For now, these two match. 
-    DFA_width_  = overall_width_;    // For now, these two match.    
-    DF_length_  = (DFA_length_-((df_no_along_wlsplength_+1.)*frame_width_along_wlsplength_))/(1.*df_no_along_wlsplength_); 
-    DF_width_   = (DFA_width_-((df_no_along_wlspwidth_+1.)*frame_width_along_wlspwidth_))/(1.*df_no_along_wlspwidth_);
+    DFA_width_  = overall_width_;    // For now, these two match.  
+    DF_length_  = (DFA_length_  -(2.*outter_frame_width_along_wlsplength_)  -((df_no_along_wlsplength_-1.)*inner_frames_width_along_wlsplength_))   /(1.*df_no_along_wlsplength_);   
+    DF_width_   = (DFA_width_   -(2.*outter_frame_width_along_wlspwidth_)   -((df_no_along_wlspwidth_-1.)*inner_frames_width_along_wlspwidth_))     /(1.*df_no_along_wlspwidth_);
 
     G4cout << "DF_length_=" << DF_length_ << G4endl;
     G4cout << "DF_width_=" << DF_width_ << G4endl;
@@ -796,8 +812,8 @@ namespace nexus{
     G4MultiUnion* frame_carvings_multiunion_solid = new G4MultiUnion("FRAME_CARVINGS");
     for(G4int i=0; i<df_no_along_wlsplength_; i++){
         for(G4int j=0; j<df_no_along_wlspwidth_; j++){
-            x_pos = -1.*(DFA_length_/2.)+((i+1)*frame_width_along_wlsplength_)+((i+0.5)*DF_length_);
-            z_pos = -1.*(DFA_width_/2.)+((j+1)*frame_width_along_wlspwidth_)+((j+0.5)*DF_width_);
+            x_pos = (-1.*(DFA_length_/2.))  +outter_frame_width_along_wlsplength_   +(i*inner_frames_width_along_wlsplength_)   +((i+0.5)*DF_length_);
+            z_pos = (-1.*(DFA_width_/2.))   +outter_frame_width_along_wlspwidth_    +(j*inner_frames_width_along_wlspwidth_)    +((j+0.5)*DF_width_);
             transform_ptr = new G4Transform3D(*rot, G4ThreeVector(x_pos, 0., z_pos));
             filters_multiunion_solid->AddNode(*df_solid, *transform_ptr);
             frame_carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
@@ -982,8 +998,8 @@ namespace nexus{
     G4int column_no = filter_no%df_no_along_wlsplength_;                // \in[0, df_no_along_wlsplength -1]  
     G4int row_no = (int) std::floor(filter_no/df_no_along_wlsplength_); // \in[0, df_no_along_wlspwidth -1]
 
-    G4double selected_filter_x_center =  -1.*(DFA_length_/2.)+((column_no+1)*frame_width_along_wlsplength_)+((column_no+0.5)*DF_length_);
-    G4double selected_filter_z_center =  -1.*(DFA_width_/2.)+((row_no+1)*frame_width_along_wlspwidth_)+((row_no+0.5)*DF_width_);
+    G4double selected_filter_x_center =  (-1.*(DFA_length_/2.)) +outter_frame_width_along_wlsplength_   +(column_no*inner_frames_width_along_wlsplength_)   +((column_no+0.5)*DF_length_);
+    G4double selected_filter_z_center =  (-1.*(DFA_width_/2.))  +outter_frame_width_along_wlspwidth_    +(row_no*inner_frames_width_along_wlspwidth_)       +((row_no+0.5)*DF_width_);
     G4double y_pos = (internal_thickn_/2.) +DFA_thickn_ +tolerance;
 
     if(!random_generation_vertex_){
