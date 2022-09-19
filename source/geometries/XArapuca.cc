@@ -54,6 +54,7 @@ namespace nexus{
   inner_frames_width_along_wlspwidth_   (2.*mm),
   df_no_along_wlsplength_               (2),
   df_no_along_wlspwidth_                (3),
+  DFA_frame_is_reflective_              (false),
   remove_DFA_                           (false),
   case_thickn_                          (1.*mm),      ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   num_phsensors_                        (24),
@@ -192,6 +193,10 @@ namespace nexus{
     G4GenericMessenger::Command& rgv_cmd =
       msg_->DeclareProperty("random_generation_vertex", random_generation_vertex_,
 			    "Whether the generation vertex is sampled randomly or not.");
+
+    G4GenericMessenger::Command& dfafir_cmd =
+      msg_->DeclareProperty("DFA_frame_is_reflective", DFA_frame_is_reflective_,
+			    "Whether the FR4 DFA frame is vikuiti-coated or not.");
 
     G4GenericMessenger::Command& rdfa_cmd =
       msg_->DeclareProperty("remove_DFA", remove_DFA_,
@@ -845,10 +850,11 @@ namespace nexus{
     const G4String refsurf_name = "REF_SURFACE";
     G4OpticalSurface* refsurf_opsurf = 
       new G4OpticalSurface(refsurf_name, unified, polished, dielectric_metal, 1);
-    
     refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::VIKUITI());
-    new G4LogicalSkinSurface(refsurf_name, frame_logic, refsurf_opsurf);
-      
+    
+    if(DFA_frame_is_reflective_){
+        new G4LogicalSkinSurface(refsurf_name, frame_logic, refsurf_opsurf);
+    }
     
     G4PVPlacement* frame_physical = new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_+DFA_thickn_)/2. +0.*cm, 0.),
                                     frame_name, frame_logic, mother_physical, true, 0, true);

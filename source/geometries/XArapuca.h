@@ -59,6 +59,7 @@ namespace nexus {
     G4double inner_frames_width_along_wlspwidth_;                   ///< Inner frames dimension along the width of the X-ARAPUCA
     G4int df_no_along_wlsplength_;                                  ///< Number of dichroic filters along the length of the X-ARAPUCA
     G4int df_no_along_wlspwidth_;                                   ///< Number of dichroic filters along the width of the X-ARAPUCA
+    G4bool DFA_frame_is_reflective_;                                ///< Whether the FR4 DFA frame is vikuiti-coated or not
     G4bool remove_DFA_;                                             ///< Whether to remove the dichroic filters assembly or not
     G4double case_thickn_;                                          ///< Reflective foils thickness
     G4int num_phsensors_;                                           ///< If config_code_==1, this is the number of SiPMs per long side
