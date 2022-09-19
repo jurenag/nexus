@@ -62,7 +62,7 @@ namespace nexus{
   ref_phsensors_supports_               (true), 
   double_sided_                         (true),
   collectors_are_reflective_            (false),
-  random_generation_vertex_             (true),
+  generation_vertex_over_df_            (true),
   path_to_dichroic_data_                (""),
   world_extra_thickn_                   (100.*cm),
   plate_length_                         (487.*mm),    ///X
@@ -190,9 +190,9 @@ namespace nexus{
       msg_->DeclareProperty("collectors_are_reflective", collectors_are_reflective_,
 			    "Whether the test collectors are reflective.");
 
-    G4GenericMessenger::Command& rgv_cmd =
-      msg_->DeclareProperty("random_generation_vertex", random_generation_vertex_,
-			    "Whether the generation vertex is sampled randomly or not.");
+    G4GenericMessenger::Command& gvod_cmd =
+      msg_->DeclareProperty("generation_vertex_over_df", generation_vertex_over_df_,
+			    "Whether the generation vertex is randomly sampled over any dichroic filter. If not, it is randomly sampled over the whohle DFA, including the frame itself.");
 
     G4GenericMessenger::Command& dfafir_cmd =
       msg_->DeclareProperty("DFA_frame_is_reflective", DFA_frame_is_reflective_,
@@ -1006,18 +1006,22 @@ namespace nexus{
 
     G4double selected_filter_x_center =  (-1.*(DFA_length_/2.)) +outter_frame_width_along_wlsplength_   +(column_no*inner_frames_width_along_wlsplength_)   +((column_no+0.5)*DF_length_);
     G4double selected_filter_z_center =  (-1.*(DFA_width_/2.))  +outter_frame_width_along_wlspwidth_    +(row_no*inner_frames_width_along_wlspwidth_)       +((row_no+0.5)*DF_width_);
+    G4double x_pos, z_pos;
     G4double y_pos = (internal_thickn_/2.) +DFA_thickn_ +tolerance;
 
-    if(!random_generation_vertex_){
-        return G4ThreeVector(0., y_pos, 0.);
+    if(!generation_vertex_over_df_){
+        x_pos = UniformRandomInRange(  -1.*DFA_length_/2.,
+                                        DFA_length_/2.      );
+        z_pos = UniformRandomInRange(  -1.*DFA_width_/2.,
+                                        DFA_width_/2.       );
     }
     else{
-        G4double x_pos = UniformRandomInRange(  selected_filter_x_center -(DF_length_/2.) +tolerance, 
-                                                selected_filter_x_center +(DF_length_/2.) -tolerance);
-        G4double z_pos = UniformRandomInRange(  selected_filter_z_center -(DF_width_/2.) +tolerance, 
-                                                selected_filter_z_center +(DF_width_/2.) -tolerance);
-        return G4ThreeVector(x_pos, y_pos, z_pos);
+        x_pos = UniformRandomInRange(  selected_filter_x_center -(DF_length_/2.) +tolerance, 
+                                                selected_filter_x_center +(DF_length_/2.) -tolerance    );
+        z_pos = UniformRandomInRange(  selected_filter_z_center -(DF_width_/2.) +tolerance, 
+                                                selected_filter_z_center +(DF_width_/2.) -tolerance     );
     }
+    return G4ThreeVector(x_pos, y_pos, z_pos);
   }
 
 } //End namespace nexus
