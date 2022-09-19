@@ -68,7 +68,7 @@ namespace nexus {
     G4bool ref_phsensors_supports_;                                 ///< Whether photosensors supports are reflective (the tiny FR4 box that supports the SiPM)
     G4bool double_sided_;                                           ///< Whether there are dichroic filters on both sides of the WLS plate
     G4bool collectors_are_reflective_;                              ///< Whether the collectors that replace the dichroic filters are reflective or not                                      
-    G4bool random_generation_vertex_;                               ///< Whether the generation vertex is randomly sample over the inner dichroic surface. If not, the generation vertex matches the geometric center of such surface.
+    G4bool generation_vertex_over_df_;                              ///< Whether the generation vertex is randomly sampled over any dichroic filter. If not, it is randomly sampled over the whohle DFA, including the frame itself.
     G4String path_to_dichroic_data_;                                ///< Absolute path to dichroic data file
     G4double world_extra_thickn_;                                   ///< Extra thickness for the surrounding box world to wrap the XArapuca
 
