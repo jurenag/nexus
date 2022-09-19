@@ -43,43 +43,44 @@ namespace nexus{
   XArapuca::XArapuca():
   GeometryBase(), 
   ///Get internal reflector cavity dimensions from arxiv.org/abs/1912.09191
-  config_code_                          (1),
-  internal_length_                      (488.*mm),    ///X
-  internal_width_                       (100.*mm),     ///Z
-  internal_thickn_                      (8*mm),     ///Y
-  DFA_thickn_                           (1.*mm),
-  outter_frame_width_along_wlsplength_  (10. *mm),
-  outter_frame_width_along_wlspwidth_   (10. *mm),
-  inner_frames_width_along_wlsplength_  (6.*mm),
-  inner_frames_width_along_wlspwidth_   (2.*mm),
-  df_no_along_wlsplength_               (2),
-  df_no_along_wlspwidth_                (3),
-  DFA_frame_is_reflective_              (false),
-  remove_DFA_                           (false),
-  case_thickn_                          (1.*mm),      ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
-  num_phsensors_                        (24),
-  gap_                                  (0.5*mm),
-  ref_phsensors_supports_               (true), 
-  double_sided_                         (true),
-  collectors_are_reflective_            (false),
-  generation_vertex_over_df_            (true),
-  path_to_dichroic_data_                (""),
-  world_extra_thickn_                   (100.*cm),
-  plate_length_                         (487.*mm),    ///X
-  plate_width_                          (93.*mm),     ///Z
-  plate_thickn_                         (3.5*mm),     ///Y
-  only_sipms_along_long_sides_          (true),
-  with_boards_                          (true),
-  with_dimples_                         (true),
+  config_code_                          (1          ),
+  internal_length_                      (488.   *mm ),   ///X
+  internal_width_                       (100.   *mm ),   ///Z
+  internal_thickn_                      (8      *mm ),   ///Y
+  DFA_thickn_                           (1.     *mm ),
+  DF_thickn_                            (1.     *mm ),
+  outter_frame_width_along_wlsplength_  (10.    *mm ),
+  outter_frame_width_along_wlspwidth_   (10.    *mm ),
+  inner_frames_width_along_wlsplength_  (6.     *mm ),
+  inner_frames_width_along_wlspwidth_   (2.     *mm ),
+  df_no_along_wlsplength_               (2          ),
+  df_no_along_wlspwidth_                (3          ),
+  DFA_frame_is_reflective_              (false      ),
+  remove_DFA_                           (false      ),
+  case_thickn_                          (1.     *mm ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
+  num_phsensors_                        (24         ),
+  gap_                                  (0.5    *mm ),
+  ref_phsensors_supports_               (true       ), 
+  double_sided_                         (true       ),
+  collectors_are_reflective_            (false      ),
+  generation_vertex_over_df_            (true       ),
+  path_to_dichroic_data_                (""         ),
+  world_extra_thickn_                   (100.   *cm ),
+  plate_length_                         (487.   *mm ),   ///X
+  plate_width_                          (93.    *mm ),   ///Z
+  plate_thickn_                         (3.5    *mm ),   ///Y
+  only_sipms_along_long_sides_          (true       ),
+  with_boards_                          (true       ),
+  with_dimples_                         (true       ),
   dimple_type_                          ("cylindrical"),
-  flat_dimple_width_                    (6.1*mm),
-  flat_dimple_depth_                    (2.*mm),
-  curvy_dimple_radius_                  (1.5*mm),
-  fibers_no_                            (6),
-  fiber_planes_no_                      (1),    
-  fiber_radius_                         (5.*mm),
-  fiber_length_                         (400.*mm),
-  along_long_side_                      (true)
+  flat_dimple_width_                    (6.1    *mm ),
+  flat_dimple_depth_                    (2.     *mm ),
+  curvy_dimple_radius_                  (1.5    *mm ),
+  fibers_no_                            (6          ),
+  fiber_planes_no_                      (1          ),    
+  fiber_radius_                         (5.     *mm ),
+  fiber_length_                         (400.   *mm ),
+  along_long_side_                      (true       )
   {
     msg_ = new G4GenericMessenger(this, "/Geometry/XArapuca/",
 				"Control commands of geometry XArapuca.");
@@ -111,12 +112,19 @@ namespace nexus{
     it_cmd.SetParameterName("internal_thickness", false);
     it_cmd.SetRange("internal_thickness>0.");
 
-    G4GenericMessenger::Command& dfa_cmd =
+    G4GenericMessenger::Command& dfat_cmd =
       msg_->DeclareProperty("DFA_thickn", DFA_thickn_,
 			    "Thickness of the dichroic filters assembly.");
-    dfa_cmd.SetUnitCategory("Length");
-    dfa_cmd.SetParameterName("DFA_thickn", false);
-    dfa_cmd.SetRange("DFA_thickn>0.");
+    dfat_cmd.SetUnitCategory("Length");
+    dfat_cmd.SetParameterName("DFA_thickn", false);
+    dfat_cmd.SetRange("DFA_thickn>0.");
+
+    G4GenericMessenger::Command& dft_cmd =
+      msg_->DeclareProperty("DF_thickn", DF_thickn_,
+			    "Thickness of the dichroic filters.");
+    dft_cmd.SetUnitCategory("Length");
+    dft_cmd.SetParameterName("DF_thickn", false);
+    dft_cmd.SetRange("DF_thickn>0.");
 
     G4GenericMessenger::Command& ofwawl_cmd =
       msg_->DeclareProperty("outter_frame_width_along_wlsplength", outter_frame_width_along_wlsplength_,
@@ -314,10 +322,10 @@ namespace nexus{
 
     // Compute internal attributes
     overall_length_ = internal_length_  + 2*case_thickn_;
-    overall_thickn_ = internal_thickn_  + 2*DFA_thickn_;
+    overall_thickn_ = internal_thickn_  + 2*DFA_thickn_;    // geometry_is_ill_formed() will make sure that DF_thickn_<=DFA_thickn_
     overall_width_  = internal_width_   + 2*case_thickn_;
-    DFA_length_ = overall_length_;  // For now, these two match. 
-    DFA_width_  = overall_width_;    // For now, these two match.  
+    DFA_length_ = overall_length_;                          // For now, these two match. 
+    DFA_width_  = overall_width_;                           // For now, these two match.  
     DF_length_  = (DFA_length_  -(2.*outter_frame_width_along_wlsplength_)  -((df_no_along_wlsplength_-1.)*inner_frames_width_along_wlsplength_))   /(1.*df_no_along_wlsplength_);   
     DF_width_   = (DFA_width_   -(2.*outter_frame_width_along_wlspwidth_)   -((df_no_along_wlspwidth_-1.)*inner_frames_width_along_wlspwidth_))     /(1.*df_no_along_wlspwidth_);
 
@@ -803,10 +811,7 @@ namespace nexus{
     G4Box* cover_solid = new G4Box("AUX", DFA_length_/2., DFA_thickn_/2., DFA_width_/2.);
     G4double tolerance = 5.*mm; // Tolerance to prevent matching surfaces when subtracting carvings from frame
     G4Box* carving_solid =  new G4Box("FRAME_CARVING", DF_length_/2., DFA_thickn_/2. +tolerance, DF_width_/2.); 
-
-    G4Box* df_solid =       new G4Box("DICHROIC_FILTER", DF_length_/2., DFA_thickn_/2., DF_width_/2.); 
-
-    // DFA thickn and DF thickn match
+    G4Box* df_solid =       new G4Box("DICHROIC_FILTER", DF_length_/2., DF_thickn_/2., DF_width_/2.); 
 
     G4double x_pos, z_pos;
 
@@ -918,6 +923,12 @@ namespace nexus{
 
   G4bool XArapuca::geometry_is_ill_formed()
   {
+    // Some checks are independent of the configuration code. Perform those tests here:
+    if(DF_thickn_>DFA_thickn_){
+        G4Exception("[XArapuca]", "geometry_is_ill_formed()", FatalException,
+        "The dichroic filters thickness cannot be bigger than the frame thickness.");
+    }
+
     // What we need to make sure here is that there's room enough within the XArapuca internal cavity
     // to allocate everything that we intending to put in it. To do so, we may find the span of the 
     // internal geometry along each axis, and then compare it to the dimensions of the internal cavity.

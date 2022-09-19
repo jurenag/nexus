@@ -52,7 +52,8 @@ namespace nexus {
                                                                     ///< 1 -    common X-ARAPUCA (with WLS plate)
                                                                     ///< 2 -    Replace WLS plate with optical fibers with SiPMs attached to its ends                                                                    
     G4double internal_length_, internal_width_, internal_thickn_;   ///< Internal dimensions of the reflector cavity
-    G4double DFA_thickn_;                                           ///< Frame/dichroic filter thickness (both thicknesses match)
+    G4double DFA_thickn_;                                           ///< Frame thickness 
+    G4double DF_thickn_;                                            ///< Thickness of the dichroic filters. Must be smaller than the frame thickness.
     G4double outter_frame_width_along_wlsplength_;                  ///< Outter frame dimension along the length of the X-ARAPUCA
     G4double outter_frame_width_along_wlspwidth_;                   ///< Outter frame dimension along the width of the X-ARAPUCA
     G4double inner_frames_width_along_wlsplength_;                  ///< Inner frames dimension along the length of the X-ARAPUCA
