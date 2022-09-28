@@ -49,6 +49,7 @@ namespace nexus{
   internal_thickn_                      (8      *mm ),   ///Y
   DFA_thickn_                           (1.     *mm ),
   DF_thickn_                            (1.     *mm ),
+  DF_pos_wrt_DFA_pos_                   (0.         ),
   outter_frame_width_along_wlsplength_  (10.    *mm ),
   outter_frame_width_along_wlspwidth_   (10.    *mm ),
   inner_frames_width_along_wlsplength_  (6.     *mm ),
@@ -125,6 +126,13 @@ namespace nexus{
     dft_cmd.SetUnitCategory("Length");
     dft_cmd.SetParameterName("DF_thickn", false);
     dft_cmd.SetRange("DF_thickn>0.");
+
+    G4GenericMessenger::Command& dpwdp_cmd =
+      msg_->DeclareProperty("DF_pos_wrt_DFA_pos", DF_pos_wrt_DFA_pos_,
+			    "Position (height) of the dichroic filters with respect to the DFA position (height). This parameter can take values from 0 to 1.");
+    dpwdp_cmd.SetParameterName("DF_pos_wrt_DFA_pos", false);
+    dpwdp_cmd.SetRange("DF_pos_wrt_DFA_pos>=0.");
+    dpwdp_cmd.SetRange("DF_pos_wrt_DFA_pos<=1.");
 
     G4GenericMessenger::Command& ofwawl_cmd =
       msg_->DeclareProperty("outter_frame_width_along_wlsplength", outter_frame_width_along_wlsplength_,
@@ -896,7 +904,7 @@ namespace nexus{
 
     //  Place the filters
     G4VPhysicalVolume* first_df_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
-        new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_+DFA_thickn_)/2., 0.), 
+        new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_+DF_thickn_)/2.+ (DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)), 0.), 
                         "DICHROIC_FILTERS", filters_multiunion_logic, mother_physical, true, 0, true));
 
     // Add dichroic specifications
@@ -913,7 +921,7 @@ namespace nexus{
     
     if(double_sided_){
         G4VPhysicalVolume* second_df_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
-            new G4PVPlacement(nullptr, G4ThreeVector(0., -1.*(internal_thickn_+DFA_thickn_)/2., 0.), 
+            new G4PVPlacement(nullptr, G4ThreeVector(0., -1.*((internal_thickn_+DF_thickn_)/2.+ (DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_))), 0.), 
                             "DICHROIC_FILTERS", filters_multiunion_logic, mother_physical, true, 1, true));
         new G4LogicalBorderSurface("LAr->DICHROIC2", mother_physical, second_df_multiunion_physical, dfs_opsurf);
     }
@@ -927,6 +935,11 @@ namespace nexus{
     if(DF_thickn_>DFA_thickn_){
         G4Exception("[XArapuca]", "geometry_is_ill_formed()", FatalException,
         "The dichroic filters thickness cannot be bigger than the frame thickness.");
+    }
+
+    if(DF_pos_wrt_DFA_pos_<0. || DF_pos_wrt_DFA_pos_>1.){
+        G4Exception("[XArapuca]", "geometry_is_ill_formed()", FatalException,
+        "The dichroic filter position with respect to the DFA position must belong to the [0, 1] interval.");
     }
 
     // What we need to make sure here is that there's room enough within the XArapuca internal cavity

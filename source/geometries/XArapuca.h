@@ -54,6 +54,7 @@ namespace nexus {
     G4double internal_length_, internal_width_, internal_thickn_;   ///< Internal dimensions of the reflector cavity
     G4double DFA_thickn_;                                           ///< Frame thickness 
     G4double DF_thickn_;                                            ///< Thickness of the dichroic filters. Must be smaller than the frame thickness.
+    G4double DF_pos_wrt_DFA_pos_;                                   ///< Position (height) of the dichroic filters with respect to the DFA position (height). This parameter can take values from 0 to 1. See * below
     G4double outter_frame_width_along_wlsplength_;                  ///< Outter frame dimension along the length of the X-ARAPUCA
     G4double outter_frame_width_along_wlspwidth_;                   ///< Outter frame dimension along the width of the X-ARAPUCA
     G4double inner_frames_width_along_wlsplength_;                  ///< Inner frames dimension along the length of the X-ARAPUCA
@@ -100,3 +101,53 @@ namespace nexus {
 }
 
 #endif
+
+/* *
+________ ___________________ ________
+        |                   |  
+        |       DF          | <--- DF_pos_wrt_DFA_pos_ = 1.  (Shallow)
+        |___________________|
+        |                   |
+        |                   |
+        |                   |       
+        |                   |
+  DFA   |                   |  DFA
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+        |___________________|
+        |                   |
+        |        DF         | <--- DF_pos_wrt_DFA_pos_ = 0. (Deepest position within DFA)
+________|___________________|________
+
+
+_____________________________________
+                WLSPLATE
+_____________________________________
+
+________ ___________________ ________
+        |                   |  
+        |       DF          | <--- DF_pos_wrt_DFA_pos_ = 0. (Deepest position within DFA)
+        |___________________|
+        |                   |
+        |                   |
+        |                   |       
+        |                   |
+  DFA   |                   |  DFA
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+        |___________________|
+        |                   |
+        |        DF         | <--- DF_pos_wrt_DFA_pos_ = 1.  (Shallow)
+________|___________________|________
+
+
+
+*/
