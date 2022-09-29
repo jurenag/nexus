@@ -402,7 +402,7 @@ namespace nexus{
                 (internal_width_ +case_thickn_ +world_extra_thickn_)/2.);
 
     G4Material* LAr = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
-    LAr->SetMaterialPropertiesTable(opticalprops::paulucci_LAr());
+    LAr->SetMaterialPropertiesTable(opticalprops::LAr());
 
     G4LogicalVolume* LAr_box_logic =
       new G4LogicalVolume(LAr_box_solid, LAr, LAr_box_name);
@@ -894,7 +894,7 @@ namespace nexus{
     // the dichroic filter volume, they shall not be further reflected or refracted. To avoid this, the 
     // dichroic filter substrate optical properties must match those of the surrounding LAr. This was checked 
     // in an alternative setup.
-    dfs_substrate->SetMaterialPropertiesTable(opticalprops::paulucci_LAr());
+    dfs_substrate->SetMaterialPropertiesTable(opticalprops::LAr());
     G4LogicalVolume* filters_multiunion_logic = 
                         new G4LogicalVolume(filters_multiunion_solid, dfs_substrate, "DICHROIC_FILTERS");
 

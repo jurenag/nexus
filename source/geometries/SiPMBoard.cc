@@ -100,7 +100,7 @@ namespace nexus {
         new G4Box(encasing_name, board_length_/2., board_height_/2., encasing_thickn/2.);
 
     G4Material* lAr = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
-    lAr->SetMaterialPropertiesTable(opticalprops::paulucci_LAr());
+    lAr->SetMaterialPropertiesTable(opticalprops::LAr());
 
     G4LogicalVolume* encasing_logic = 
         new G4LogicalVolume(encasing_solid, lAr, encasing_name);
