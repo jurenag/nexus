@@ -738,9 +738,20 @@ namespace nexus{
     //Now create the reflectivie optical surface
     const G4String refsurf_name = "REF_SURFACE";
     G4OpticalSurface* refsurf_opsurf = 
-      new G4OpticalSurface(refsurf_name, unified, polishedfrontpainted, dielectric_dielectric, 1);
+      new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
     
-    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::VIKUITI());
+    // From geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/TrackingAndPhysics/physicsProcess.html#optical-photon-processes
+    // The dielectric_metal->ground configuration of the unified model works as:
+    // "Only reflection or absorption; No refraction: Reflection probability set by
+    // reflectivity. If reflected, one of the four specular spike, backscatter,
+    // lambertian or specular lobe reflection with respect to a FacetNormal takes
+    // place according to the assigned probabilities."
+    // So, make sure you have set the reflectivity and the probabilities for each
+    // type of reflection. On the other hand, for this configuration, it does not matter
+    // if you have set the transmission, since that option is already banned from the
+    // configuration model.
+
+    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
     new G4LogicalSkinSurface("REF_CASE_SURFACE", ref_case_logic, refsurf_opsurf);   
     
     new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.),
@@ -862,8 +873,8 @@ namespace nexus{
     //Now create the reflective optical surface
     const G4String refsurf_name = "REF_SURFACE";
     G4OpticalSurface* refsurf_opsurf = 
-      new G4OpticalSurface(refsurf_name, unified, polished, dielectric_metal, 1);
-    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::VIKUITI());
+      new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
+    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
     
     if(DFA_frame_is_reflective_){
         new G4LogicalSkinSurface(refsurf_name, frame_logic, refsurf_opsurf);
