@@ -76,9 +76,9 @@ namespace nexus {
         //VIKUITI coating for the support
         const G4String sc_name = "SUPPORT_COATING";
         G4OpticalSurface* support_coating = 
-        new G4OpticalSurface(sc_name, unified, polishedfrontpainted, dielectric_dielectric, 1);
+        new G4OpticalSurface(sc_name, unified, ground, dielectric_metal, 1);
 
-        support_coating->SetMaterialPropertiesTable(opticalprops::VIKUITI());
+        support_coating->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
         new G4LogicalSkinSurface(sc_name, support_logic, support_coating); 
     }
 
