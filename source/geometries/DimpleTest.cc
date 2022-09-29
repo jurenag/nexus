@@ -199,7 +199,7 @@ namespace nexus{
     G4String sphere_name = "LAR_SPHERE";
     G4Orb* sphere_solid = new G4Orb(sphere_name, world_radius_);
     G4Material* lAr = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
-    lAr->SetMaterialPropertiesTable(opticalprops::paulucci_LAr());
+    lAr->SetMaterialPropertiesTable(opticalprops::LAr());
     G4LogicalVolume* sphere_logic = new G4LogicalVolume(sphere_solid, lAr, sphere_name);
     sphere_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     

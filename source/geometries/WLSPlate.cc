@@ -131,7 +131,7 @@ namespace nexus{
         G4Material* lAr = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
 
         // Set the optical material properties
-        lAr->SetMaterialPropertiesTable(opticalprops::paulucci_LAr());
+        lAr->SetMaterialPropertiesTable(opticalprops::LAr());
 
         // Define the logical volume of the sphere using the material
         // and the solid volume defined above

@@ -69,7 +69,7 @@ namespace nexus{
     G4Material* lAr = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
 
     // Set the optical material properties
-    lAr->SetMaterialPropertiesTable(opticalprops::paulucci_LAr());
+    lAr->SetMaterialPropertiesTable(opticalprops::LAr());
 
     // Create the logical volume
     G4LogicalVolume* world_logic = 
