@@ -97,7 +97,11 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* XXX();
 
-  G4MaterialPropertiesTable* VIKUITI();
+  G4MaterialPropertiesTable* specularspikeVIKUITI();
+
+  G4MaterialPropertiesTable* specularlobeVIKUITI();
+
+  G4MaterialPropertiesTable* diffusiveVIKUITI();
 
 
   constexpr G4double optPhotMinE_ =  0.2  * eV;

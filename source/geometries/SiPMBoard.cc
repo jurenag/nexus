@@ -138,9 +138,9 @@ namespace nexus {
     //VIKUITI coating for the board
     const G4String bc_name = "BOARD_COATING";
     G4OpticalSurface* board_coating = 
-      new G4OpticalSurface(bc_name, unified, polishedfrontpainted, dielectric_dielectric, 1);
+      new G4OpticalSurface(bc_name, unified, ground, dielectric_metal, 1);
     
-    board_coating->SetMaterialPropertiesTable(opticalprops::VIKUITI());
+    board_coating->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
     new G4LogicalSkinSurface(bc_name, board_logic, board_coating); 
 
     //Place it
