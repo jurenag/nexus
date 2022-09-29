@@ -51,7 +51,7 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* LXe();
 
-  G4MaterialPropertiesTable* paulucci_LAr();
+  G4MaterialPropertiesTable* LAr();
   
   G4MaterialPropertiesTable* PerfectPhotonCollector();
 

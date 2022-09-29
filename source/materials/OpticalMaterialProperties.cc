@@ -667,7 +667,7 @@ namespace opticalprops {
     return LXe_mpt;
   }
 
-  G4MaterialPropertiesTable* paulucci_LAr()
+  G4MaterialPropertiesTable* LAr()
   {
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
 
