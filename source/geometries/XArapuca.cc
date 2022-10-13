@@ -611,7 +611,7 @@ namespace nexus{
         if(!only_sipms_along_long_sides_){
             SiPMBoard board3;
             board3.SetBaseID(2*num_phsensors_);
-            board3.SetBoardLength(plate_length_);
+            board3.SetBoardLength(plate_width_);
             board3.SetNumPhsensors(num_phsensors_);
             board3.SetReflectiveSupports(ref_phsensors_supports_);
             board3.Construct();
@@ -626,7 +626,7 @@ namespace nexus{
 
             SiPMBoard board4;
             board4.SetBaseID(3*num_phsensors_);
-            board4.SetBoardLength(plate_length_);
+            board4.SetBoardLength(plate_width_);
             board4.SetNumPhsensors(num_phsensors_);
             board4.SetReflectiveSupports(ref_phsensors_supports_);
             board4.Construct();
