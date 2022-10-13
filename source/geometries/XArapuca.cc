@@ -5,6 +5,7 @@
 #include "FactoryBase.h"  
 #include "WLSPlate.h"
 #include "HamamatsuS133606050VE.h"
+#include "ScalableHamamatsuS133606050VE.h"
 #include "SiPMBoard.h"
 #include "MomentumSD.h"
 #include "RandomUtils.h"
@@ -60,6 +61,7 @@ namespace nexus{
   DFA_frame_is_specular_                (true       ),
   remove_DFA_                           (false      ),
   case_thickn_                          (1.     *mm ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
+  PS_config_code_                       (1          ),
   num_phsensors_                        (24         ),
   gap_                                  (0.5    *mm ),
   ref_phsensors_supports_               (true       ), 
@@ -181,6 +183,12 @@ namespace nexus{
     ct_cmd.SetUnitCategory("Length");
     ct_cmd.SetParameterName("case_thickn", false);
     ct_cmd.SetRange("case_thickn>0.");
+
+    G4GenericMessenger::Command& pscc_cmd =
+      msg_->DeclareProperty("PS_config_code", PS_config_code_,
+			    "Photo sensors configuration code.");
+    pscc_cmd.SetParameterName("PS_config_code", false);
+    pscc_cmd.SetRange("PS_config_code>=1"); 
 
     G4GenericMessenger::Command& np_cmd =
       msg_->DeclareProperty("num_phsensors", num_phsensors_,
@@ -524,51 +532,153 @@ namespace nexus{
 
   void XArapuca::ConstructPhotosensors(G4VPhysicalVolume* mother_physical) const
   {
-    HamamatsuS133606050VE sipm;
-    sipm.SetReflectiveSupports(ref_phsensors_supports_);
-    sipm.Construct();
-    G4double sipm_thickn = sipm.GetThickness();
-    G4LogicalVolume* sipm_logic_vol = sipm.GetLogicalVolume();
-
     G4VisAttributes sipm_col = nexus::Red();
     sipm_col.SetForceSolid(true);
-    sipm_logic_vol->SetVisAttributes(sipm_col);
 
-    if (!sipm_logic_vol) {
-      G4Exception("[XArapuca]", "ConstructPhotosensors()",
-                  FatalException, "Null pointer to logical volume.");
+    if(PS_config_code_==1){
+
+        HamamatsuS133606050VE sipm;
+        sipm.SetReflectiveSupports(ref_phsensors_supports_);
+        sipm.Construct();
+        G4double sipm_thickn = sipm.GetThickness();
+        G4LogicalVolume* sipm_logic_vol = sipm.GetLogicalVolume();
+
+        if (!sipm_logic_vol) {
+        G4Exception("[XArapuca]", "ConstructPhotosensors()",
+                    FatalException, "Null pointer to logical volume.");
+        }
+
+        sipm_logic_vol->SetVisAttributes(sipm_col);
+
+        G4int phsensor_id = 0;
+
+        G4RotationMatrix* rot = new G4RotationMatrix();
+        rot->rotateX(-90.*deg);
+        for (G4int i=0; i<num_phsensors_; ++i) {
+            G4ThreeVector pos(  -plate_length_/2. + (0.5 + i) * plate_length_/num_phsensors_,
+                                0.,
+                                -plate_width_/2. -sipm_thickn/2. -gap_);
+
+            new G4PVPlacement(  rot, pos,
+                                "S133606050VE_MPPC", sipm_logic_vol,
+                                mother_physical, false, phsensor_id, true);
+            phsensor_id += 1;
+        }
+
+        G4RotationMatrix* rot2 = new G4RotationMatrix();
+        rot2->rotateX(90.*deg);
+        for (G4int i=0; i<num_phsensors_; ++i) {
+            G4ThreeVector pos(-plate_length_/2. + (0.5 + i) * plate_length_/num_phsensors_,
+                                0.,
+                                +plate_width_/2. +sipm_thickn/2. +gap_);
+
+            new G4PVPlacement(rot2, pos,
+                                "S133606050VE_MPPC", sipm_logic_vol,
+                                mother_physical, false, phsensor_id, true);
+            phsensor_id += 1;
+        }
+
+        if(!only_sipms_along_long_sides_){
+            G4RotationMatrix* rot3 = new G4RotationMatrix();
+            rot3->rotateZ(90.*deg);
+            for (G4int i=0; i<num_phsensors_; ++i) {
+                G4ThreeVector pos(  -plate_length_/2. -sipm_thickn/2. -gap_,
+                                    0.,
+                                    -plate_width_/2. + (0.5 + i) * plate_width_/num_phsensors_);
+
+                new G4PVPlacement(  rot3, pos,
+                                    "S133606050VE_MPPC", sipm_logic_vol,
+                                    mother_physical, false, phsensor_id, true);
+                phsensor_id += 1;
+            }
+
+            G4RotationMatrix* rot4 = new G4RotationMatrix();
+            rot4->rotateZ(-90.*deg);
+            for (G4int i=0; i<num_phsensors_; ++i) {
+                G4ThreeVector pos(  +plate_length_/2. +sipm_thickn/2. +gap_,
+                                    0.,
+                                    -plate_width_/2. + (0.5 + i) * plate_width_/num_phsensors_);
+
+                new G4PVPlacement(  rot4, pos,
+                                    "S133606050VE_MPPC", sipm_logic_vol,
+                                    mother_physical, false, phsensor_id, true);
+                phsensor_id += 1;
+            }
+        }
+
+    }
+    else if(PS_config_code_==2){
+
+        ScalableHamamatsuS133606050VE sipm_along_length(plate_length_, plate_thickn_);
+        sipm_along_length.SetReflectiveSupports(ref_phsensors_supports_);
+        sipm_along_length.Construct();
+        G4double sipm_thickn = sipm_along_length.GetThickness();
+        G4LogicalVolume* sipm_along_length_logic_vol = sipm_along_length.GetLogicalVolume();
+        if(!sipm_along_length_logic_vol){
+        G4Exception("[XArapuca]", "ConstructPhotosensors()",
+                    FatalException, "Null pointer to logical volume.");
+        }
+        sipm_along_length_logic_vol->SetVisAttributes(sipm_col);
+
+        G4RotationMatrix* rot0 = new G4RotationMatrix();
+        rot0->rotateX(-90.*deg);
+        G4ThreeVector pos0( 0.,
+                            0.,
+                            -plate_width_/2. -sipm_thickn/2. -gap_);
+        new G4PVPlacement(rot0, pos0,
+                            "SS133606050VE_MPPC", sipm_along_length_logic_vol,
+                            mother_physical, false, 0, true);
+
+        G4RotationMatrix* rot1 = new G4RotationMatrix();
+        rot1->rotateX(90.*deg);
+        G4ThreeVector pos1( 0.,
+                            0.,
+                            +plate_width_/2. +sipm_thickn/2. +gap_);
+        new G4PVPlacement(rot1, pos1,
+                            "SS133606050VE_MPPC", sipm_along_length_logic_vol,
+                            mother_physical, false, 1, true);
+
+        if(!only_sipms_along_long_sides_){
+
+            ScalableHamamatsuS133606050VE sipm_along_width(plate_width_, plate_thickn_);
+            sipm_along_width.SetReflectiveSupports(ref_phsensors_supports_);
+            sipm_along_width.Construct();
+            G4double sipm_thickn = sipm_along_width.GetThickness();
+            G4LogicalVolume* sipm_along_width_logic_vol = sipm_along_width.GetLogicalVolume();
+            if (!sipm_along_width_logic_vol) {
+            G4Exception("[XArapuca]", "ConstructPhotosensors()",
+                        FatalException, "Null pointer to logical volume.");
+            }
+            sipm_along_width_logic_vol->SetVisAttributes(sipm_col);
+
+            G4RotationMatrix* rot2 = new G4RotationMatrix();
+            rot2->rotateY(-90.*deg);
+            rot2->rotateX(-90.*deg);
+            G4ThreeVector pos2(  -plate_length_/2. -sipm_thickn/2. -gap_,
+                                0.,
+                                0.);
+            new G4PVPlacement(rot2, pos2,
+                                "SS133606050VE_MPPC", sipm_along_width_logic_vol,
+                                mother_physical, false, 2, true);
+
+            G4RotationMatrix* rot3 = new G4RotationMatrix();
+            rot3->rotateY(-90.*deg);
+            rot3->rotateX(90.*deg);
+            G4ThreeVector pos3(  +plate_length_/2. +sipm_thickn/2. +gap_,
+                                0.,
+                                0.);
+            new G4PVPlacement(rot3, pos3,
+                                "SS133606050VE_MPPC", sipm_along_width_logic_vol,
+                                mother_physical, false, 3, true);
+        }
+
+    }
+    else{
+        G4Exception(    "[XArapuca]", "ConstructPhotosensors()",
+                        FatalException, "Not allowed configuration code.");
+
     }
 
-    G4int phsensor_id = 0;
-
-    G4RotationMatrix* rot = new G4RotationMatrix();
-    rot->rotateX(-90.*deg);
-
-    for (G4int i=0; i<num_phsensors_; ++i) {
-      phsensor_id = i;
-      G4ThreeVector pos(-plate_length_/2. + (0.5 + i) * plate_length_/num_phsensors_,
-                        0.,
-                        -plate_width_/2. - sipm_thickn/2. -gap_);
-
-      new G4PVPlacement(rot, pos,
-                        "S133606050VE_MPPC", sipm_logic_vol,
-                        mother_physical, false, phsensor_id, true);
-    }
-
-    G4RotationMatrix* rot2 = new G4RotationMatrix();
-    rot2->rotateX(90.*deg);
-
-    for (G4int i=0; i<num_phsensors_; ++i) {
-      phsensor_id = num_phsensors_ +i;
-      G4ThreeVector pos(-plate_length_/2. + (0.5 + i) * plate_length_/num_phsensors_,
-                        0.,
-                        +plate_width_/2. +sipm_thickn/2. +gap_);
-
-      new G4PVPlacement(rot2, pos,
-                        "S133606050VE_MPPC", sipm_logic_vol,
-                        mother_physical, false, phsensor_id, true);
-    }
-    
     return;
   }
 
@@ -981,22 +1091,28 @@ namespace nexus{
         }
 
         if(with_boards_){
+            // If with_boards_==true, then PS_config_code_ is ignored, the geometry is loaded
+            // as if PS_config_code_==1, so there's no need to distinguish cases here
             SiPMBoard board;
             internal_geom_length_span   = plate_length_ +(2.*gap_)+(2.*board.GetOverallThickness());
             internal_geom_width_span    = plate_width_  +(2.*gap_)+(2.*board.GetOverallThickness());
             internal_geom_thickn_span   = std::max(plate_thickn_, board.GetOverallHeight());
         }
         else{
-            HamamatsuS133606050VE sipm;
-            internal_geom_length_span = plate_length_;  //If you check XArapuca::ConstructPhotosensors() you 
-                                                        //can check that num_phsensors_ sensors are uniformly 
-                                                        //distributed along the length of the plate. Therefore,
-                                                        //in this case it is necessary to make one additional
-                                                        //check: the plate must be long enough so as to fit
-                                                        //num_phsensors_ sensors.
+            HamamatsuS133606050VE sipm; 
+            if(PS_config_code_==1){
+                if(num_phsensors_*sipm.GetWidth()>plate_length_) { return true; }
+                if(!only_sipms_along_long_sides_){
+                    if(num_phsensors_*sipm.GetWidth()>plate_width_) { return true; }
+                }
 
-            if(num_phsensors_*sipm.GetWidth()>plate_length_) { return true; }
+            }
+            // Else if PS_config_code_==2, the scalable SiPM is build with the exact plate 
+            // dimensions, so there's no need to care about such case here
 
+            internal_geom_length_span = plate_length_+(2.*gap_)+(2.*sipm.GetThickness());   // Either the HamamatsuS133606050VE and the ScalableHamamatsuS133606050VE
+                                                                                            // have the same thickness, so there's no need to distinguish between both
+                                                                                            // according to PS_config_code_ value
             internal_geom_width_span = plate_width_+(2.*gap_)+(2.*sipm.GetThickness());
             internal_geom_thickn_span = std::max(plate_thickn_, sipm.GetHeight());
         }
