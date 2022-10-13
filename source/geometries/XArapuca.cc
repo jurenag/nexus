@@ -982,9 +982,9 @@ namespace nexus{
 
         if(with_boards_){
             SiPMBoard board;
-            internal_geom_length_span = std::max(plate_length_, board.GetBoardLength());
-            internal_geom_width_span = plate_width_+(2.*gap_)+(2.*board.GetOverallThickness());
-            internal_geom_thickn_span = std::max(plate_thickn_, board.GetOverallHeight());
+            internal_geom_length_span   = plate_length_ +(2.*gap_)+(2.*board.GetOverallThickness());
+            internal_geom_width_span    = plate_width_  +(2.*gap_)+(2.*board.GetOverallThickness());
+            internal_geom_thickn_span   = std::max(plate_thickn_, board.GetOverallHeight());
         }
         else{
             HamamatsuS133606050VE sipm;
