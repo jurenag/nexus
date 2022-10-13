@@ -18,7 +18,9 @@
 namespace nexus {
 
   HamamatsuS133606050VE::HamamatsuS133606050VE():
-    visibility_(true), reflective_support_(false)
+  GeometryBase(), 
+  visibility_(true), 
+  reflective_support_(false)
   {
   }
 
