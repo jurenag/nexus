@@ -892,6 +892,12 @@ namespace nexus{
                             frame_name, frame_logic, mother_physical, true, 1, true);
     }
     else{
+        // If the X-ARAPUCA is not double-sided, then the dummy plane is reflective
+        const G4String refsurf_name = "REF_SURFACE";
+        G4OpticalSurface* refsurf_opsurf = 
+        new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
+        refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+
         const G4String cover_name = "REFLECTIVE_COVER";
         G4LogicalVolume* cover_logic = new G4LogicalVolume(cover_solid, materials::FR4(), cover_name);
         cover_logic->SetVisAttributes(frame_col);
