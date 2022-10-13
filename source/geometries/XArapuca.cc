@@ -57,6 +57,7 @@ namespace nexus{
   df_no_along_wlsplength_               (2          ),
   df_no_along_wlspwidth_                (3          ),
   DFA_frame_is_reflective_              (false      ),
+  DFA_frame_is_specular_                (true       ),
   remove_DFA_                           (false      ),
   case_thickn_                          (1.     *mm ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   num_phsensors_                        (24         ),
@@ -213,6 +214,10 @@ namespace nexus{
     G4GenericMessenger::Command& dfafir_cmd =
       msg_->DeclareProperty("DFA_frame_is_reflective", DFA_frame_is_reflective_,
 			    "Whether the FR4 DFA frame is vikuiti-coated or not.");
+
+    G4GenericMessenger::Command& dfafis_cmd =
+      msg_->DeclareProperty("DFA_frame_is_specular", DFA_frame_is_specular_,
+			    "Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.");
 
     G4GenericMessenger::Command& rdfa_cmd =
       msg_->DeclareProperty("remove_DFA", remove_DFA_,
@@ -870,14 +875,13 @@ namespace nexus{
     frame_col.SetForceSolid(true);
     frame_logic->SetVisAttributes(frame_col);
 
-    //Now create the reflective optical surface
-    const G4String refsurf_name = "REF_SURFACE";
-    G4OpticalSurface* refsurf_opsurf = 
-      new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
-    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
-    
     if(DFA_frame_is_reflective_){
-        new G4LogicalSkinSurface(refsurf_name, frame_logic, refsurf_opsurf);
+        const G4String refcoat_name = "REF_COATING";
+        G4OpticalSurface* refcoat_opsurf = 
+        new G4OpticalSurface(refcoat_name, unified, ground, dielectric_metal, 1);
+        if(DFA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+        else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::diffusiveVIKUITI());
+        new G4LogicalSkinSurface(refcoat_name, frame_logic, refcoat_opsurf);
     }
     
     G4PVPlacement* frame_physical = new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_+DFA_thickn_)/2. +0.*cm, 0.),
