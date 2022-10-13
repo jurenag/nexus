@@ -68,7 +68,7 @@ namespace nexus {
     G4int num_phsensors_;                                           ///< If config_code_==1, this is the number of SiPMs per long side
                                                                     ///< If config_code_==2, this is the number of photosensors per side which is perpendicular to the fibers
     G4double gap_;                                                  ///< Gap between photosensors and WLS material. A negative gap can help modelate the immersion of the SiPMs into the flat dimples. Be careful not to collide the SiPMs into the plate.
-    G4bool ref_phsensors_supports_;                                 ///< Whether photosensors supports are reflective (the tiny FR4 box that supports the SiPM)
+    G4bool ref_phsensors_supports_;                                 ///< Whether photosensors supports are reflective (the FR4 box that supports the SiPM, regardless PS_config_code_)
     G4bool double_sided_;                                           ///< Whether there are dichroic filters on both sides of the WLS plate
     G4bool collectors_are_reflective_;                              ///< Whether the collectors that replace the dichroic filters are reflective or not                                      
     G4bool generation_vertex_over_df_;                              ///< Whether the generation vertex is randomly sampled over any dichroic filter. If not, it is randomly sampled over the whohle DFA, including the frame itself.
@@ -82,7 +82,7 @@ namespace nexus {
 
     ///---- config_code_==1 parameters ----///
     G4double plate_length_, plate_width_, plate_thickn_;            ///< WLS plate thickness
-    G4bool only_sipms_along_long_sides_;                            ///< Whether SiPM boards are installed only along the long sides of the X-ARAPUCA (i.e. the 'length' dimension), or along every side.
+    G4bool only_sipms_along_long_sides_;                            ///< Whether the photo sensors are installed only along the long sides of the X-ARAPUCA (i.e. the 'length' dimension), or along every side.
     G4bool with_boards_;                                            ///< Whether the photosensors are mounted on a board
     G4int PS_config_code_;                                          ///< Value in (1,2) which labels which photo sensors configuration will be simulated
                                                                     ///< 1 -    num_phsensors_ are evenly distributed along each chosen* to side of the WLS plate.
