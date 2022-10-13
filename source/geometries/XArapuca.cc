@@ -1026,8 +1026,24 @@ namespace nexus{
     }
     
     G4bool check1 = internal_length_ >= internal_geom_length_span;
-    G4bool check2 = internal_width_  >= internal_geom_width_span;
-    G4bool check3 = internal_thickn_ >= internal_geom_thickn_span;
+    G4bool check2 = internal_thickn_ >= internal_geom_thickn_span;
+    G4bool check3 = internal_width_  >= internal_geom_width_span;
+
+    // Uncomment the following chunk for testing purposes
+    /*
+    if (!check1) {
+        G4cout << "WARNING: First condition is not met" << G4endl;
+        G4cout << "internal_length_=" << internal_length_ << ", internal_geom_length_span=" << internal_geom_length_span << G4endl;
+    }
+    if (!check2) {
+        G4cout << "WARNING: Second condition is not met" << G4endl;
+        G4cout << "internal_thickn_=" << internal_thickn_ << ", internal_geom_thickn_span=" << internal_geom_thickn_span << G4endl;
+    }
+    if (!check3) {
+        G4cout << "WARNING: Third condition is not met" << G4endl;
+        G4cout << "internal_width_=" << internal_width_ << ", internal_geom_width_span=" << internal_geom_width_span << G4endl;
+    }
+    */
 
     return !(check1*check2*check3);
   }
