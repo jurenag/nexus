@@ -84,6 +84,11 @@ namespace nexus {
     G4double plate_length_, plate_width_, plate_thickn_;            ///< WLS plate thickness
     G4bool only_sipms_along_long_sides_;                            ///< Whether SiPM boards are installed only along the long sides of the X-ARAPUCA (i.e. the 'length' dimension), or along every side.
     G4bool with_boards_;                                            ///< Whether the photosensors are mounted on a board
+    G4int PS_config_code_;                                          ///< Value in (1,2) which labels which photo sensors configuration will be simulated
+                                                                    ///< 1 -    num_phsensors_ are evenly distributed along each chosen* to side of the WLS plate.
+                                                                    ///< 2 -    one big photosensor (whose transversal dimensions match those of the WLS plate side face) is placed in front of each chosen* WLS plate side face.  
+                                                                    ///< WARNING: Currently, PS_config_code_==2 is only available if with_boards_==false, so setting with_boards_==true automatically entails that num_phsensors_ different SiPMs per side will be installed      
+                                                                    ///< NOTE: chosen* up to only_sipms_along_long_sides_
     G4bool with_dimples_;                                           ///< Whether the plate has carved dimples on it.
     G4String dimple_type_;                                          ///< Type of the dimple, i.e. "cylindrical", "spherical" etc.
     G4double flat_dimple_width_, flat_dimple_depth_;                ///< Used for flat dimples. The width of the dimple (along the board direction) and its depth, perpendicular to the plate surface.
