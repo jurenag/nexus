@@ -681,6 +681,9 @@ namespace opticalprops {
                           9.9448*eV, 10.029*eV, 10.097*eV, 10.159*eV, 10.235*eV, 10.288*eV, 10.328*eV, 
                           10.383*eV, 10.461*eV, 10.475*eV, 10.502*eV};
 
+    // Before considering any change on this LAr rindex, please take into account that LArPTPArtifact
+    // is meant to have the exact same rindex as LAr. So, please, introduce the same changes in both
+    // mpts.
     G4double rindex[] = {1.2288, 1.233, 1.2332, 1.2344, 1.235, 1.2362, 1.2373, 1.2379, 1.2393, 1.2405, 
                         1.2414, 1.2432, 1.2441, 1.2452, 1.2471, 1.2495, 1.2511, 1.2527, 1.2548, 1.2571, 
                         1.2592, 1.2614, 1.2641, 1.2667, 1.2694, 1.2725, 1.2758, 1.2794, 1.2835, 1.2877, 
@@ -699,6 +702,117 @@ namespace opticalprops {
 
     return mpt;
   }
+
+  G4MaterialPropertiesTable* LArPTPArtifact(){
+    // This material must have the same exact optical properties as opticalprops::LAr(), and, on top of 
+    // that, it must have also a defined a Optical WLS process (OpWLS) with a WLS absorption length, such 
+    // that every LAr scintillation photon (127-128nm) is quickly absorbed and reemitted according to the 
+    // PTP emission spectrum. The parameter WLSMEANNUMBERPHOTONS of OpWLS can be used to simulate the 
+    // overall efficiency of PTP, both due to an actual-too-long-wlsabslength or due to a conversion efficiency.
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    G4double energies_rindex[] = {2.043*eV, 2.2109*eV, 2.3789*eV, 2.5468*eV, 2.7148*eV, 2.8828*eV, 3.0507*eV, 
+                          3.2187*eV, 3.3867*eV, 3.5546*eV, 3.7226*eV, 3.8905*eV, 4.0585*eV, 4.2265*eV, 
+                          4.3944*eV, 4.5624*eV, 4.7303*eV, 4.8983*eV, 5.0663*eV, 5.2342*eV, 5.4022*eV, 
+                          5.5702*eV, 5.7381*eV, 5.9061*eV, 6.074*eV, 6.242*eV, 6.41*eV, 6.5779*eV, 
+                          6.7459*eV, 6.9139*eV, 7.0818*eV, 7.2498*eV, 7.4177*eV, 7.5857*eV, 7.7537*eV, 
+                          7.9216*eV, 8.0896*eV, 8.2575*eV, 8.4255*eV, 8.5935*eV, 8.7614*eV, 8.9294*eV, 
+                          9.0974*eV, 9.2577*eV, 9.3951*eV, 9.5173*eV, 9.6471*eV, 9.7616*eV, 9.8532*eV, 
+                          9.9448*eV, 10.029*eV, 10.097*eV, 10.159*eV, 10.235*eV, 10.288*eV, 10.328*eV, 
+                          10.383*eV, 10.461*eV, 10.475*eV, 10.502*eV};
+
+            
+    // Before considering any change on this LArPTPArtifact rindex, please take into account that
+    // this mpt is meant to have the exact same rindex as LAr's mpt.
+    G4double rindex[] = {1.2288, 1.233, 1.2332, 1.2344, 1.235, 1.2362, 1.2373, 1.2379, 1.2393, 1.2405, 
+                        1.2414, 1.2432, 1.2441, 1.2452, 1.2471, 1.2495, 1.2511, 1.2527, 1.2548, 1.2571, 
+                        1.2592, 1.2614, 1.2641, 1.2667, 1.2694, 1.2725, 1.2758, 1.2794, 1.2835, 1.2877, 
+                        1.2928, 1.2979, 1.3031, 1.3085, 1.3146, 1.3218, 1.3291, 1.337, 1.3454, 1.3556, 
+                        1.3673, 1.3796, 1.3921, 1.4071, 1.4229, 1.4381, 1.4535, 1.4691, 1.485, 1.4999, 
+                        1.5149, 1.5332, 1.5506, 1.5672, 1.5859, 1.5997, 1.6171, 1.6301, 1.6464, 1.6623};
+
+    mpt->AddProperty("RINDEX", energies_rindex, rindex, 60);
+
+    // Absorption length (ABSLENGTH)
+    G4double energies_abslength[]  = {optPhotMinE_, optPhotMaxE_};
+    G4double abslength[] = {noAbsLength_, noAbsLength_};
+
+    mpt->AddProperty("ABSLENGTH", energies_abslength, abslength, 2);
+
+    // WLS ABSORPTION LENGTH
+    // Getting the LAr scintillation spectrum from researchgate.net/figure/Scintillation-light-spectrum-of-LAr-recorded-with-sulfur-beam-excitation-blue-in-color_fig7_258169905
+    // , it is clear that there's almost no LAr scintillation for wavelengths bigger than 145nm. The following WLS absorption length is set so as to absorb every LAr scintillation
+    // photon in the range [118, 145]nm, and absorb nothing outside that range.
+    std::vector<G4double> WLS_abs_energy = {
+      optPhotMinE_, 
+      h_Planck*c_light/(146.25*nm), h_Planck*c_light/(145.75*nm), // These points are meant to fix wlsabslength=infinite at 146nm
+      h_Planck*c_light/(145.25*nm), h_Planck*c_light/(144.75*nm), // These points are meant to fix wlsabslength=very small at 145nm
+      h_Planck*c_light/(118.25*nm), h_Planck*c_light/(117.75*nm), // These points are meant to fix wlsabslength=very small at 118nm
+      h_Planck*c_light/(117.25*nm), h_Planck*c_light/(116.75*nm), // These points are meant to fix wlsabslength=infinite at 117nm   
+      optPhotMaxE_
+    };
+
+    std::vector<G4double> WLS_absLength = {
+      noAbsLength_  ,
+      noAbsLength_  , noAbsLength_  ,
+      1.*nm         , 1.*nm         ,
+      1.*nm         , 1.*nm         ,
+      noAbsLength_  , noAbsLength_  ,
+      noAbsLength_  
+    };
+    mpt->AddProperty("WLSABSLENGTH", WLS_abs_energy, WLS_absLength);
+
+    // WLS EMISSION SPECTRUM
+    std::vector<G4double> WLS_emi_energy = {
+      optPhotMinE_, 
+      h_Planck*c_light/(401.7764*nm), h_Planck*c_light/(399.4336*nm), h_Planck*c_light/(396.6098*nm), h_Planck*c_light/(395.2065*nm), h_Planck*c_light/(393.0391*nm), 
+      h_Planck*c_light/(391.6609*nm), h_Planck*c_light/(390.1205*nm), h_Planck*c_light/(389.0432*nm), h_Planck*c_light/(388.1055*nm), h_Planck*c_light/(387.257*nm), 
+      h_Planck*c_light/(386.2195*nm), h_Planck*c_light/(385.8109*nm), h_Planck*c_light/(384.8051*nm), h_Planck*c_light/(383.7688*nm), h_Planck*c_light/(382.7972*nm), 
+      h_Planck*c_light/(382.0305*nm), h_Planck*c_light/(380.9974*nm), h_Planck*c_light/(379.9932*nm), h_Planck*c_light/(379.087*nm), h_Planck*c_light/(378.0467*nm), 
+      h_Planck*c_light/(377.0923*nm), h_Planck*c_light/(376.0287*nm), h_Planck*c_light/(375.1186*nm), h_Planck*c_light/(374.9371*nm), h_Planck*c_light/(374.2467*nm), 
+      h_Planck*c_light/(373.9871*nm), h_Planck*c_light/(373.5364*nm), h_Planck*c_light/(372.9633*nm), h_Planck*c_light/(372.7951*nm), h_Planck*c_light/(372.5039*nm), 
+      h_Planck*c_light/(372.1126*nm), h_Planck*c_light/(371.8224*nm), h_Planck*c_light/(371.4771*nm), h_Planck*c_light/(371.1768*nm), h_Planck*c_light/(370.9658*nm), 
+      h_Planck*c_light/(370.1462*nm), h_Planck*c_light/(369.9143*nm), h_Planck*c_light/(369.4954*nm), h_Planck*c_light/(368.9566*nm), h_Planck*c_light/(368.3537*nm), 
+      h_Planck*c_light/(367.4803*nm), h_Planck*c_light/(366.0482*nm), h_Planck*c_light/(363.8461*nm), h_Planck*c_light/(362.5375*nm), h_Planck*c_light/(361.607*nm), 
+      h_Planck*c_light/(360.7652*nm), h_Planck*c_light/(360.2621*nm), h_Planck*c_light/(359.6768*nm), h_Planck*c_light/(359.364*nm), h_Planck*c_light/(359.1766*nm), 
+      h_Planck*c_light/(358.9998*nm), h_Planck*c_light/(358.8232*nm), h_Planck*c_light/(358.6468*nm), h_Planck*c_light/(358.4601*nm), h_Planck*c_light/(358.284*nm), 
+      h_Planck*c_light/(358.1081*nm), h_Planck*c_light/(357.6845*nm), h_Planck*c_light/(357.2105*nm), h_Planck*c_light/(357.0665*nm), h_Planck*c_light/(356.1536*nm), 
+      h_Planck*c_light/(354.5748*nm), h_Planck*c_light/(353.2414*nm), h_Planck*c_light/(353.0*nm), h_Planck*c_light/(352.5283*nm), h_Planck*c_light/(352.398*nm), 
+      h_Planck*c_light/(351.9379*nm), h_Planck*c_light/(351.8779*nm), h_Planck*c_light/(351.6284*nm), h_Planck*c_light/(351.2499*nm), h_Planck*c_light/(351.1007*nm), 
+      h_Planck*c_light/(350.6142*nm), h_Planck*c_light/(350.5052*nm), h_Planck*c_light/(350.0203*nm), h_Planck*c_light/(349.2217*nm), h_Planck*c_light/(348.2604*nm), 
+      h_Planck*c_light/(347.1974*nm), h_Planck*c_light/(346.6925*nm), h_Planck*c_light/(346.5278*nm), h_Planck*c_light/(345.6487*nm), h_Planck*c_light/(344.7644*nm), 
+      h_Planck*c_light/(344.0374*nm), h_Planck*c_light/(343.5226*nm), h_Planck*c_light/(343.0569*nm), h_Planck*c_light/(342.924*nm), h_Planck*c_light/(342.5829*nm), 
+      h_Planck*c_light/(342.2519*nm), h_Planck*c_light/(341.9122*nm), h_Planck*c_light/(341.8744*nm), h_Planck*c_light/(341.8085*nm), h_Planck*c_light/(341.7519*nm), 
+      h_Planck*c_light/(341.6672*nm), h_Planck*c_light/(341.338*nm), h_Planck*c_light/(341.1971*nm), h_Planck*c_light/(341.0188*nm), h_Planck*c_light/(340.9437*nm), 
+      h_Planck*c_light/(340.5878*nm), h_Planck*c_light/(340.5317*nm), h_Planck*c_light/(340.298*nm), h_Planck*c_light/(340.214*nm), h_Planck*c_light/(340.214*nm), 
+      h_Planck*c_light/(340.046*nm), h_Planck*c_light/(339.9714*nm), h_Planck*c_light/(339.5618*nm), h_Planck*c_light/(339.5618*nm), h_Planck*c_light/(339.4967*nm), 
+      h_Planck*c_light/(339.1623*nm), h_Planck*c_light/(338.9213*nm), h_Planck*c_light/(338.8472*nm), h_Planck*c_light/(338.6066*nm), h_Planck*c_light/(338.4495*nm), 
+      h_Planck*c_light/(338.2832*nm), h_Planck*c_light/(338.1264*nm), h_Planck*c_light/(337.7856*nm), h_Planck*c_light/(337.6476*nm), h_Planck*c_light/(337.4913*nm), 
+      h_Planck*c_light/(337.4913*nm), h_Planck*c_light/(337.4913*nm), h_Planck*c_light/(337.2435*nm), h_Planck*c_light/(336.8586*nm), h_Planck*c_light/(336.6483*nm), 
+      h_Planck*c_light/(336.3743*nm), h_Planck*c_light/(336.0278*nm), h_Planck*c_light/(335.7094*nm), h_Planck*c_light/(335.328*nm), h_Planck*c_light/(334.9023*nm), 
+      h_Planck*c_light/(334.0541*nm), h_Planck*c_light/(332.7988*nm),
+      optPhotMaxE_
+    };
+    std::vector<G4double> WLS_emiSpectrum = {
+      0.0000, 
+      0.036, 0.051, 0.066, 0.076, 0.092, 0.108, 0.123, 0.138, 0.153, 0.168, 0.186, 0.199, 0.214, 0.232, 0.25, 0.269, 0.285, 0.3, 0.314, 0.328, 0.341, 0.358, 0.381, 0.399, 
+      0.408, 0.426, 0.448, 0.472, 0.489, 0.507, 0.542, 0.529, 0.554, 0.575, 0.591, 0.603, 0.614, 0.631, 0.648, 0.663, 0.683, 0.701, 0.709, 0.723, 0.744, 0.765, 0.783, 0.798, 
+      0.824, 0.813, 0.854, 0.839, 0.887, 0.87, 0.917, 0.9, 0.931, 0.951, 0.968, 0.988, 1.0, 0.978, 0.961, 0.943, 0.923, 0.894, 0.908, 0.879, 0.862, 0.844, 0.824, 0.803, 
+      0.784, 0.76, 0.742, 0.757, 0.776, 0.79, 0.807, 0.813, 0.796, 0.779, 0.759, 0.742, 0.72, 0.698, 0.66, 0.679, 0.645, 0.61, 0.627, 0.571, 0.592, 0.538, 0.555, 0.511, 
+      0.526, 0.466, 0.494, 0.481, 0.435, 0.451, 0.42, 0.388, 0.404, 0.368, 0.349, 0.328, 0.29, 0.307, 0.258, 0.274, 0.222, 0.239, 0.208, 0.194, 0.18, 0.16, 0.143, 0.125, 
+      0.105, 0.082, 0.061, 0.04, 0.022, 0.007, 0.005,
+      0.0000
+    };
+    mpt->AddProperty("WLSCOMPONENT",  WLS_emi_energy, WLS_emiSpectrum);
+
+    // WLS Delay 
+    mpt->AddConstProperty("WLSTIMECONSTANT", 1.2 * ns);     //WARNING: THIS ONE NEEDS TO BE SET YET
+
+    // WLS Quantum Efficiency
+    mpt->AddConstProperty("WLSMEANNUMBERPHOTONS", 0.99);    //WARNING: THIS ONE NEEDS TO BE SET YET
+
+    return mpt;
+  };
 
   /// 100% Efficient photon collector ///
   G4MaterialPropertiesTable* PerfectPhotonCollector()
