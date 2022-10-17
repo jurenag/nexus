@@ -55,6 +55,8 @@ namespace nexus {
     G4double DFA_thickn_;                                           ///< Frame thickness 
     G4double DF_thickn_;                                            ///< Thickness of the dichroic filters. Must be smaller than the frame thickness.
     G4double DF_pos_wrt_DFA_pos_;                                   ///< Position (height) of the dichroic filters with respect to the DFA position (height). This parameter can take values from 0 to 1. See * below
+    G4bool DF_are_coated_;                                          ///< Whether the filters are coated with PTP or not
+    G4double coating_thickn_;                                       ///< Thickness of the coating layer that is deposited over the dichroic filters
     G4double outter_frame_width_along_wlsplength_;                  ///< Outter frame dimension along the length of the X-ARAPUCA
     G4double outter_frame_width_along_wlspwidth_;                   ///< Outter frame dimension along the width of the X-ARAPUCA
     G4double inner_frames_width_along_wlsplength_;                  ///< Inner frames dimension along the length of the X-ARAPUCA

@@ -51,6 +51,13 @@ namespace nexus{
   DFA_thickn_                           (1.     *mm ),
   DF_thickn_                            (1.     *mm ),
   DF_pos_wrt_DFA_pos_                   (0.         ),
+  DF_are_coated_                        (true       ),
+  coating_thickn_                       (3.226  *um ),  // Based on arxiv.org/abs/1912.09191 and TDR vol.IX, section 5.8.3.1,
+                                                        // the pTP film thickness is such that there's 400 micrograms of pTP
+                                                        // deposited over each square centimeter of DF.
+                                                        // This, together with the pTP density, (1.24g/cm3, found in
+                                                        // en.wikipedia.org/wiki/Terphenyl), gives a pTP film thickness of 
+                                                        // 3.226 micrometers
   outter_frame_width_along_wlsplength_  (10.    *mm ),
   outter_frame_width_along_wlspwidth_   (10.    *mm ),
   inner_frames_width_along_wlsplength_  (6.     *mm ),
@@ -136,6 +143,17 @@ namespace nexus{
     dpwdp_cmd.SetParameterName("DF_pos_wrt_DFA_pos", false);
     dpwdp_cmd.SetRange("DF_pos_wrt_DFA_pos>=0.");
     dpwdp_cmd.SetRange("DF_pos_wrt_DFA_pos<=1.");
+
+    G4GenericMessenger::Command& dfac_cmd =
+      msg_->DeclareProperty("DF_are_coated", DF_are_coated_,
+			    "Whether the dichroic filter is set on both sides of the WLS plate.");
+
+    G4GenericMessenger::Command& ptpct_cmd =
+      msg_->DeclareProperty("coating_thickn", coating_thickn_,
+			    "Thickness of the coating layer that is deposited over the dichroic filters.");
+    ptpct_cmd.SetUnitCategory("Length");
+    ptpct_cmd.SetParameterName("coating_thickn", false);
+    ptpct_cmd.SetRange("coating_thickn>0.");
 
     G4GenericMessenger::Command& ofwawl_cmd =
       msg_->DeclareProperty("outter_frame_width_along_wlsplength", outter_frame_width_along_wlsplength_,
@@ -944,16 +962,21 @@ namespace nexus{
     // Dichroic-filters assembly. It is made up of one-piece frame, and the dichroic filters.
     G4Box* cover_solid = new G4Box("AUX", DFA_length_/2., DFA_thickn_/2., DFA_width_/2.);
     G4double tolerance = 5.*mm; // Tolerance to prevent matching surfaces when subtracting carvings from frame
-    G4Box* carving_solid =  new G4Box("FRAME_CARVING", DF_length_/2., DFA_thickn_/2. +tolerance, DF_width_/2.); 
-    G4Box* df_solid =       new G4Box("DICHROIC_FILTER", DF_length_/2., DF_thickn_/2., DF_width_/2.); 
+    
+    G4Box* carving_solid                =  new G4Box("FRAME_CARVING", DF_length_/2., DFA_thickn_/2. +tolerance, DF_width_/2.); 
+    G4Box* df_solid                     =  new G4Box("DICHROIC_FILTER", DF_length_/2., DF_thickn_/2., DF_width_/2.); 
+    G4Box* coating_solid                =  nullptr;
+    if(DF_are_coated_) coating_solid    = new G4Box("DF_COATING", DF_length_/2., coating_thickn_/2., DF_width_/2.); 
+
+    G4MultiUnion* filters_multiunion_solid          = new G4MultiUnion("DICHROIC_FILTERS");
+    G4MultiUnion* frame_carvings_multiunion_solid   = new G4MultiUnion("FRAME_CARVINGS");
+    G4MultiUnion* coatings_multiunion_solid         = nullptr;
+    if(DF_are_coated_) coatings_multiunion_solid    = new G4MultiUnion("DF_COATINGS"); 
 
     G4double x_pos, z_pos;
-
     G4Transform3D* transform_ptr = nullptr;
     G4RotationMatrix* rot = new G4RotationMatrix();
 
-    G4MultiUnion* filters_multiunion_solid = new G4MultiUnion("DICHROIC_FILTERS");
-    G4MultiUnion* frame_carvings_multiunion_solid = new G4MultiUnion("FRAME_CARVINGS");
     for(G4int i=0; i<df_no_along_wlsplength_; i++){
         for(G4int j=0; j<df_no_along_wlspwidth_; j++){
             x_pos = (-1.*(DFA_length_/2.))  +outter_frame_width_along_wlsplength_   +(i*inner_frames_width_along_wlsplength_)   +((i+0.5)*DF_length_);
@@ -961,10 +984,12 @@ namespace nexus{
             transform_ptr = new G4Transform3D(*rot, G4ThreeVector(x_pos, 0., z_pos));
             filters_multiunion_solid->AddNode(*df_solid, *transform_ptr);
             frame_carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
+            if(DF_are_coated_) coatings_multiunion_solid->AddNode(*coating_solid, *transform_ptr);
         }
     }
     filters_multiunion_solid->Voxelize();
     frame_carvings_multiunion_solid->Voxelize();
+    if(DF_are_coated_) coatings_multiunion_solid->Voxelize();
 
     // FRAME //
 
@@ -1016,46 +1041,82 @@ namespace nexus{
                             cover_name, cover_logic, mother_physical, true, 1, true);
     }
 
-
     // DICHROIC FILTERS //
 
-    G4Material* dfs_substrate = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
-    // The filter will be implemented as a G4LogicalBorderSurface from the surrounding LAr physical volume
-    // towards the filter physical volume. For photons that are transmited from outside the X-ARAPUCA towards
-    // the dichroic filter volume, they shall not be further reflected or refracted. To avoid this, the 
-    // dichroic filter substrate optical properties must match those of the surrounding LAr. This was checked 
-    // in an alternative setup.
-    dfs_substrate->SetMaterialPropertiesTable(opticalprops::LAr());
-    G4LogicalVolume* filters_multiunion_logic = 
-                        new G4LogicalVolume(filters_multiunion_solid, dfs_substrate, "DICHROIC_FILTERS");
+            G4Material* dfs_substrate = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
+            // The filter will be implemented as a G4LogicalBorderSurface from the surrounding LAr physical volume
+            // towards the filter physical volume. For photons that are transmited from outside the X-ARAPUCA towards
+            // the dichroic filter volume, they shall not be further reflected or refracted. To avoid this, the 
+            // dichroic filter substrate optical properties must match those of the surrounding LAr. This was checked 
+            // in an alternative setup.
+            dfs_substrate->SetMaterialPropertiesTable(opticalprops::LAr());
+            G4LogicalVolume* filters_multiunion_logic = 
+                                new G4LogicalVolume(filters_multiunion_solid, dfs_substrate, "DICHROIC_FILTERS");
 
-    G4VisAttributes dfs_col = nexus::BloodRedAlpha();
-    dfs_col.SetForceSolid(true);
-    filters_multiunion_logic->SetVisAttributes(dfs_col);
+            G4VisAttributes dfs_col = nexus::BloodRedAlpha();
+            dfs_col.SetForceSolid(true);
+            filters_multiunion_logic->SetVisAttributes(dfs_col);
 
-    //  Place the filters
-    G4VPhysicalVolume* first_df_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
-        new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_+DF_thickn_)/2.+ (DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)), 0.), 
-                        "DICHROIC_FILTERS", filters_multiunion_logic, mother_physical, true, 0, true));
+            // Place the filters
+            G4VPhysicalVolume* first_df_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
+                new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_+DF_thickn_)/2.+ (DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)), 0.), 
+                                "DICHROIC_FILTERS", filters_multiunion_logic, mother_physical, true, 0, true));
 
-    // Add dichroic specifications
-    if(path_to_dichroic_data_==""){
-        G4Exception("[XArapuca]", "ConstructDichroicAssemblies()",
-                    FatalException, "The path to the dichroic data file was not set.");
-    }
+            // Add dichroic specifications
+            if(path_to_dichroic_data_==""){
+                G4Exception("[XArapuca]", "ConstructDichroicAssemblies()",
+                            FatalException, "The path to the dichroic data file was not set.");
+            }
 
-    setenv("G4DICHROICDATA", path_to_dichroic_data_, 1);
-    G4OpticalSurface* dfs_opsurf =   
-        new G4OpticalSurface("DICHROIC_OPSURF", dichroic, polished, dielectric_dichroic);
+            setenv("G4DICHROICDATA", path_to_dichroic_data_, 1);
+            G4OpticalSurface* dfs_opsurf =   
+                new G4OpticalSurface("DICHROIC_OPSURF", dichroic, polished, dielectric_dichroic);
+            new G4LogicalBorderSurface("LAr->DICHROIC1", mother_physical, first_df_multiunion_physical, dfs_opsurf);
+            
+            if(double_sided_){
+                G4VPhysicalVolume* second_df_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
+                    new G4PVPlacement(nullptr, G4ThreeVector(0., -1.*((internal_thickn_+DF_thickn_)/2.+ (DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_))), 0.), 
+                                    "DICHROIC_FILTERS", filters_multiunion_logic, mother_physical, true, 1, true));
+                new G4LogicalBorderSurface("LAr->DICHROIC2", mother_physical, second_df_multiunion_physical, dfs_opsurf);
+            }
 
-    new G4LogicalBorderSurface("LAr->DICHROIC1", mother_physical, first_df_multiunion_physical, dfs_opsurf);
-    
-    if(double_sided_){
-        G4VPhysicalVolume* second_df_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
-            new G4PVPlacement(nullptr, G4ThreeVector(0., -1.*((internal_thickn_+DF_thickn_)/2.+ (DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_))), 0.), 
-                            "DICHROIC_FILTERS", filters_multiunion_logic, mother_physical, true, 1, true));
-        new G4LogicalBorderSurface("LAr->DICHROIC2", mother_physical, second_df_multiunion_physical, dfs_opsurf);
-    }
+        // COATINGS //
+
+        G4double ptp_df_gap = 1.*um;
+        // As far as the G4LogicalBorderSurface that implements the dichroic transmitance curve is now written (mother_physical->df_multiunion_physical), there 
+        // should be a gap in between the PTP and the DF. The volumes-evolution that a PTP-WLSed photon follows is:
+        // (1) LAr world (mother_physical) -> 
+        // (2) PTP (WLSed and luckily emitted towards the XA internal cavity) -> 
+        // (3) LAr world (mother_physical) ->            
+        // (4) DF -> 
+        // (5) LAr world -> 
+        // (6) WLS plate -> ...
+        // The gap in (3) is needed because, in this way, the photon "sees" the DF transmitance curve in the transition (3)->(4)
+
+        if(DF_are_coated_){
+            G4Material* coatings_substrate = G4NistManager::Instance()->FindOrBuildMaterial("G4_TERPHENYL");
+            coatings_substrate->SetMaterialPropertiesTable(opticalprops::LArPTPArtifact());
+            G4LogicalVolume* coatings_multiunion_logic = 
+                                new G4LogicalVolume(coatings_multiunion_solid, coatings_substrate, "DF_COATINGS");   
+
+            G4VisAttributes coatings_col = nexus::TitaniumGreyAlpha();
+            coatings_col.SetForceSolid(true);
+            coatings_multiunion_logic->SetVisAttributes(coatings_col);
+
+            // Place the coatings
+            G4VPhysicalVolume* first_coatings_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
+                new G4PVPlacement(  nullptr, G4ThreeVector(0.,  (internal_thickn_+DF_thickn_)/2.+ (DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)) 
+                                                                +(DF_thickn_/2.) +(coating_thickn_/2.) +ptp_df_gap, 0.), 
+                                    "DF_COATINGS", coatings_multiunion_logic, mother_physical, true, 0, true));
+
+            if(double_sided_){
+                G4VPhysicalVolume* second_coatings_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
+                    new G4PVPlacement(  nullptr, G4ThreeVector(0.,  -1.*((internal_thickn_+DF_thickn_)/2.+ (DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)) 
+                                                                    +(DF_thickn_/2.) +(coating_thickn_/2.) +ptp_df_gap), 0.), 
+                                        "DF_COATINGS", coatings_multiunion_logic, mother_physical, true, 1, true));
+            }
+        }
+
 
     return;
   }
