@@ -65,6 +65,7 @@ namespace nexus {
     G4int df_no_along_wlspwidth_;                                   ///< Number of dichroic filters along the width of the X-ARAPUCA
     G4bool DFA_frame_is_reflective_;                                ///< Whether the FR4 DFA frame is vikuiti-coated or not
     G4bool DFA_frame_is_specular_;                                  ///< Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.
+    G4bool remove_DFs_;                                             ///< Whether to remove the dichroic filters or not
     G4bool remove_DFA_;                                             ///< Whether to remove the dichroic filters assembly or not
     G4double case_thickn_;                                          ///< Reflective foils thickness
     G4int num_phsensors_;                                           ///< If config_code_==1, this is the number of SiPMs per long side

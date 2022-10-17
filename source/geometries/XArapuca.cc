@@ -67,6 +67,7 @@ namespace nexus{
   DFA_frame_is_reflective_              (false      ),
   DFA_frame_is_specular_                (true       ),
   remove_DFA_                           (false      ),
+  remove_DFs_                           (false      ),    
   case_thickn_                          (1.     *mm ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   PS_config_code_                       (1          ),
   num_phsensors_                        (24         ),
@@ -248,6 +249,10 @@ namespace nexus{
     G4GenericMessenger::Command& rdfa_cmd =
       msg_->DeclareProperty("remove_DFA", remove_DFA_,
 			    "Whether to remove the dichroic filters assembly or not.");
+
+    G4GenericMessenger::Command& rdfs_cmd =
+      msg_->DeclareProperty("remove_DFs", remove_DFs_,
+			    "Whether to remove the dichroic filters or not.");
 
     G4GenericMessenger::Command& ptdd_cmd =
       msg_->DeclareProperty("path_to_dichroic_data", path_to_dichroic_data_,
@@ -1042,6 +1047,7 @@ namespace nexus{
     }
 
     // DICHROIC FILTERS //
+    if(!remove_DFs_){
 
             G4Material* dfs_substrate = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
             // The filter will be implemented as a G4LogicalBorderSurface from the surrounding LAr physical volume
@@ -1116,6 +1122,7 @@ namespace nexus{
                                         "DF_COATINGS", coatings_multiunion_logic, mother_physical, true, 1, true));
             }
         }
+    }
 
 
     return;
