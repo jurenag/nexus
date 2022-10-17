@@ -1162,7 +1162,10 @@ namespace nexus{
             // If with_boards_==true, then PS_config_code_ is ignored, the geometry is loaded
             // as if PS_config_code_==1, so there's no need to distinguish cases here
             SiPMBoard board;
-            internal_geom_length_span   = plate_length_ +(2.*gap_)+(2.*board.GetOverallThickness());
+            internal_geom_length_span   = plate_length_;
+            if(!only_sipms_along_long_sides_){
+                internal_geom_length_span   += (2.*gap_)+(2.*board.GetOverallThickness());    
+            }
             internal_geom_width_span    = plate_width_  +(2.*gap_)+(2.*board.GetOverallThickness());
             internal_geom_thickn_span   = std::max(plate_thickn_, board.GetOverallHeight());
         }
