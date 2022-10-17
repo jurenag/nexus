@@ -66,8 +66,8 @@ namespace nexus{
   df_no_along_wlspwidth_                (3          ),
   DFA_frame_is_reflective_              (false      ),
   DFA_frame_is_specular_                (true       ),
-  remove_DFA_                           (false      ),
-  remove_DFs_                           (false      ),    
+  remove_DFs_                           (false      ),  
+  remove_DFA_frame_                     (false      ),
   case_thickn_                          (1.     *mm ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   PS_config_code_                       (1          ),
   num_phsensors_                        (24         ),
@@ -246,13 +246,13 @@ namespace nexus{
       msg_->DeclareProperty("DFA_frame_is_specular", DFA_frame_is_specular_,
 			    "Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.");
 
-    G4GenericMessenger::Command& rdfa_cmd =
-      msg_->DeclareProperty("remove_DFA", remove_DFA_,
-			    "Whether to remove the dichroic filters assembly or not.");
-
     G4GenericMessenger::Command& rdfs_cmd =
       msg_->DeclareProperty("remove_DFs", remove_DFs_,
 			    "Whether to remove the dichroic filters or not.");
+
+    G4GenericMessenger::Command& rdfaf_cmd =
+      msg_->DeclareProperty("remove_DFA_frame", remove_DFA_frame_,
+			    "Whether to remove the dichroic filters assembly or not.");
 
     G4GenericMessenger::Command& ptdd_cmd =
       msg_->DeclareProperty("path_to_dichroic_data", path_to_dichroic_data_,
@@ -451,7 +451,7 @@ namespace nexus{
 
     ConstructReflectiveCase(mother_physical);
     //ConstructCollectors(mother_physical); 
-    if(!remove_DFA_) ConstructDichroicAssemblies(mother_physical);
+    if(!remove_DFs_ || !remove_DFA_frame_) ConstructDichroicAssemblies(mother_physical);
     if(config_code_==1){
         ConstructWLSPlate(mother_physical);
         if(with_boards_) ConstructBoards(mother_physical);
@@ -997,53 +997,54 @@ namespace nexus{
     if(DF_are_coated_) coatings_multiunion_solid->Voxelize();
 
     // FRAME //
+    if(!remove_DFA_frame_){
+        const G4String frame_name = "DICHROIC-FILTERS_ASSEMBLY_FRAME";
+        G4SubtractionSolid* frame_solid = new G4SubtractionSolid(frame_name, cover_solid,
+                                                                frame_carvings_multiunion_solid, 
+                                                                rot, G4ThreeVector(0., 0., 0.));
 
-    const G4String frame_name = "DICHROIC-FILTERS_ASSEMBLY_FRAME";
-    G4SubtractionSolid* frame_solid = new G4SubtractionSolid(frame_name, cover_solid,
-                                                            frame_carvings_multiunion_solid, 
-                                                            rot, G4ThreeVector(0., 0., 0.));
+        // At some point there was a segfault bug with the logical frame. I am suspicious that it has to do with
+        // the fact that for the case where the internal cavity thickness matches the height of the SiPM board, there are
+        // two logical skin surfaces matching in the space: The one of the SiPM board and the one of the frame.
+        // To prevent this, make internal_thickn_ slightly bigger than the height of the SiPM board.
 
-    // At some point there was a segfault bug with the logical frame. I am suspicious that it has to do with
-    // the fact that for the case where the internal cavity thickness matches the height of the SiPM board, there are
-    // two logical skin surfaces matching in the space: The one of the SiPM board and the one of the frame.
-    // To prevent this, make internal_thickn_ slightly bigger than the height of the SiPM board.
+        G4LogicalVolume* frame_logic = new G4LogicalVolume(frame_solid, materials::FR4(), frame_name);
 
-    G4LogicalVolume* frame_logic = new G4LogicalVolume(frame_solid, materials::FR4(), frame_name);
+        // Set its color for visualization purposes
+        G4VisAttributes frame_col = nexus::DarkGreenAlpha();
+        frame_col.SetForceSolid(true);
+        frame_logic->SetVisAttributes(frame_col);
 
-    // Set its color for visualization purposes
-    G4VisAttributes frame_col = nexus::DarkGreen();
-    frame_col.SetForceSolid(true);
-    frame_logic->SetVisAttributes(frame_col);
+        if(DFA_frame_is_reflective_){
+            const G4String refcoat_name = "REF_COATING";
+            G4OpticalSurface* refcoat_opsurf = 
+            new G4OpticalSurface(refcoat_name, unified, ground, dielectric_metal, 1);
+            if(DFA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+            else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::diffusiveVIKUITI());
+            new G4LogicalSkinSurface(refcoat_name, frame_logic, refcoat_opsurf);
+        }
+        
+        G4PVPlacement* frame_physical = new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_+DFA_thickn_)/2. +0.*cm, 0.),
+                                        frame_name, frame_logic, mother_physical, true, 0, true);
 
-    if(DFA_frame_is_reflective_){
-        const G4String refcoat_name = "REF_COATING";
-        G4OpticalSurface* refcoat_opsurf = 
-        new G4OpticalSurface(refcoat_name, unified, ground, dielectric_metal, 1);
-        if(DFA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
-        else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::diffusiveVIKUITI());
-        new G4LogicalSkinSurface(refcoat_name, frame_logic, refcoat_opsurf);
-    }
-    
-    G4PVPlacement* frame_physical = new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_+DFA_thickn_)/2. +0.*cm, 0.),
-                                    frame_name, frame_logic, mother_physical, true, 0, true);
+        if(double_sided_){
+            new G4PVPlacement(nullptr, G4ThreeVector(0., -1.*(internal_thickn_+DFA_thickn_)/2., 0.), 
+                                frame_name, frame_logic, mother_physical, true, 1, true);
+        }
+        else{
+            // If the X-ARAPUCA is not double-sided, then the dummy plane is reflective
+            const G4String refsurf_name = "REF_SURFACE";
+            G4OpticalSurface* refsurf_opsurf = 
+            new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
+            refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
 
-    if(double_sided_){
-        new G4PVPlacement(nullptr, G4ThreeVector(0., -1.*(internal_thickn_+DFA_thickn_)/2., 0.), 
-                            frame_name, frame_logic, mother_physical, true, 1, true);
-    }
-    else{
-        // If the X-ARAPUCA is not double-sided, then the dummy plane is reflective
-        const G4String refsurf_name = "REF_SURFACE";
-        G4OpticalSurface* refsurf_opsurf = 
-        new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
-        refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
-
-        const G4String cover_name = "REFLECTIVE_COVER";
-        G4LogicalVolume* cover_logic = new G4LogicalVolume(cover_solid, materials::FR4(), cover_name);
-        cover_logic->SetVisAttributes(frame_col);
-        new G4LogicalSkinSurface(refsurf_name, cover_logic, refsurf_opsurf);   
-        new G4PVPlacement(nullptr, G4ThreeVector(0., -1.*(internal_thickn_+DFA_thickn_)/2., 0.), 
-                            cover_name, cover_logic, mother_physical, true, 1, true);
+            const G4String cover_name = "REFLECTIVE_COVER";
+            G4LogicalVolume* cover_logic = new G4LogicalVolume(cover_solid, materials::FR4(), cover_name);
+            cover_logic->SetVisAttributes(frame_col);
+            new G4LogicalSkinSurface(refsurf_name, cover_logic, refsurf_opsurf);   
+            new G4PVPlacement(nullptr, G4ThreeVector(0., -1.*(internal_thickn_+DFA_thickn_)/2., 0.), 
+                                cover_name, cover_logic, mother_physical, true, 1, true);
+        }
     }
 
     // DICHROIC FILTERS //
