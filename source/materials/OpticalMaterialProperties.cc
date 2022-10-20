@@ -1686,10 +1686,11 @@ namespace opticalprops {
       optPhotMaxE_
     };
     std::vector<G4double> absLength = {
-      noAbsLength_,
-      noAbsLength_, 3.0 * m, 3.0 * m, noAbsLength_,
-      noAbsLength_
+      attenuation_length,  attenuation_length,
+      attenuation_length,  attenuation_length,
+      attenuation_length,  attenuation_length
     };
+
     mpt->AddProperty("ABSLENGTH", abs_energy, absLength);
 
     // WLS ABSORPTION LENGTH
@@ -1709,6 +1710,7 @@ namespace opticalprops {
       hc_ / (280. * nm), hc_ / (275. * nm),
       optPhotMaxE_
     };
+
 
     std::vector<G4double> WLS_absLength = {
       noAbsLength_,
@@ -1793,7 +1795,7 @@ namespace opticalprops {
     return mpt;
   }
 
-  G4MaterialPropertiesTable* G2P_FB118()
+  G4MaterialPropertiesTable* G2P_FB118(G4double attenuation_length)
   {
     // iopscience.iop.org/article/10.1088/1748-0221/16/09/P09027
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
@@ -1826,13 +1828,11 @@ namespace opticalprops {
       h_Planck * c_light / (740. * nm),  h_Planck * c_light / (380. * nm),
       h_Planck * c_light / (370. * nm),  optPhotMaxE_
     };
-
     std::vector<G4double> absLength = {
-      1. *m,  1. *m,
-      1. *m,  1. *m,
-      1. *m,  1. *m
+      attenuation_length,  attenuation_length,
+      attenuation_length,  attenuation_length,
+      attenuation_length,  attenuation_length
     };
-
     mpt->AddProperty("ABSLENGTH", abs_energy, absLength);
 
     // WLS ABSORPTION LENGTH
