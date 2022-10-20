@@ -1887,7 +1887,8 @@ namespace opticalprops {
 
     // WLS EMISSION SPECTRUM
     std::vector<G4double> WLS_emi_energy = {
-      optPhotMinE_, h_Planck * c_light / (599.44 * nm), h_Planck * c_light / (579.10 * nm), 
+      optPhotMinE_, h_Planck * c_light / (602.00 * nm), h_Planck * c_light / (601.00 * nm),
+                    h_Planck * c_light / (599.44 * nm), h_Planck * c_light / (579.10 * nm), 
                     h_Planck * c_light / (547.19 * nm), h_Planck * c_light / (522.45 * nm), 
                     h_Planck * c_light / (502.87 * nm), h_Planck * c_light / (490.87 * nm), 
                     h_Planck * c_light / (481.27 * nm), h_Planck * c_light / (472.86 * nm), 
@@ -1904,11 +1905,14 @@ namespace opticalprops {
                     h_Planck * c_light / (409.54 * nm), h_Planck * c_light / (406.81 * nm), 
                     h_Planck * c_light / (404.45 * nm), h_Planck * c_light / (401.67 * nm), 
                     h_Planck * c_light / (394.50 * nm), h_Planck * c_light / (380.54 * nm),
+                    h_Planck * c_light / (379.00 * nm), h_Planck * c_light / (378.00 * nm),
       optPhotMaxE_
     };
 
     std::vector<G4double> WLS_emiSpectrum = {
-      0.0000,   0.0044, 0.0081, 
+      0.0000,   
+                0.0000, 0.0000,
+                0.0044, 0.0081, 
                 0.0328, 0.0786, 
                 0.1782, 0.2586, 
                 0.3237, 0.4214, 
@@ -1925,6 +1929,7 @@ namespace opticalprops {
                 0.2484, 0.0988, 
                 0.0336, 0.0106, 
                 0.0029, 0.0009,
+                0.0000, 0.0000,
       0.0000
     };
     mpt->AddProperty("WLSCOMPONENT",  WLS_emi_energy, WLS_emiSpectrum);
