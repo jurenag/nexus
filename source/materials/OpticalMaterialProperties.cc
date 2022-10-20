@@ -1713,48 +1713,50 @@ namespace opticalprops {
     // WLS EMISSION SPECTRUM
     std::vector<G4double> WLS_emi_energy = {
       optPhotMinE_,
-      h_Planck * c_light / (535. * nm),  h_Planck * c_light / (530. * nm),
-      h_Planck * c_light / (525. * nm),  h_Planck * c_light / (520. * nm),
-      h_Planck * c_light / (515. * nm),  h_Planck * c_light / (510. * nm),
-      h_Planck * c_light / (505. * nm),  h_Planck * c_light / (500. * nm),
-      h_Planck * c_light / (495. * nm),  h_Planck * c_light / (490. * nm),
-      h_Planck * c_light / (485. * nm),  h_Planck * c_light / (480. * nm),
-      h_Planck * c_light / (475. * nm),  h_Planck * c_light / (470. * nm),
-      h_Planck * c_light / (465. * nm),  h_Planck * c_light / (460. * nm),
-      h_Planck * c_light / (455. * nm),  h_Planck * c_light / (450. * nm),
-      h_Planck * c_light / (445. * nm),  h_Planck * c_light / (440. * nm),
-      h_Planck * c_light / (435. * nm),  h_Planck * c_light / (430. * nm),
-      h_Planck * c_light / (425. * nm),  h_Planck * c_light / (420. * nm),
-      h_Planck * c_light / (415. * nm),  h_Planck * c_light / (410. * nm),
-      h_Planck * c_light / (405. * nm),  h_Planck * c_light / (400. * nm),
-      h_Planck * c_light / (395. * nm),  h_Planck * c_light / (390. * nm),
-      h_Planck * c_light / (385. * nm),  h_Planck * c_light / (380. * nm),
-      h_Planck * c_light / (375. * nm),  h_Planck * c_light / (370. * nm),
-      h_Planck * c_light / (365. * nm),  h_Planck * c_light / (360. * nm),
-      h_Planck * c_light / (355. * nm),  optPhotMaxE_
+      h_Planck * c_light / (533. * nm), h_Planck * c_light / (532. * nm), h_Planck * c_light / (531. * nm),
+      h_Planck * c_light / (530. * nm), h_Planck * c_light / (525. * nm),  
+      h_Planck * c_light / (520. * nm), h_Planck * c_light / (515. * nm),  
+      h_Planck * c_light / (510. * nm), h_Planck * c_light / (505. * nm),  
+      h_Planck * c_light / (500. * nm), h_Planck * c_light / (495. * nm),  
+      h_Planck * c_light / (490. * nm), h_Planck * c_light / (485. * nm),  
+      h_Planck * c_light / (480. * nm), h_Planck * c_light / (475. * nm),  
+      h_Planck * c_light / (470. * nm), h_Planck * c_light / (465. * nm),  
+      h_Planck * c_light / (460. * nm), h_Planck * c_light / (455. * nm),  
+      h_Planck * c_light / (450. * nm), h_Planck * c_light / (445. * nm),  
+      h_Planck * c_light / (440. * nm), h_Planck * c_light / (435. * nm),  
+      h_Planck * c_light / (430. * nm), h_Planck * c_light / (425. * nm),  
+      h_Planck * c_light / (420. * nm), h_Planck * c_light / (415. * nm),  
+      h_Planck * c_light / (410. * nm), h_Planck * c_light / (405. * nm),  
+      h_Planck * c_light / (400. * nm), h_Planck * c_light / (395. * nm),  
+      h_Planck * c_light / (390. * nm), h_Planck * c_light / (385. * nm),  
+      h_Planck * c_light / (380. * nm), h_Planck * c_light / (375. * nm),  
+      h_Planck * c_light / (370. * nm), h_Planck * c_light / (365. * nm),  
+      h_Planck * c_light / (364. * nm), h_Planck * c_light / (363. * nm), h_Planck * c_light / (362. * nm),  
+      optPhotMaxE_
     };
 
     std::vector<G4double> WLS_emiSpectrum = {
       0.0000,
-      0.0000,  0.0089,   // 535 , 530 nm
-      0.0100,  0.0181,   // 525 , 520 nm
-      0.0210,  0.0270,   // 515 , 510 nm
-      0.0380,  0.0496,   // 505 , 500 nm
-      0.0600,  0.0721,   // 495 , 490 nm
-      0.0900,  0.1125,   // 485 , 480 nm
-      0.1500,  0.1848,   // 475 , 470 nm
-      0.2100,  0.2388,   // 465 , 460 nm
-      0.2800,  0.3289,   // 455 , 450 nm
-      0.4000,  0.4956,   // 445 , 440 nm
-      0.5700,  0.6230,   // 435 , 430 nm
-      0.6450,  0.6667,   // 425 , 420 nm
-      0.8000,  0.9800,   // 415 , 410 nm
-      0.9900,  0.8559,   // 405 , 400 nm
-      0.7118,  0.7400,   // 395 , 390 nm
-      0.8000,  0.6702,   // 385 , 380 nm
-      0.3800,  0.1082,   // 375 , 370 nm
-      0.0400,  0.0089,   // 365 , 360 nm
-      0.0000,  0.0000    // 355 ,     nm
+      0.0000, 0.0000, 0.0000,
+      0.0089, 0.0100,  
+      0.0181, 0.0210,  
+      0.0270, 0.0380,
+      0.0496, 0.0600,  
+      0.0721, 0.0900,
+      0.1125, 0.1500,  
+      0.1848, 0.2100,  
+      0.2388, 0.2800,  
+      0.3289, 0.4000,  
+      0.4956, 0.5700,  
+      0.6230, 0.6450,  
+      0.6667, 0.8000,  
+      0.9800, 0.9900,  
+      0.8559, 0.7118,  
+      0.7400, 0.8000,  
+      0.6702, 0.3800,  
+      0.1082, 0.0400,  
+      0.0000, 0.0000,  0.0000,
+      0.0000
     };
     mpt->AddProperty("WLSCOMPONENT",  WLS_emi_energy, WLS_emiSpectrum);
 
