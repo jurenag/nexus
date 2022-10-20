@@ -805,11 +805,12 @@ namespace opticalprops {
     };
     mpt->AddProperty("WLSCOMPONENT",  WLS_emi_energy, WLS_emiSpectrum);
 
+    // The following data was taken from mdpi-res.com/d_attachment/instruments/instruments-05-00004/article_deploy/instruments-05-00004-v2.pdf?version=1609810328
     // WLS Delay 
-    mpt->AddConstProperty("WLSTIMECONSTANT", 1.2 * ns);     //WARNING: THIS ONE NEEDS TO BE SET YET
+    mpt->AddConstProperty("WLSTIMECONSTANT", 1. * ns);
 
     // WLS Quantum Efficiency
-    mpt->AddConstProperty("WLSMEANNUMBERPHOTONS", 0.99);    //WARNING: THIS ONE NEEDS TO BE SET YET
+    mpt->AddConstProperty("WLSMEANNUMBERPHOTONS", 0.82);
 
     return mpt;
   };
