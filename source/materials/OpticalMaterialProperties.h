@@ -83,9 +83,9 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* EJ282();
 
-  G4MaterialPropertiesTable* EJ286();
+  G4MaterialPropertiesTable* EJ286(G4double attenuation_length=1.*m);
 
-  G4MaterialPropertiesTable* G2P_FB118();
+  G4MaterialPropertiesTable* G2P_FB118(G4double attenuation_length);
 
   G4MaterialPropertiesTable* SCHOTT_B270();
 
