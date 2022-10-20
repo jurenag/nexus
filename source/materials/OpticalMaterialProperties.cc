@@ -704,7 +704,8 @@ namespace opticalprops {
   }
 
   G4MaterialPropertiesTable* LArPTPArtifact(){
-    // This material must have the same exact optical properties as opticalprops::LAr(), and, on top of 
+    // This material is model p-Terphenyl, but with the same refractive index as opticalprops::LAr(). 
+    // That's why this material must have the same refractive indexs as opticalprops::LAr(), and, on top of 
     // that, it must have also a defined a Optical WLS process (OpWLS) with a WLS absorption length, such 
     // that every LAr scintillation photon (127-128nm) is quickly absorbed and reemitted according to the 
     // PTP emission spectrum. The parameter WLSMEANNUMBERPHOTONS of OpWLS can be used to simulate the 
@@ -765,6 +766,7 @@ namespace opticalprops {
     // WLS EMISSION SPECTRUM
     std::vector<G4double> WLS_emi_energy = {
       optPhotMinE_, 
+      h_Planck*c_light/(404.*nm), h_Planck*c_light/(403.*nm), h_Planck*c_light/(402.*nm),
       h_Planck*c_light/(401.7764*nm), h_Planck*c_light/(399.4336*nm), h_Planck*c_light/(396.6098*nm), h_Planck*c_light/(395.2065*nm), h_Planck*c_light/(393.0391*nm), 
       h_Planck*c_light/(391.6609*nm), h_Planck*c_light/(390.1205*nm), h_Planck*c_light/(389.0432*nm), h_Planck*c_light/(388.1055*nm), h_Planck*c_light/(387.257*nm), 
       h_Planck*c_light/(386.2195*nm), h_Planck*c_light/(385.8109*nm), h_Planck*c_light/(384.8051*nm), h_Planck*c_light/(383.7688*nm), h_Planck*c_light/(382.7972*nm), 
@@ -784,24 +786,26 @@ namespace opticalprops {
       h_Planck*c_light/(344.0374*nm), h_Planck*c_light/(343.5226*nm), h_Planck*c_light/(343.0569*nm), h_Planck*c_light/(342.924*nm), h_Planck*c_light/(342.5829*nm), 
       h_Planck*c_light/(342.2519*nm), h_Planck*c_light/(341.9122*nm), h_Planck*c_light/(341.8744*nm), h_Planck*c_light/(341.8085*nm), h_Planck*c_light/(341.7519*nm), 
       h_Planck*c_light/(341.6672*nm), h_Planck*c_light/(341.338*nm), h_Planck*c_light/(341.1971*nm), h_Planck*c_light/(341.0188*nm), h_Planck*c_light/(340.9437*nm), 
-      h_Planck*c_light/(340.5878*nm), h_Planck*c_light/(340.5317*nm), h_Planck*c_light/(340.298*nm), h_Planck*c_light/(340.214*nm), h_Planck*c_light/(340.214*nm), 
-      h_Planck*c_light/(340.046*nm), h_Planck*c_light/(339.9714*nm), h_Planck*c_light/(339.5618*nm), h_Planck*c_light/(339.5618*nm), h_Planck*c_light/(339.4967*nm), 
-      h_Planck*c_light/(339.1623*nm), h_Planck*c_light/(338.9213*nm), h_Planck*c_light/(338.8472*nm), h_Planck*c_light/(338.6066*nm), h_Planck*c_light/(338.4495*nm), 
-      h_Planck*c_light/(338.2832*nm), h_Planck*c_light/(338.1264*nm), h_Planck*c_light/(337.7856*nm), h_Planck*c_light/(337.6476*nm), h_Planck*c_light/(337.4913*nm), 
-      h_Planck*c_light/(337.4913*nm), h_Planck*c_light/(337.4913*nm), h_Planck*c_light/(337.2435*nm), h_Planck*c_light/(336.8586*nm), h_Planck*c_light/(336.6483*nm), 
-      h_Planck*c_light/(336.3743*nm), h_Planck*c_light/(336.0278*nm), h_Planck*c_light/(335.7094*nm), h_Planck*c_light/(335.328*nm), h_Planck*c_light/(334.9023*nm), 
-      h_Planck*c_light/(334.0541*nm), h_Planck*c_light/(332.7988*nm),
+      h_Planck*c_light/(340.5878*nm), h_Planck*c_light/(340.5317*nm), h_Planck*c_light/(340.298*nm), h_Planck*c_light/(340.214*nm), h_Planck*c_light/(340.046*nm), 
+      h_Planck*c_light/(339.9714*nm), h_Planck*c_light/(339.5618*nm), h_Planck*c_light/(339.4967*nm), h_Planck*c_light/(339.1623*nm), h_Planck*c_light/(338.9213*nm), 
+      h_Planck*c_light/(338.8472*nm), h_Planck*c_light/(338.6066*nm), h_Planck*c_light/(338.4495*nm), h_Planck*c_light/(338.2832*nm), h_Planck*c_light/(338.1264*nm), 
+      h_Planck*c_light/(337.7856*nm), h_Planck*c_light/(337.6476*nm), h_Planck*c_light/(337.4913*nm), h_Planck*c_light/(337.2435*nm), h_Planck*c_light/(336.8586*nm), 
+      h_Planck*c_light/(336.6483*nm), h_Planck*c_light/(336.3743*nm), h_Planck*c_light/(336.0278*nm), h_Planck*c_light/(335.7094*nm), h_Planck*c_light/(335.328*nm), 
+      h_Planck*c_light/(334.9023*nm), h_Planck*c_light/(334.0541*nm), h_Planck*c_light/(332.7988*nm), 
+      h_Planck*c_light/(331.*nm), h_Planck*c_light/(330.*nm), h_Planck*c_light/(329.*nm),
       optPhotMaxE_
     };
     std::vector<G4double> WLS_emiSpectrum = {
-      0.0000, 
-      0.036, 0.051, 0.066, 0.076, 0.092, 0.108, 0.123, 0.138, 0.153, 0.168, 0.186, 0.199, 0.214, 0.232, 0.25, 0.269, 0.285, 0.3, 0.314, 0.328, 0.341, 0.358, 0.381, 0.399, 
-      0.408, 0.426, 0.448, 0.472, 0.489, 0.507, 0.542, 0.529, 0.554, 0.575, 0.591, 0.603, 0.614, 0.631, 0.648, 0.663, 0.683, 0.701, 0.709, 0.723, 0.744, 0.765, 0.783, 0.798, 
-      0.824, 0.813, 0.854, 0.839, 0.887, 0.87, 0.917, 0.9, 0.931, 0.951, 0.968, 0.988, 1.0, 0.978, 0.961, 0.943, 0.923, 0.894, 0.908, 0.879, 0.862, 0.844, 0.824, 0.803, 
-      0.784, 0.76, 0.742, 0.757, 0.776, 0.79, 0.807, 0.813, 0.796, 0.779, 0.759, 0.742, 0.72, 0.698, 0.66, 0.679, 0.645, 0.61, 0.627, 0.571, 0.592, 0.538, 0.555, 0.511, 
-      0.526, 0.466, 0.494, 0.481, 0.435, 0.451, 0.42, 0.388, 0.404, 0.368, 0.349, 0.328, 0.29, 0.307, 0.258, 0.274, 0.222, 0.239, 0.208, 0.194, 0.18, 0.16, 0.143, 0.125, 
-      0.105, 0.082, 0.061, 0.04, 0.022, 0.007, 0.005,
-      0.0000
+      0.0, 
+      0.0, 0.0, 0.0,
+      0.036, 0.051, 0.066, 0.076, 0.092, 0.108, 0.123, 0.138, 0.153, 0.168, 0.186, 0.199, 0.214, 0.232, 0.25, 0.269, 0.285, 0.3, 0.314, 0.328, 0.341, 0.358, 0.381, 
+      0.399, 0.408, 0.426, 0.448, 0.472, 0.489, 0.507, 0.542, 0.529, 0.554, 0.575, 0.591, 0.603, 0.614, 0.631, 0.648, 0.663, 0.683, 0.701, 0.709, 0.723, 0.744, 0.765, 
+      0.783, 0.798, 0.824, 0.813, 0.854, 0.839, 0.887, 0.87, 0.917, 0.9, 0.931, 0.951, 0.968, 0.988, 1.0, 0.978, 0.961, 0.943, 0.923, 0.894, 0.908, 0.879, 0.862, 
+      0.844, 0.824, 0.803, 0.784, 0.76, 0.742, 0.757, 0.776, 0.79, 0.807, 0.813, 0.796, 0.779, 0.759, 0.742, 0.72, 0.698, 0.66, 0.679, 0.645, 0.61, 0.627, 0.571, 
+      0.592, 0.538, 0.555, 0.511, 0.526, 0.466, 0.487, 0.435, 0.451, 0.404, 0.404, 0.368, 0.349, 0.328, 0.29, 0.307, 0.258, 0.274, 0.222, 0.239, 0.194, 0.16, 0.143, 
+      0.125, 0.105, 0.082, 0.061, 0.04, 0.022, 0.007, 0.005, 
+      0.0, 0.0, 0.0,
+      0.0
     };
     mpt->AddProperty("WLSCOMPONENT",  WLS_emi_energy, WLS_emiSpectrum);
 
