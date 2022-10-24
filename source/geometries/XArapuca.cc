@@ -1000,38 +1000,74 @@ namespace nexus{
     //                                |                               |
     //                                |-------------------------------|
     //                                |  MLS (with substrate rindex)  |
-    //                       ___________________________________________________
+    //                       _________|_______________________________|_________
     //                                                
     //                                    LAr (X-ARAPUCA internal cavity)
     //
     // For a common configuration, the coating is PTP with refractive index equal to 1.65, and
     // the substrate is fused silica (R. index approximately equal to 1.47 for PTP light). The
     // transmitance curve of the DF must be "seen" not only by photons that try to enter the 
-    // X-Arapuca coming from the cryostat, but also those that are already trapped within the 
+    // X-Arapuca coming from the cryostat, but also by those that are already trapped within the 
     // X-Arapuca. Such transmitance curve must be seen either in the substrate-MLS interface, 
     // or in the MLS-LAr interface. Now, up to Geant4 functioning, in the interface where such 
     // transmission curve is implemented, no refraction is simulated. The photon is either reflected 
     // or transmitted with no deviation with respect to its original trajectory. However, for photons
-    // trying to enter the X-Arapuca for the first time, we want them to be undergo a DF->LAr refraction
-    // for the sake of realism. So, either we set the transmission 
-    // curve in the substrate-MLS interface and let the DF-LAr refraction happen in the MLS-LAr interface, 
-    // or we set the transmission curve in the MLS-LAr interface and let the DF-LAr refraction happen in 
-    // the substrate-MLS interface. A priori, both options are valid, but if we go for the second one, 
-    // where the DF->LAr refraction happens in the substrate-MLS interface, we need to set the MLS 
-    // G4MaterialPropertiesTable as if it was LAr. For the sake of keeping the DF source code independent 
-    // of the outter media, which, in this case is LAr but may change for other-detectors simulations, 
-    // I am going to implement the second option, i.e.:
+    // trying to enter the X-Arapuca for the first time, we want them to undergo a DF->LAr refraction
+    // for the sake of realism (See **). So, either we set the transmission curve in the substrate-MLS 
+    // interface and let the DF-LAr refraction happen in the MLS-LAr interface, or we set the transmission 
+    // curve in the MLS-LAr interface and let the DF-LAr refraction happen in the substrate-MLS interface. 
+    // A priori, both options are valid, but if we go for the second one, where the DF->LAr refraction 
+    // happens in the substrate-MLS interface, we need to set the MLS G4MaterialPropertiesTable as if it 
+    // was LAr. For the sake of keeping the DF source code independent of the outter media, which, in 
+    // this case is LAr but may change for other-detectors simulations, I am going to implement the 
+    // second option, i.e.:
     //
     //                          1) the photons see the transmitance curve in the substrate-MLS interface
     //                          2) the DF->LAr refraction happens in the MLS-LAr interface
-    // 
-    // As a consequence of this choice, photons that interact with the DF coming from the X-Arapuca 
-    // internal have to travel through the MLS volume to be (probably) reflected back to the X-Arapuca
-    // cavity (the transmission/reflection happens in the substrate-MLS interface). As far as the real 
-    // DFs are concerned, this is not a crazy thing to consider if we take into account that the 
-    // reflection or transmission of the photon is a behaviour that physically emerges from the whole 
-    // MLS.
     //
+    // Now, in order not to destroy the snell's invariant of the PTP-light (i.e. its pair (n, \theta)),
+    // the refraction DF->LAr that happens in the MLS-LAr interface must take into account the 
+    // MLS refractive index. To ensure this, we should apply a G4MaterialPropertiesTable to the 
+    // MLS volume which includes the MLS refractive index.
+    //
+    // There's another thing to take into account. The MLS-LAr interface might transmit or reflect
+    // photons up to Fresnel probabilities based on the AOI and the refractive indices of both
+    // medias, i.e. MLS effective refractive indices and LAr refractive index. However, all of the
+    // reflection-or-transmission should be already taken into account in the transmission curve.
+    // So, if a photon trying to enter the XArapuca has been transmitted through the MLS, which, 
+    // in the simulation means that such photon has traveled past the substrate->MLS interface,
+    // it shall not be further reflected in the MLS->LAr interface. Conversely, for a photon
+    // that tried to escape the XArapuca but got reflected at the MLS->substrate interface, 
+    // it shall be not further reflected in the MLS->LAr interface. Some G4OpticalSurface must be
+    // added to the MLS->LAr interface. Using the same reasoning (since all of the 
+    // reflection-or-transmission info. should be contained in the TC curves) we should also
+    // prevent reflections from happening in the coating->substrate, substrate->coating and LAr->MLS 
+    // interfaces. To sum up, we should add only-refraction surfaces G4LogicalBorderSurfaces to 
+    // the following ordered transitions of physical volumes:
+    //
+    //  1) MLS->LAr
+    //  2) LAr->MLS
+    //  3) coating->substrate
+    //  4) substrate->coating
+    // 
+    // As a consequence of this overall DF model, photons that interact with the DF coming from the 
+    // X-Arapuca internal have to travel through the MLS volume to be (probably) reflected back to the 
+    // X-Arapuca cavity (the transmission/reflection happens in the substrate-MLS interface). As far as 
+    // the real DFs are concerned, this is not a crazy thing to consider if we take into account that 
+    // the reflection or transmission of the photon is a behaviour that physically emerges from the 
+    // whole MLS.
+    //
+    // ** In the lab, when we measure the transmitance curve (TC) for a DF at a certain AOI, the DF is
+    // not coated. This means that the light impinges into the DF from air, and after interacting with
+    // it, the light emerges back to air. Since the filter is a stacking of face-parallel layers, 
+    // the transmitted light beam is parallel to the incident light beam. However, for a coated DF, 
+    // the incident light beam is (hopefully) WLSed by the coating, which, in turn, emits the light
+    // isotropic-ly. Thus, the light that impinges into the DF not only has a random angle within the
+    // coating, but also such angle won't match the angle of the photon in case it is transmitted
+    // through the DF into the surrouding media, say LAr. Such final angle should be computed applying
+    // snell's law towards LAr, from the coating volume or any other volume where the photon still
+    // preserves the snell's invariant ( {n, \theta}, for face-parallel geometries) of the coating-emission.
+
     G4double df_MLS_thickn = DF_thickn_-DF_substrate_thickn_;
 
     G4Box* cover_solid = new G4Box("AUX", DFA_length_/2., DFA_thickn_/2., DFA_width_/2.);
