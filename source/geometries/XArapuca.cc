@@ -981,18 +981,27 @@ namespace nexus{
   void XArapuca::ConstructDichroicAssemblies(G4VPhysicalVolume* mother_physical) const
   {
       
+    // ---------------------------- DEPRECATED ---------------------------- See *** to know why --
     // Dichroic-filters assembly is made up of one-piece frame and a bunch of dichroic filters 
-    // inserted in the frame The DF (without coating) is implemented as two stacked volumes. 
+    // inserted in the frame. The DF (without coating) is implemented as two stacked volumes. 
     // The volume that faces the cryostat is meant to be the DF substrate (a piece of glass 
     // with good transmitance for the coating light). The volume that faces the intenal cavity 
     // of the X-Arapuca is meant to be the multilayer structure (MLS). The DF transmitance curve 
-    // is implemented as G4LogicalBorderSurface from the world LAr to the MLS volume, and as a 
-    // G4LogicalBorderSurface from the MLS volume to the world LAr. When the DF are coated, a 
+    // is implemented as properly placed G4LogicalBorderSurface's. When the DF are coated, a 
     // third volume is stacked on top of the filter (on top of the substrate volume). The resulting 
     // volume is:
     //
     //                                            LAr (Cryostat)
-    //                       ___________________________________________________
+    //
+    //                       __________                               __________
+    //                                |                               |
+    //                                |                               |
+    //                                |                               |
+    //                                |                               |
+    //                                |                               |
+    //                                |                               |
+    //                                |                               |
+    //                                |-------------------------------|
     //                                |            coating            |
     //                                |-------------------------------|
     //                                |                               |
@@ -1036,19 +1045,21 @@ namespace nexus{
     // reflection-or-transmission should be already taken into account in the transmission curve.
     // So, if a photon trying to enter the XArapuca has been transmitted through the MLS, which, 
     // in the simulation means that such photon has traveled past the substrate->MLS interface,
-    // it shall not be further reflected in the MLS->LAr interface. Conversely, for a photon
+    // it shall not be further reflected in the MLS->LAr interface. In the same way, for a photon
     // that tried to escape the XArapuca but got reflected at the MLS->substrate interface, 
-    // it shall be not further reflected in the MLS->LAr interface. Some G4OpticalSurface must be
-    // added to the MLS->LAr interface. Using the same reasoning (since all of the 
-    // reflection-or-transmission info. should be contained in the TC curves) we should also
-    // prevent reflections from happening in the coating->substrate, substrate->coating and LAr->MLS 
-    // interfaces. To sum up, we should add only-refraction surfaces G4LogicalBorderSurfaces to 
-    // the following ordered transitions of physical volumes:
+    // it shall be not further reflected in the MLS->LAr interface. Conversely, for a photon
+    // that tries to escape the XArapuca, it should be the TC in the MLS->substrate which decides
+    // whether the photon is transmitted or not, so no reflection should happen in the LAr->MLS
+    // interface before the photon reaches the MLS->substrate interface. To sum up, we should add 
+    // only-refraction surfaces G4LogicalBorderSurfaces to the following ordered transitions of 
+    // physical volumes:
     //
     //  1) MLS->LAr
     //  2) LAr->MLS
-    //  3) coating->substrate
-    //  4) substrate->coating
+    //
+    // As far as the coating-substrate interface is concerned, I'm not quite sure if I should force 
+    // the refraction in such interface. The TC curves that are measured in the laboratory are not 
+    // coated, so those do not take into account possible reflections in such interface.
     // 
     // As a consequence of this overall DF model, photons that interact with the DF coming from the 
     // X-Arapuca internal have to travel through the MLS volume to be (probably) reflected back to the 
@@ -1067,6 +1078,49 @@ namespace nexus{
     // through the DF into the surrouding media, say LAr. Such final angle should be computed applying
     // snell's law towards LAr, from the coating volume or any other volume where the photon still
     // preserves the snell's invariant ( {n, \theta}, for face-parallel geometries) of the coating-emission.
+    // -----------------------------------------------------------------------------------------------
+    // *** There's no way to set 'only-refraction' surfaces as I was trying to in the previous implementation.
+    // I mean that Geant4 does not allow to do this. Anyway, this is also physically reasonable because
+    // refraction is not straightforward-ly separable from reflection. The Fresnel equations rule the 
+    // probability that a photon is refracted or reflected and, for some configuration (n1>n2 and 
+    // \theta >\theta_c) the refraction is not even well-defined, because only internal reflection can 
+    // happen. So, for some configurations, refraction could not be forced. Since there seems to be no 
+    // way to consider the DF->LAr refraction while taking into account that all of the reflection-or-transmission 
+    // information should be encoded in the MLS, I am going to implement a simpler DF that does not 
+    // account for the DF->LAr refraction. If, in the future, we have more information about the inner 
+    // functioning of the DF, maybe a better implementation can be made. For now, I am going to stick with 
+    // the following model:
+    //
+    //                                           LAr (Cryostat)
+    //
+    //                       __________                                  __________
+    //                                |                                  |
+    //                                |                                  |
+    //                                |                                  |
+    //                                |                                  |
+    //                                |                                  |
+    //                                |                                  |
+    //                                |                                  |
+    //                                |----------------------------------|
+    //                                |              coating             |
+    //                                |----------------------------------|
+    //                                |                                  |
+    //                        frame   |             substrate            | frame
+    //                                |                                  |
+    //                                |                                  |
+    //                                |                                  |
+    //                       _________|__G4LogicalBorderSurface with TC__|_________
+    //                                                
+    //                                    LAr (X-ARAPUCA internal cavity)
+    //
+    // Here, coating is a volume with the coating optical properties, such as WLS absorption length,
+    // refractive index and the following rough surfaces: LAr->coating, coating->LAr and coating->substrate.
+    // substrate is a volume with the DF substrate optical properties, such as absorption length and
+    // refractive index. Since both the coating and the substrate have well-defined refractive indices,
+    // this model is able to simulate the light behaviour in the coating-substrate interface, which has not
+    // been measured in the laboratory. The lower limit of the substrate volume has two G4LogicalBorderSurface's.
+    // The first one, substrate->LAr, implements transmission curves that are properly shifted for the substrate
+    // rindex. The second one, LAr->substrate, implements transmission curves that are properly shifted for LAr.
 
     G4double df_MLS_thickn = DF_thickn_-DF_substrate_thickn_;
 
