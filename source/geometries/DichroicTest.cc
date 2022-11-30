@@ -220,7 +220,35 @@ namespace nexus{
     
 
     /* CODE FOR ADDING A SECOND DF
+    G4Material* substrate_mat_2 = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
+    if(mpt_){
+      substrate_mat_2->SetMaterialPropertiesTable(mpt_);
+    }
+    else{
+      G4Exception("[DichroicTest]", "ConstructDichroicFilter()", JustWarning,
+      "The optical properties of the dichroic filter substrate were not set");
+    }
+    
+    G4LogicalVolume* df_logic_2 =
+      new G4LogicalVolume(df_solid, substrate_mat_2, df_name);
+    
+    G4VPhysicalVolume* df_physical_2 = dynamic_cast<G4VPhysicalVolume*>(
+        new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.5*cm +thickn_/2.), df_name, df_logic_2,
+        mother_physical, false, 0, false));
+    
+    //G4cout << getenv("G4DICHROICDATA") << G4endl;
+    //unsetenv("G4DICHROICDATA");
+    setenv("G4DICHROICDATA", "data/full_reflection_test_dichroic_data", 1);
+    G4OpticalSurface* dichroic_opsurf_2 =
+        new G4OpticalSurface("DICHROIC_OPSURF_2", dichroic, polished, dielectric_dichroic);
+    G4LogicalBorderSurface* second_lbs = 
+                new G4LogicalBorderSurface("LAr->DICHROIC2", mother_physical, df_physical_2, dichroic_opsurf_2);
+    */
 
+    // *Bug1: Digamos que si el primer fotón que interactúa con alguna de las G4LogicalBorderSurface
+    // interactúa con la i-ésima G4LogicalBorderSurface. Entonces, todas las G4LogicalBorderSurface
+    // adquieren las curvas de transmisión de dicha G4LogicalBorderSurface.
+    
     return;
 
   }
