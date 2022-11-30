@@ -88,7 +88,7 @@ G4double PTPPhotonGenerator::RandomEnergy(){
         return sampler_->operator()<std::mt19937>(gen_);
     }
     else{
-        G4Exception("[PTPPhotonGenerator]", "LoadNCheckPTPData()", JustWarning,
+        G4Exception("[PTPPhotonGenerator]", "RandomEnergy()", JustWarning,
         "PTP histogram sampler was not set. Energy could not be sampled.");
         return -1.;
     }
