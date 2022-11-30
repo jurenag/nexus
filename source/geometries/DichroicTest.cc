@@ -157,7 +157,8 @@ namespace nexus{
     G4Tubs* df_solid =
       new G4Tubs(df_name, 0., radius_, thickn_/2., 0., 360.*degree);
 
-    G4Material* substrate_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
+    G4Material* substrate_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
+
     if(mpt_){
       substrate_mat->SetMaterialPropertiesTable(mpt_);
     }
