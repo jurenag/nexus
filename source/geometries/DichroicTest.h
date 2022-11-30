@@ -30,7 +30,9 @@ namespace nexus {
 
   private:
     G4double radius_, thickn_;                      ///<Cylindrical filter dimensions
-    G4double det_thickn_, det_depth_;  ///<Cylindrical detectors dimensions
+    G4double det_thickn_, det_depth_;               ///<Cylindrical detectors dimensions
+    G4bool with_ptp_deposition_;                    ///<Whether to add a PTP deposition or not
+    G4double ptp_thickn_;                           ///<Thickness of the PTP deposition
     G4MaterialPropertiesTable* mpt_;                ///<Dichroic filter substrate optical properties
 
     G4GenericMessenger* msg_;
