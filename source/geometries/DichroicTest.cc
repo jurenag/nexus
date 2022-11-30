@@ -34,7 +34,9 @@ namespace nexus{
   thickn_(1.*mm),
   det_thickn_(5.*mm),
   det_depth_(2.*cm),
-  mpt_(opticalprops::paulucci_LAr())
+  with_ptp_deposition_(false),
+  ptp_thickn_(3.*um),
+  mpt_(opticalprops::SCHOTT_B270())
   {
 
     msg_ = new G4GenericMessenger(this, "/Geometry/DichroicTest/",
@@ -67,6 +69,18 @@ namespace nexus{
     detd_cmd.SetUnitCategory("Length");
     detd_cmd.SetParameterName("det_depth", false);
     detd_cmd.SetRange("det_depth>0.");
+
+    G4GenericMessenger::Command& wpd_cmd =
+      msg_->DeclareProperty("with_ptp_deposition", with_ptp_deposition_,
+			    "Whether the dichroic filter has a PTP coating or not.");
+
+    G4GenericMessenger::Command& ptpt_cmd =
+      msg_->DeclareProperty("ptp_thickn", ptp_thickn_,
+			    "Thickness of PTP deposition.");
+    dett_cmd.SetUnitCategory("Length");
+    dett_cmd.SetParameterName("ptp_thickn", false);
+    dett_cmd.SetRange("ptp_thickn>0.");
+
   }
 
   DichroicTest::~DichroicTest()
@@ -101,8 +115,9 @@ namespace nexus{
         new G4PVPlacement (new G4RotationMatrix(), G4ThreeVector(0., 0., 0.), sphere_logic, 
                         sphere_name, world_logic, false, 0, false));
 
-    ConstructDichroicFilter(mother_physical);
     ConstructDetectors(mother_physical);
+    ConstructDichroicFilter(mother_physical);
+    
     return;
 
   }
@@ -159,15 +174,52 @@ namespace nexus{
     df_logic->SetVisAttributes(df_col);
 
     G4VPhysicalVolume* df_physical = dynamic_cast<G4VPhysicalVolume*>(
-        new G4PVPlacement(nullptr, G4ThreeVector(0., 0., +thickn_/2.), df_name, df_logic,
+        new G4PVPlacement(nullptr, G4ThreeVector(0., 0., -1.*thickn_/2.), df_name, df_logic,
         mother_physical, false, 0, false));
-    
+
+
+    G4VPhysicalVolume* ptpd_physical = nullptr;
+    if(with_ptp_deposition_){
+      const G4String ptpd_name = "PTP_LAYER";
+      G4Tubs* ptpd_solid =
+        new G4Tubs(ptpd_name, 0., radius_, ptp_thickn_/2., 0., 360.*degree);
+
+      G4Material* ptpd_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TERPHENYL");
+      ptpd_mat->SetMaterialPropertiesTable(opticalprops::PTP());
+
+      G4LogicalVolume* ptpd_logic =
+        new G4LogicalVolume(ptpd_solid, ptpd_mat, ptpd_name);
+
+      G4VisAttributes ptpd_col = nexus::TitaniumGreyAlpha();
+      ptpd_col.SetForceSolid(true);
+      ptpd_logic->SetVisAttributes(ptpd_col);
+
+      ptpd_physical = dynamic_cast<G4VPhysicalVolume*>(
+          new G4PVPlacement(nullptr, G4ThreeVector(0., 0., +ptp_thickn_/2.), ptpd_name, ptpd_logic,
+          mother_physical, false, 0, false));
+
+      G4OpticalSurface* coating_rough_surf =
+            new G4OpticalSurface("COATING_ROUGH_SURFACE", glisur, ground, dielectric_dielectric, .01);
+            // 0.01 is the polish value for glisur model that was measured for TPB in doi.org/10.1140/epjc/s10052-018-5807-z
+            // This is the best reference we have, since both PTP and TPB are the result of an evaporation+deposition process
+      new G4LogicalBorderSurface("SURROUNDINGS->COATING", mother_physical, ptpd_physical, coating_rough_surf);
+      new G4LogicalBorderSurface("COATING->SURROUNDINGS", ptpd_physical, mother_physical, coating_rough_surf);
+      //new G4LogicalBorderSurface("COATING->DF", ptpd_physical, df_physical, coating_rough_surf);
+    }
+
     // Add dichroic specifications
     setenv("G4DICHROICDATA", "data/full_transmission_test_dichroic_data", 1);
     G4OpticalSurface* dichroic_opsurf =
         new G4OpticalSurface("DICHROIC_OPSURF", dichroic, polished, dielectric_dichroic);
+    
+    G4LogicalBorderSurface* first_lbs = nullptr;   
+    if(!with_ptp_deposition_) first_lbs = new G4LogicalBorderSurface("LAr->DICHROIC1", mother_physical, df_physical, dichroic_opsurf);
+    else                      first_lbs = new G4LogicalBorderSurface("LAr->DICHROIC1", ptpd_physical, df_physical, dichroic_opsurf);
+    
+    return;
+    
 
-    new G4LogicalBorderSurface("LAr->DICHROIC1", mother_physical, df_physical, dichroic_opsurf);
+    /* CODE FOR ADDING A SECOND DF
 
     return;
 
@@ -231,7 +283,10 @@ namespace nexus{
 
   G4ThreeVector DichroicTest::GenerateVertex(const G4String&) const
   {
-    return G4ThreeVector(0., 0., -(thickn_/2.)-0.0001*cm);
+
+    G4double distance_from_filter = 0.5*cm;
+    if(with_ptp_deposition_) distance_from_filter += ptp_thickn_;
+    return G4ThreeVector(0., 0., distance_from_filter);
   }
 
 }
