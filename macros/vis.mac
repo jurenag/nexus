@@ -11,7 +11,7 @@
 
 ### Create an empty scene and a scene handles (OpenGL)
 /vis/scene/create
-/vis/open OGL
+/vis/open OGLI
 #/vis/viewer/create ! ! 900
 
 ### Setting drawing style to "wireframe" / "surface"
