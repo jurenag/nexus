@@ -1,0 +1,15 @@
+/control/execute macros/physics/OpticalPhysics.mac
+
+/nexus/RegisterGeometry AngularDistributionTest
+
+#/nexus/RegisterGenerator SingleParticleGenerator
+/nexus/RegisterGenerator LArScintillationGenerator
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+/nexus/RegisterSteppingAction SaveAllSteppingAction #Be careful w/ this line
+                                                    #Enable this only when necessary!
+/nexus/RegisterMacro macros/AngularDistributionTest.config.mac
