@@ -1,0 +1,34 @@
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+#/Geometry/AngularDistributionTest/config_code              1
+#/Geometry/AngularDistributionTest/filter_code              1
+#/Geometry/AngularDistributionTest/world_radius             10000. m
+#/Geometry/AngularDistributionTest/world_height             1. cm
+#/Geometry/AngularDistributionTest/sample_LDP_distance      0.5 cm
+#/Geometry/AngularDistributionTest/lgv_zpos_wrt_world_center 0.5 cm
+#/Geometry/AngularDistributionTest/DF_thickn                1. mm 
+#/Geometry/AngularDistributionTest/ptp_thickn               1. um
+
+/Geometry/AngularDistributionTest/config_code               3
+/Geometry/AngularDistributionTest/filter_code               2
+/Geometry/AngularDistributionTest/world_radius              100. m
+/Geometry/AngularDistributionTest/world_height              1. cm
+/Geometry/AngularDistributionTest/sample_LDP_distance       0.5 cm
+/Geometry/AngularDistributionTest/lgv_zpos_wrt_world_center 2.50 mm
+#/Geometry/AngularDistributionTest/lgv_zpos_wrt_world_center 2.51 mm
+/Geometry/AngularDistributionTest/DF_thickn                 1. mm 
+/Geometry/AngularDistributionTest/ptp_thickn                1. um
+/Geometry/AngularDistributionTest/DF_x_size                 10. cm
+/Geometry/AngularDistributionTest/DF_y_size                 10. cm
+/Geometry/AngularDistributionTest/rib_height                5. mm
+/Geometry/AngularDistributionTest/shallowness               0.
+/Geometry/AngularDistributionTest/randomly_sample_lgv       true
+
+/control/execute macros/generators/LArScintillationGeneratorZ.mac
+#/control/execute macros/generators/SingleParticleDichroicTest.mac
+
+/nexus/persistency/outputFile output/AngularDistributionStudy/FramedPTPAlone/TrashCan
