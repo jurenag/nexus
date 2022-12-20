@@ -132,7 +132,7 @@ namespace nexus {
         new G4LogicalVolume(board_solid, materials::FR4(), board_name);
 
     G4VisAttributes board_col = nexus::White();
-    board_col.SetForceSolid(true);
+    //board_col.SetForceSolid(true);
     board_logic->SetVisAttributes(board_col);
 
     //VIKUITI coating for the board
