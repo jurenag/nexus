@@ -7,7 +7,6 @@
 #include "HamamatsuS133606050VE.h"
 #include "ScalableHamamatsuS133606050VE.h"
 #include "SiPMBoard.h"
-#include "MomentumSD.h"
 #include "RandomUtils.h"
 #include "Visibilities.h"
 
@@ -958,18 +957,6 @@ namespace nexus{
         collector_opsurf->SetMaterialPropertiesTable(opticalprops::PerfectPhotonReflector());
     }
     new G4LogicalSkinSurface("COLLECTOR_OPSURF", collector_logic, collector_opsurf);
-
-    /*
-    //  Sensitive Detector
-    MomentumSD* msd = new MomentumSD("MomentumSD");
-    G4SDManager* SDMPointer = G4SDManager::GetSDMpointer();
-    if(!SDMPointer){
-      G4Exception("[XArapuca]", "ConstructCollectors()", FatalException,
-      "Could not retrieve the Sensitive Detector Manager pointer.");
-    }
-    SDMPointer->AddNewDetector(msd);
-    collector_logic->SetSensitiveDetector(msd);
-    */
     
     //  Place the collector(s)
     new G4PVPlacement(nullptr, G4ThreeVector(0., internal_thickn_/2. + case_thickn_/2., 0.), 
