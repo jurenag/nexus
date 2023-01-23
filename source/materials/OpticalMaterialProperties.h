@@ -61,6 +61,8 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* PerfectPhotonReflector();
 
+  G4MaterialPropertiesTable* PerfectPolishedSurfaceTransmitter();
+
   G4MaterialPropertiesTable* FakeGrid(G4double pressure=1.*bar,
                                       G4double temperature=STP_Temperature,
                                       G4double transparency=.9,
