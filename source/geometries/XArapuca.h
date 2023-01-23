@@ -33,7 +33,7 @@ namespace nexus {
     void ConstructPhotosensors(G4VPhysicalVolume*) const;           ///< DEPRECATED. Called by Construct(). Adds (floating) SiPMs.
     void ConstructBoards(G4VPhysicalVolume*) const;                 ///< Called by Construct(). Adds the board-mounted SiPMs.
     void ConstructReflectiveCase(G4VPhysicalVolume*) const;         ///< Called by Construct(). Adds the reflective case that encloses the X-ARAPUCA geometry.
-    void ConstructCollectors(G4VPhysicalVolume*) const;             ///< Called by Construct(). Adds the artificial volumes that replace the dichoric filters.
+    void ConstructCollectors(G4VPhysicalVolume*) const;             ///< Called by Construct(). Adds the artificial volumes that replace the dichroic filters.
     void ConstructDichroicAssemblies(G4VPhysicalVolume*) const;     ///< Called by Construct(). Adds the dichroic filters plane, i.e. dichroic filters embedded in a frame
                                                                     ///< If double_sided_, the DFAs are placed on both sides of the X-ARAPUCA. If not, one reflective cover is added 
                                                                     ///< on the dead side.
@@ -115,7 +115,7 @@ namespace nexus {
 
 #endif
 
-/* *
+/*
 ________ ___________________ ________
         |                   |  
         |       DF          | <--- DF_pos_wrt_DFA_pos_ = 1.  (Shallow)
