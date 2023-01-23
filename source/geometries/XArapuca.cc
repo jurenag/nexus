@@ -44,57 +44,60 @@ namespace nexus{
   XArapuca::XArapuca():
   GeometryBase(), 
   ///Get internal reflector cavity dimensions from arxiv.org/abs/1912.09191
-  config_code_                          (1          ),
-  internal_length_                      (488.   *mm ),   ///X
-  internal_width_                       (100.   *mm ),   ///Z
-  internal_thickn_                      (8      *mm ),   ///Y
-  DFA_thickn_                           (1.     *mm ),
-  DF_thickn_                            (1.010  *mm ),
-  DF_substrate_thickn_                  (1.000  *mm ),
-  DF_pos_wrt_DFA_pos_                   (0.         ),
-  DF_are_coated_                        (true       ),
-  coating_thickn_                       (3.226  *um ),  // Based on arxiv.org/abs/1912.09191 and TDR vol.IX, section 5.8.3.1,
-                                                        // the pTP film thickness is such that there's 400 micrograms of pTP
-                                                        // deposited over each square centimeter of DF.
-                                                        // This, together with the pTP density, (1.24g/cm3, found in
-                                                        // en.wikipedia.org/wiki/Terphenyl), gives a pTP film thickness of 
-                                                        // 3.226 micrometers
-  outter_frame_width_along_wlsplength_  (10.    *mm ),
-  outter_frame_width_along_wlspwidth_   (10.    *mm ),
-  inner_frames_width_along_wlsplength_  (6.     *mm ),
-  inner_frames_width_along_wlspwidth_   (2.     *mm ),
-  df_no_along_wlsplength_               (2          ),
-  df_no_along_wlspwidth_                (3          ),
-  DFA_frame_is_reflective_              (false      ),
-  DFA_frame_is_specular_                (true       ),
-  remove_DFs_                           (false      ),  
-  remove_DFA_frame_                     (false      ),
-  secondary_wls_attlength_              (1.     *m  ),
-  case_thickn_                          (1.     *mm ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
-  PS_config_code_                       (1          ),
-  num_phsensors_                        (24         ),
-  gap_                                  (0.5    *mm ),
-  ref_phsensors_supports_               (true       ), 
-  double_sided_                         (true       ),
-  collectors_are_reflective_            (false      ),
-  generation_vertex_over_df_            (true       ),
-  path_to_dichroic_data_                (""         ),
-  world_extra_thickn_                   (100.   *cm ),
-  plate_length_                         (487.   *mm ),   ///X
-  plate_width_                          (93.    *mm ),   ///Z
-  plate_thickn_                         (3.5    *mm ),   ///Y
-  only_sipms_along_long_sides_          (true       ),
-  with_boards_                          (true       ),
-  with_dimples_                         (true       ),
-  dimple_type_                          ("cylindrical"),
-  flat_dimple_width_                    (6.1    *mm ),
-  flat_dimple_depth_                    (2.     *mm ),
-  curvy_dimple_radius_                  (1.5    *mm ),
-  fibers_no_                            (6          ),
-  fiber_planes_no_                      (1          ),    
-  fiber_radius_                         (5.     *mm ),
-  fiber_length_                         (400.   *mm ),
-  along_long_side_                      (true       )
+  config_code_                          (1                            ),
+  internal_length_                      (488.   *mm                   ),   ///X
+  internal_width_                       (100.   *mm                   ),   ///Z
+  internal_thickn_                      (8      *mm                   ),   ///Y
+  DFA_thickn_                           (1.     *mm                   ),
+  DF_thickn_                            (1.010  *mm                   ),
+  DF_substrate_thickn_                  (1.000  *mm                   ),
+  DF_substrate_mpt_                     (opticalprops::FusedSilica()  ),
+  DF_pos_wrt_DFA_pos_                   (0.                           ),
+  DF_are_coated_                        (true                         ),
+  coating_thickn_                       (3.226  *um                   ),  // Based on arxiv.org/abs/1912.09191 and TDR vol.IX, section 5.8.3.1,
+                                                                          // the pTP film thickness is such that there's 400 micrograms of pTP
+                                                                          // deposited over each square centimeter of DF.
+                                                                          // This, together with the pTP density, (1.24g/cm3, found in
+                                                                          // en.wikipedia.org/wiki/Terphenyl), gives a pTP film thickness of 
+                                                                          // 3.226 micrometers
+  outter_frame_width_along_wlsplength_  (10.    *mm                   ),
+  outter_frame_width_along_wlspwidth_   (10.    *mm                   ),
+  inner_frames_width_along_wlsplength_  (6.     *mm                   ),
+  inner_frames_width_along_wlspwidth_   (2.     *mm                   ),
+  df_no_along_wlsplength_               (2                            ),
+  df_no_along_wlspwidth_                (3                            ),
+  DFA_config_code_                      (1                            ),
+  DFA_frame_is_reflective_              (false                        ),
+  DFA_frame_is_specular_                (true                         ),
+  remove_DFs_                           (false                        ),  
+  remove_DFA_frame_                     (false                        ),
+  secondary_wls_attlength_              (1.     *m                    ),
+  case_thickn_                          (1.     *mm                   ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
+  PS_config_code_                       (1                            ),
+  num_phsensors_                        (24                           ),
+  gap_                                  (0.5    *mm                   ),
+  ref_phsensors_supports_               (true                         ), 
+  double_sided_                         (true                         ),
+  collectors_are_reflective_            (false                        ),
+  generation_vertex_over_df_            (true                         ),
+  path_to_inwards_dichroic_data_        (""                           ),
+  path_to_outwards_dichroic_data_       (""                           ),
+  world_extra_thickn_                   (100.   *cm                   ),
+  plate_length_                         (487.   *mm                   ),   ///X
+  plate_width_                          (93.    *mm                   ),   ///Z
+  plate_thickn_                         (3.5    *mm                   ),   ///Y
+  only_sipms_along_long_sides_          (true                         ),
+  with_boards_                          (true                         ),
+  with_dimples_                         (true                         ),
+  dimple_type_                          ("cylindrical"                ),
+  flat_dimple_width_                    (6.1    *mm                   ),
+  flat_dimple_depth_                    (2.     *mm                   ),
+  curvy_dimple_radius_                  (1.5    *mm                   ),
+  fibers_no_                            (6                            ),
+  fiber_planes_no_                      (1                            ),    
+  fiber_radius_                         (5.     *mm                   ),
+  fiber_length_                         (400.   *mm                   ),
+  along_long_side_                      (true                         )
   {
     msg_ = new G4GenericMessenger(this, "/Geometry/XArapuca/",
 				"Control commands of geometry XArapuca.");
@@ -270,9 +273,13 @@ namespace nexus{
     swlsal_cmd.SetParameterName("secondary_wls_attlength", false);
     swlsal_cmd.SetRange("secondary_wls_attlength>0.");
 
-    G4GenericMessenger::Command& ptdd_cmd =
-      msg_->DeclareProperty("path_to_dichroic_data", path_to_dichroic_data_,
-			    "Absolute path to the file containing the transmission data of the dichroic filter.");
+    G4GenericMessenger::Command& ptidd_cmd =
+      msg_->DeclareProperty("path_to_inwards_dichroic_data", path_to_inwards_dichroic_data_,
+			    "Absolute path to dichroic data file that is to be sampled for the light trying to enter the XA cavity.");
+
+    G4GenericMessenger::Command& ptodd_cmd =
+      msg_->DeclareProperty("path_to_outwards_dichroic_data", path_to_outwards_dichroic_data_,
+			    "Absolute path to dichroic data file that is to be sampled for the light trying to escape the XA cavity.");
 
     G4GenericMessenger::Command& pl_cmd =
       msg_->DeclareProperty("plate_length", plate_length_,
@@ -1214,16 +1221,13 @@ namespace nexus{
 
     // DICHROIC FILTERS //
     if(!remove_DFs_){
-
-        
-        G4Material* fused_silica_mat    = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
-        fused_silica_mat->SetMaterialPropertiesTable(opticalprops::FusedSilica());
+        G4Material* DF_substrate_mat    = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
+        DF_substrate_mat->SetMaterialPropertiesTable(DF_substrate_mpt_);
         G4LogicalVolume* df_substrates_multiunion_logic = 
-                            new G4LogicalVolume(df_substrates_multiunion_solid, fused_silica_mat, "DICHROIC_FILTER_SUBSTRATES");
+                            new G4LogicalVolume(df_substrates_multiunion_solid, DF_substrate_mat, "DICHROIC_FILTER_SUBSTRATES");
         G4LogicalVolume* df_MLSs_multiunion_logic = 
-                            new G4LogicalVolume(df_MLSs_multiunion_solid,       fused_silica_mat, "DICHROIC_FILTER_MLSs");
-                    
-
+                            new G4LogicalVolume(df_MLSs_multiunion_solid,       DF_substrate_mat, "DICHROIC_FILTER_MLSs");
+            
         // Visually transparent substrate, and visually red MLs
         G4VisAttributes df_MLSs_col = nexus::BloodRedAlpha();
         df_MLSs_col.SetForceSolid(true);
