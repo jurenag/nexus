@@ -55,6 +55,7 @@ namespace nexus {
     G4double DFA_thickn_;                                           ///< Frame thickness 
     G4double DF_thickn_;                                            ///< Overall thickness of the dichroic filters (MLS+substrate). Must be smaller than the frame thickness.
     G4double DF_substrate_thickn_;                                  ///< Thickness of the dichroic filters substrate. Must be smaller than DF_thickn_.
+    G4MaterialPropertiesTable* DF_substrate_mpt_;                   ///< Material Properties Table of the dichroic filters substrate.
     G4double DF_pos_wrt_DFA_pos_;                                   ///< Position (height) of the dichroic filters with respect to the DFA position (height). This parameter can take values from 0 to 1. See * below
     G4bool DF_are_coated_;                                          ///< Whether the filters are coated with PTP or not
     G4double coating_thickn_;                                       ///< Thickness of the coating layer that is deposited over the dichroic filters
@@ -77,7 +78,8 @@ namespace nexus {
     G4bool double_sided_;                                           ///< Whether there are dichroic filters on both sides of the WLS plate
     G4bool collectors_are_reflective_;                              ///< Whether the collectors that replace the dichroic filters are reflective or not                                      
     G4bool generation_vertex_over_df_;                              ///< Whether the generation vertex is randomly sampled over any dichroic filter. If not, it is randomly sampled over the whohle DFA, including the frame itself.
-    G4String path_to_dichroic_data_;                                ///< Absolute path to dichroic data file
+    G4String path_to_inwards_dichroic_data_;                        ///< Absolute path to dichroic data file that is to be sampled for the light trying to enter the XA cavity
+    G4String path_to_outwards_dichroic_data_;                       ///< Absolute path to dichroic data file that is to be sampled for the light trying to escape the XA cavity
     G4double world_extra_thickn_;                                   ///< Extra thickness for the surrounding box world to wrap the XArapuca
 
     ///---- General internal attributes ----///
