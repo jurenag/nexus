@@ -950,6 +950,20 @@ namespace opticalprops {
     return mpt;
   }
 
+  G4MaterialPropertiesTable* PerfectPolishedSurfaceTransmitter()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    std::vector<G4double> energy =          {optPhotMinE_   ,   optPhotMaxE_};
+    std::vector<G4double> reflectivity =    {0.             ,   0.          };
+    std::vector<G4double> transmission =    {1.             ,   1.          };
+
+    mpt->AddProperty("REFLECTIVITY",    energy.data(), reflectivity.data(), energy.size());
+    mpt->AddProperty("TRANSMITTANCE",    energy.data(), transmission.data(), energy.size());
+
+    return mpt;
+  }
+
   /// Fake Grid ///
   G4MaterialPropertiesTable* FakeGrid(G4double pressure,
                                       G4double temperature,
