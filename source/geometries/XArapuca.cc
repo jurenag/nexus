@@ -207,6 +207,29 @@ namespace nexus{
     dfnaww_cmd.SetParameterName("df_no_along_wlspwidth", false);
     dfnaww_cmd.SetRange("df_no_along_wlspwidth>=0"); 
 
+    G4GenericMessenger::Command& dfafir_cmd =
+      msg_->DeclareProperty("DFA_frame_is_reflective", DFA_frame_is_reflective_,
+			    "Whether the FR4 DFA frame is vikuiti-coated or not.");
+
+    G4GenericMessenger::Command& dfafis_cmd =
+      msg_->DeclareProperty("DFA_frame_is_specular", DFA_frame_is_specular_,
+			    "Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.");
+
+    G4GenericMessenger::Command& rdfs_cmd =
+      msg_->DeclareProperty("remove_DFs", remove_DFs_,
+			    "Whether to remove the dichroic filters or not.");
+
+    G4GenericMessenger::Command& rdfaf_cmd =
+      msg_->DeclareProperty("remove_DFA_frame", remove_DFA_frame_,
+			    "Whether to remove the dichroic filters assembly or not.");
+
+    G4GenericMessenger::Command& swlsal_cmd =
+      msg_->DeclareProperty("secondary_wls_attlength", secondary_wls_attlength_,
+			    "Attenuation length of the secondary WLShifter.");
+    swlsal_cmd.SetUnitCategory("Length");
+    swlsal_cmd.SetParameterName("secondary_wls_attlength", false);
+    swlsal_cmd.SetRange("secondary_wls_attlength>0.");
+
     G4GenericMessenger::Command& ct_cmd =
       msg_->DeclareProperty("case_thickn", case_thickn_,
 			    "Thickness of the XArapuca case.");
@@ -248,29 +271,6 @@ namespace nexus{
     G4GenericMessenger::Command& gvod_cmd =
       msg_->DeclareProperty("generation_vertex_over_df", generation_vertex_over_df_,
 			    "Whether the generation vertex is randomly sampled over any dichroic filter. If not, it is randomly sampled over the whohle DFA, including the frame itself.");
-
-    G4GenericMessenger::Command& dfafir_cmd =
-      msg_->DeclareProperty("DFA_frame_is_reflective", DFA_frame_is_reflective_,
-			    "Whether the FR4 DFA frame is vikuiti-coated or not.");
-
-    G4GenericMessenger::Command& dfafis_cmd =
-      msg_->DeclareProperty("DFA_frame_is_specular", DFA_frame_is_specular_,
-			    "Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.");
-
-    G4GenericMessenger::Command& rdfs_cmd =
-      msg_->DeclareProperty("remove_DFs", remove_DFs_,
-			    "Whether to remove the dichroic filters or not.");
-
-    G4GenericMessenger::Command& rdfaf_cmd =
-      msg_->DeclareProperty("remove_DFA_frame", remove_DFA_frame_,
-			    "Whether to remove the dichroic filters assembly or not.");
-
-    G4GenericMessenger::Command& swlsal_cmd =
-      msg_->DeclareProperty("secondary_wls_attlength", secondary_wls_attlength_,
-			    "Attenuation length of the secondary WLShifter.");
-    swlsal_cmd.SetUnitCategory("Length");
-    swlsal_cmd.SetParameterName("secondary_wls_attlength", false);
-    swlsal_cmd.SetRange("secondary_wls_attlength>0.");
 
     G4GenericMessenger::Command& ptidd_cmd =
       msg_->DeclareProperty("path_to_inwards_dichroic_data", path_to_inwards_dichroic_data_,
