@@ -3,8 +3,8 @@
 
 #include "GeometryBase.h"
 
-class G4LogicalVolume;
 class G4VPhysicalVolume;
+class G4MaterialPropertiesTable;
 class G4GenericMessenger;
 class G4UserLimits;
 
