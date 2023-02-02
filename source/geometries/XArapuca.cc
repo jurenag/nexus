@@ -1201,23 +1201,52 @@ namespace nexus{
                                                         +(DF_substrate_thickn_/2.) 
                                                         +(DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)), 0.), 
                             "DICHROIC_FILTER_SUBSTRATES_1", df_substrates_multiunion_logic, mother_physical, true, 0, true));
-        G4VPhysicalVolume* first_df_MLSs_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
-            new G4PVPlacement(nullptr, G4ThreeVector(0., (internal_thickn_/2.) 
-                                                        +(df_MLS_thickn/2.) 
-                                                        +(DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)), 0.), 
-                            "DICHROIC_FILTER_MLSs_1", df_MLSs_multiunion_logic, mother_physical, true, 0, true));
 
-        // Add dichroic specifications
-        if(path_to_dichroic_data_==""){
+        G4VPhysicalVolume* first_df_MLSs_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
+            new G4PVPlacement(nullptr, G4ThreeVector(0.,  (internal_thickn_/2.)
+                                                          +(df_MLS_thickn/2.)
+                                                          +(DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)), 0.),
+                              "DICHROIC_FILTER_MLSs_1", df_MLSs_multiunion_logic, mother_physical, true, 0, true));
+        
+        // Check that there's dichroic information for ingoing (wrt XA) photons
+        if(path_to_inwards_dichroic_data_==""){
             G4Exception("[XArapuca]", "ConstructDichroicAssemblies()",
-                        FatalException, "The path to the dichroic data file was not set.");
+                        FatalException, "The path to the inwards dichroic data file was not set.");
         }
 
-        setenv("G4DICHROICDATA", path_to_dichroic_data_, 1);
-        G4OpticalSurface* dfs_opsurf =   
-            new G4OpticalSurface("DICHROIC_OPSURF", dichroic, polished, dielectric_dichroic);
-        new G4LogicalBorderSurface("Substrate1->MLS1", first_df_substrates_multiunion_physical, first_df_MLSs_multiunion_physical, dfs_opsurf);
-        new G4LogicalBorderSurface("MLS1->Substrate1", first_df_MLSs_multiunion_physical, first_df_substrates_multiunion_physical, dfs_opsurf);
+        // Check that there's dichroic information for outgoing photons
+        if(path_to_outwards_dichroic_data_==""){
+            G4Exception("[XArapuca]", "ConstructDichroicAssemblies()",
+                        FatalException, "The path to the outwards dichroic data file was not set.");
+        }
+
+        // Construct the ingoing optical surface
+        setenv("G4DICHROICDATA", path_to_inwards_dichroic_data_, 1);
+        G4OpticalSurface* dfs_inwards_opsurf =                // G4OpticalSurface constructor loads the
+            new G4OpticalSurface( "DICHROIC_INWARDS_OPSURF",  // dichroic information from the file which
+                                  dichroic,                   // is currently pointed to by the environment
+                                  polished,                   // variable G4DICHROICDATA
+                                  dielectric_dichroic);
+
+        // Construct the outgoung optical surface
+        setenv("G4DICHROICDATA", path_to_outwards_dichroic_data_, 1);
+        G4OpticalSurface* dfs_outwards_opsurf =   
+            new G4OpticalSurface( "DICHROIC_OUTWARDS_OPSURF", 
+                                  dichroic, 
+                                  polished, 
+                                  dielectric_dichroic);
+
+        // Endow the substrate->MLS surface with the ingoing optical surface
+        new G4LogicalBorderSurface( "Substrate1->MLS1", 
+                                    first_df_substrates_multiunion_physical, 
+                                    first_df_MLSs_multiunion_physical, 
+                                    dfs_inwards_opsurf);
+
+        // Endow the MLS->substrate surface with the outgoing optical surface
+        new G4LogicalBorderSurface( "MLS1->Substrate1", 
+                                    first_df_MLSs_multiunion_physical, 
+                                    first_df_substrates_multiunion_physical, 
+                                    dfs_outwards_opsurf);
             
         G4VPhysicalVolume* second_df_substrates_multiunion_physical = nullptr;
         G4VPhysicalVolume* second_df_MLSs_multiunion_physical = nullptr;
@@ -1229,14 +1258,23 @@ namespace nexus{
                                                                 +(DF_substrate_thickn_/2.) 
                                                                 +(DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_))), 0.), 
                                 "DICHROIC_FILTER_SUBSTRATES_2", df_substrates_multiunion_logic, mother_physical, true, 1, true));
+
             second_df_MLSs_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
-                new G4PVPlacement(nullptr, G4ThreeVector(0.,    -1.*(
-                                                                (internal_thickn_/2.) 
-                                                                +(df_MLS_thickn/2.) 
-                                                                +(DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_))), 0.), 
-                                "DICHROIC_FILTER_MLSs_2", df_MLSs_multiunion_logic, mother_physical, true, 1, true));
-            new G4LogicalBorderSurface("Substrate2->MLS2", second_df_substrates_multiunion_physical, second_df_MLSs_multiunion_physical, dfs_opsurf);
-            new G4LogicalBorderSurface("MLS2->Substrate2", second_df_MLSs_multiunion_physical, second_df_substrates_multiunion_physical, dfs_opsurf);
+                new G4PVPlacement(nullptr, G4ThreeVector(0.,  -1.*(
+                                                              (internal_thickn_/2.)
+                                                              +(df_MLS_thickn/2.)
+                                                              +(DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_))), 0.),
+                                  "DICHROIC_FILTER_MLSs_2", df_MLSs_multiunion_logic, mother_physical, true, 0, true));
+
+            new G4LogicalBorderSurface( "Substrate2->MLS2", 
+                                        second_df_substrates_multiunion_physical, 
+                                        second_df_MLSs_multiunion_physical, 
+                                        dfs_inwards_opsurf);
+
+            new G4LogicalBorderSurface( "MLS2->Substrate2", 
+                                        second_df_MLSs_multiunion_physical, 
+                                        second_df_substrates_multiunion_physical, 
+                                        dfs_outwards_opsurf);
         }
 
         // COATINGS //
@@ -1263,14 +1301,21 @@ namespace nexus{
                     new G4OpticalSurface("COATING_ROUGH_SURFACE", glisur, ground, dielectric_dielectric, .01);
                     // 0.01 is the polish value for glisur model that was measured for TPB in doi.org/10.1140/epjc/s10052-018-5807-z
                     // This is the best reference we have, since both PTP and TPB are the result of an evaporation+deposition process
-            new G4LogicalBorderSurface("SURROUNDINGS->COATING", mother_physical, first_coatings_multiunion_physical, coating_rough_surf);
-            new G4LogicalBorderSurface("COATING->SURROUNDINGS", first_coatings_multiunion_physical, mother_physical, coating_rough_surf);
+            new G4LogicalBorderSurface( "SURROUNDINGS->COATING1", 
+                                        mother_physical, 
+                                        first_coatings_multiunion_physical, 
+                                        coating_rough_surf);
+            new G4LogicalBorderSurface( "COATING1->SURROUNDINGS", 
+                                        first_coatings_multiunion_physical, 
+                                        mother_physical, 
+                                        coating_rough_surf);
             // We will also add roughness for the coating->substrate interface, but only with such ordering. The alternative case takes place
             // when the photon travels from the DF glass substrate to the coating. The glass is supposed to be polished, so the photon may not
             // see a rough surface.
-            new G4LogicalBorderSurface("COATING->SUBSTRATE", first_coatings_multiunion_physical, first_df_substrates_multiunion_physical, coating_rough_surf);
-
-
+            new G4LogicalBorderSurface( "COATING1->SUBSTRATE1", 
+                                        first_coatings_multiunion_physical, 
+                                        first_df_substrates_multiunion_physical, 
+                                        coating_rough_surf);
 
             if(double_sided_){
                 G4VPhysicalVolume* second_coatings_multiunion_physical = dynamic_cast<G4VPhysicalVolume*>(
@@ -1279,9 +1324,18 @@ namespace nexus{
                                                                     +(DF_pos_wrt_DFA_pos_*(DFA_thickn_-DF_thickn_)) 
                                                                     +(coating_thickn_/2.)), 0.), 
                                         "DICHROIC_FILTER_COATINGS_2", coatings_multiunion_logic, mother_physical, true, 1, true));
-                new G4LogicalBorderSurface("SURROUNDINGS->COATING", mother_physical, second_coatings_multiunion_physical, coating_rough_surf);
-                new G4LogicalBorderSurface("COATING->SURROUNDINGS", second_coatings_multiunion_physical, mother_physical, coating_rough_surf);
-                new G4LogicalBorderSurface("COATING->SUBSTRATE", second_coatings_multiunion_physical, second_df_substrates_multiunion_physical, coating_rough_surf);
+                new G4LogicalBorderSurface( "SURROUNDINGS->COATING2", 
+                                            mother_physical, 
+                                            second_coatings_multiunion_physical, 
+                                            coating_rough_surf);
+                new G4LogicalBorderSurface( "COATING2->SURROUNDINGS", 
+                                            second_coatings_multiunion_physical, 
+                                            mother_physical, 
+                                            coating_rough_surf);
+                new G4LogicalBorderSurface( "COATING2->SUBSTRATE2", 
+                                            second_coatings_multiunion_physical, 
+                                            second_df_substrates_multiunion_physical, 
+                                            coating_rough_surf);
             }
         }
     }
