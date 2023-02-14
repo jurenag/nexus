@@ -353,7 +353,16 @@ namespace opticalprops {
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
 
     G4double energy_span[] =  {optPhotMinE_,  optPhotMaxE_};
-    G4double rindex[] =       {1.55        ,  1.55        };
+    G4double rindex[] =       {1.55        ,  1.55        };  // The windows for Hamamatsu S13360-6050VE  
+                                                              // and Hamamatsu S13360-5075HD-HQR
+                                                              // are made out of epoxy resin. The r. index
+                                                              // value for the epoxy resin of HS13360-6050VE 
+                                                              // is 1.55. I am assuming this one for the 
+                                                              // S13360-5075HD-HQR SiPM as well. Also, we know
+                                                              // the FBK_NUV-HD-CRYO triple trench window
+                                                              // is made out of epoxy resin. Since this is
+                                                              // everything we know, we will also use this
+                                                              // MPT for the window of the FBK SiPM.
     G4double abslength[] =    {noAbsLength_,  noAbsLength_};
 
     mpt->AddProperty("RINDEX",    energy_span, rindex,    2);
