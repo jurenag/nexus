@@ -1,5 +1,8 @@
 #include "SiPMBoard.h"
+#include "SiPMMPPC.h"
 #include "HamamatsuS133606050VE.h"
+#include "HamamatsuS133605075HQR.h"
+#include "FbkNuvHdCryoTT.h"
 
 #include "OpticalMaterialProperties.h"
 #include "MaterialsList.h"
@@ -24,7 +27,8 @@ namespace nexus {
     board_thickn_(1.*mm),   ///< Z
     ref_phsensors_supports_(true),
     base_id_(0),
-    num_phsensors_(24)
+    num_phsensors_(24),
+    SiPM_code_(1)
   {
   }
 
@@ -32,19 +36,43 @@ namespace nexus {
   {
   }
 
-  G4int SiPMBoard::GetNumPhsensors()        const   { return num_phsensors_; }
+  G4int SiPMBoard::GetNumPhsensors()        const   { return num_phsensors_;}
+  G4int SiPMBoard::GetSiPMCode()            const   { return SiPM_code_;    }
   G4double SiPMBoard::GetBoardLength()      const   { return board_length_; }
   G4double SiPMBoard::GetBoardHeight()      const   { return board_height_; }
   G4double SiPMBoard::GetOverallHeight()    const   
   { 
-      HamamatsuS133606050VE sipm;
-      G4double sipm_height = sipm.GetHeight();
-      return sipm_height>GetBoardHeight() ? sipm_height : GetBoardHeight();
+    SiPMMPPC* sipm_ptr = nullptr;
+    if(SiPM_code_==1){
+      sipm_ptr = new HamamatsuS133606050VE();
+    }
+    else if(SiPM_code_==2){
+      sipm_ptr = new HamamatsuS133605075HQR();
+    }
+    else{
+      sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    G4double sipm_height = sipm_ptr->GetTransverseDim();
+    delete sipm_ptr;
+    return sipm_height>GetBoardHeight() ? sipm_height : GetBoardHeight();
   }
+
   G4double SiPMBoard::GetBoardThickness()   const   { return board_thickn_; }
   G4double SiPMBoard::GetOverallThickness() const
   {
-    return board_thickn_ + HamamatsuS133606050VE::GetThickness();
+    SiPMMPPC* sipm_ptr = nullptr;
+    if(SiPM_code_==1){
+      sipm_ptr = new HamamatsuS133606050VE();
+    }
+    else if(SiPM_code_==2){
+      sipm_ptr = new HamamatsuS133605075HQR();
+    }
+    else{
+      sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    G4double sipm_thickn = sipm_ptr->GetThickness();
+    delete sipm_ptr;
+    return board_thickn_ + sipm_thickn;
   }
 
   G4bool SiPMBoard::GeometryIsIllFormed() const
@@ -74,8 +102,19 @@ namespace nexus {
       // only on its length depending the number of photosensors the board must allocate.
 
 
-    HamamatsuS133606050VE sipm;
-    G4double sipm_width = sipm.GetWidth();
+    SiPMMPPC* sipm_ptr = nullptr;
+    if(SiPM_code_==1){
+      sipm_ptr = new HamamatsuS133606050VE();
+    }
+    else if(SiPM_code_==2){
+      sipm_ptr = new HamamatsuS133605075HQR();
+    }
+    else{
+      sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    G4double sipm_width = sipm_ptr->GetTransverseDim();
+    delete sipm_ptr;
+
     if(sipm_width*num_phsensors_>GetBoardLength()){
         return true;
     }
@@ -163,11 +202,23 @@ namespace nexus {
         "The encasing logical volume is not available.");
     }
 
-    HamamatsuS133606050VE sipm;
-    sipm.SetReflectiveSupports(ref_phsensors_supports_);  
-    sipm.Construct();
-    G4double sipm_thickn = sipm.GetThickness();
-    G4LogicalVolume* sipm_logic_vol = sipm.GetLogicalVolume();
+    SiPMMPPC * sipm = nullptr;
+    if(SiPM_code_==1){
+      sipm = dynamic_cast<HamamatsuS133606050VE*>(sipm);
+      sipm = new HamamatsuS133606050VE();
+    }
+    else if(SiPM_code_==2){
+      sipm = dynamic_cast<HamamatsuS133605075HQR*>(sipm);
+      sipm = new HamamatsuS133605075HQR();
+    }
+    else{
+      sipm = dynamic_cast<FbkNuvHdCryoTT*>(sipm);
+      sipm = new FbkNuvHdCryoTT();
+    }
+    sipm->SetReflectiveSupports(ref_phsensors_supports_);  
+    sipm->Construct();
+    G4double sipm_thickn = sipm->GetThickness();
+    G4LogicalVolume* sipm_logic_vol = sipm->GetLogicalVolume();
 
     G4VisAttributes sipm_col = nexus::Red();
     sipm_col.SetForceSolid(true);
@@ -188,7 +239,7 @@ namespace nexus {
                         (GetOverallThickness()/2.) -GetBoardThickness() - (sipm_thickn/2.));
 
       new G4PVPlacement(rot, pos,
-                        sipm_logic_vol, "S133606050VE_MPPC",
+                        sipm_logic_vol, sipm->GetModel(),
                         encasing_logic_vol, false, phsensor_id, true);
 
       phsensor_id += 1;
@@ -197,7 +248,6 @@ namespace nexus {
     return;
 
   }
-
 
 }
 
