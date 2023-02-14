@@ -1,11 +1,11 @@
 #ifndef HAMAMATSU_S13360_6050VE_H
 #define HAMAMATSU_S13360_6050VE_H
 
-#include "GeometryBase.h"
+#include "SiPMMPPC.h"
 
 namespace nexus {
 
-  class HamamatsuS133606050VE: public GeometryBase
+  class HamamatsuS133606050VE: public SiPMMPPC
   {
   public:
     // Constructor for a Hamamatsu S13360-6050VE MPPC.
@@ -15,27 +15,17 @@ namespace nexus {
     // Destructor
     ~HamamatsuS133606050VE();
 
-    static const G4double transverse_dim_;      ///<One of the overall transverse dimensions (the MPPC section is square)
-    static const G4double thickness_;           ///<Overall thickness of the MPPC
-    static const G4double window_thickness_;    ///<Thickness of the epoxy window
-    static const G4double sensarea_td_;         ///<One of the transverse dimensions for the sensitive volume (its section is also an square)        
-    static const G4double sensarea_thickness_;  ///<Thickness of the sensitive volume. This is an approximation. This dimension does not matter since the sensarea will be coated with a sensitive optical surface and the only exposed face is the front one.
-
-    //Get methods
-    static G4double GetWidth();
-    static G4double GetHeight();
-    static G4double GetThickness();
-
-    void Construct();
-
-    //Set methods
-    inline void SetVisibility(G4bool input)                 { visibility_ = input; } 
-    inline void SetReflectiveSupports(G4bool input)         { reflective_support_ = input; }
+    G4double const GetTransverseDim()         override  { return 6.4*mm;          }   
+    G4double const GetSensareaTransverseDim() override  { return 6.0*mm;          }
+    G4double const GetThickness()             override  { return 1.35*mm;         }
+    G4double const GetWindowThickness()       override  { return 0.1*mm;          }   
+    G4double const GetSensareaThickness()     override  { return 0.1*mm;          }   
+    G4String const GetModel()                 override  { return "HS133606050VE"; }
 
   private:
-
-    G4bool visibility_;                         ///<Whether the MPPC is visible or not
-    G4bool reflective_support_;                 ///<Whether the FR4 support is vikuiti-coated
+    std::pair<G4int, G4double*> GetSensareaEnergyArray() override;
+    std::pair<G4int, G4double*> GetSensareaEfficiencyArray() override;
+    std::pair<G4int, G4double*> GetSensareaReflectivityArray() override;
   };
 
 } // namespace nexus
