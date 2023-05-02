@@ -82,17 +82,17 @@ namespace nexus {
     G4String path_to_outwards_dichroic_data_;                       ///< Absolute path to dichroic data file that is to be sampled for the light trying to escape the XA cavity
     G4double world_extra_thickn_;                                   ///< Extra thickness for the surrounding box world to wrap the XArapuca
 
-    ///---- General internal attributes ----///
+    ///---- General internal attributes ----///                     ///< These attributes are internal. They must not be set by the user.
     G4double overall_length_, overall_width_, overall_thickn_;      ///< Overall X-ARAPUCA dimensions
-    G4double DFA_length_, DFA_width_;                               ///< Dichroic filters assembly transverse dimensions. These attributes are internal. Must not be set by the user.
-    G4double DF_length_, DF_width_;                                 ///< Dichroic filter transverse dimensions. All of the filters of the DFA have the same dimensions. These attributes are internal.
+    G4double DFA_length_, DFA_width_;                               ///< Dichroic filters assembly transverse dimensions.
+    G4double DF_length_, DF_width_;                                 ///< Dichroic filter transverse dimensions. All of the filters of the DFA have the same dimensions.
 
     ///---- config_code_==1 parameters ----///
     G4double plate_length_, plate_width_, plate_thickn_;            ///< WLS plate thickness
     G4bool only_sipms_along_long_sides_;                            ///< Whether the photo sensors are installed only along the long sides of the X-ARAPUCA (i.e. the 'length' dimension), or along every side.
     G4bool with_boards_;                                            ///< Whether the photosensors are mounted on a board
     G4int PS_config_code_;                                          ///< Value in (1,2) which labels which photo sensors configuration will be simulated
-                                                                    ///< 1 -    num_phsensors_ are evenly distributed along each chosen* to side of the WLS plate.
+                                                                    ///< 1 -    num_phsensors_ are evenly distributed along each chosen* side of the WLS plate.
                                                                     ///< 2 -    one big photosensor (whose transversal dimensions match those of the WLS plate side face) is placed in front of each chosen* WLS plate side face.  
                                                                     ///< WARNING: Currently, PS_config_code_==2 is only available if with_boards_==false, so setting with_boards_==true automatically entails that num_phsensors_ different SiPMs per side will be installed      
                                                                     ///< NOTE: chosen* up to only_sipms_along_long_sides_
