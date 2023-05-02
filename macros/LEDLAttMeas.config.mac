@@ -1,0 +1,51 @@
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+#   X -> Largo
+#   Y -> Alto
+#   Z -> Ancho
+
+#---- Parameters used for every configuration ----#
+/Geometry/LAttMeas/config_code                          1
+/Geometry/LAttMeas/with_box                             true
+/Geometry/LAttMeas/black_box_internal_dx                70.0 cm
+/Geometry/LAttMeas/black_box_internal_dy                40.0 cm
+/Geometry/LAttMeas/black_box_internal_dz                65.0 cm
+/Geometry/LAttMeas/plate_x_pos                          0.0  cm
+/Geometry/LAttMeas/plate_y_pos                          0.0 cm
+/Geometry/LAttMeas/plate_z_pos                          16.0 cm
+/Geometry/LAttMeas/plate_dx                             50.0 cm
+/Geometry/LAttMeas/plate_dy                             4.5 cm
+/Geometry/LAttMeas/plate_dz                             3.9  mm
+/Geometry/LAttMeas/wls_attlength                        2.0  m
+/Geometry/LAttMeas/gap                                  0.5  mm
+/Geometry/LAttMeas/with_holder                          false
+/Geometry/LAttMeas/holder_x_pos                         0.0  cm
+/Geometry/LAttMeas/holder_y_pos                         -6.25  cm
+/Geometry/LAttMeas/holder_z_pos                         16.0 cm
+/Geometry/LAttMeas/holder_dx                            7.6  cm
+/Geometry/LAttMeas/holder_dy                            3.0  cm
+/Geometry/LAttMeas/holder_dz                            3.8  cm
+#/Geometry/LAttMeas/pmt_x_pos                            62.15 cm
+#/Geometry/LAttMeas/pmt_y_pos                            10.0  cm
+#/Geometry/LAttMeas/pmt_z_pos                            0.0  cm
+/Geometry/LAttMeas/pmt_case_depth                       7.0  cm
+/Geometry/LAttMeas/pmt_case_diameter                    4.5  cm
+/Geometry/LAttMeas/pmt_sensarea_diameter                2.7  cm
+/Geometry/LAttMeas/with_adapter                         true
+/Geometry/LAttMeas/adapter_x_pos                        25.6 cm
+/Geometry/LAttMeas/adapter_y_pos                        10.0 cm
+/Geometry/LAttMeas/adapter_z_pos                        0.0  cm
+/Geometry/LAttMeas/adp_diameter                         6.0  cm
+/Geometry/LAttMeas/adp_thickn                           5.0  mm
+/Geometry/LAttMeas/adp_hole_height                      26.4 mm
+/Geometry/LAttMeas/adp_slot_width                       4.0  mm
+/Geometry/LAttMeas/adp_slot_thickn                      3.0  mm
+/Geometry/LAttMeas/gen_vertex_x  24.0 cm
+
+/control/execute macros/generators/LED375L.mac
+
+/nexus/persistency/outputFile  /home/jurenag/installations/nexus-source/output/GenVertexStudy/200/vertex_pos24.0
