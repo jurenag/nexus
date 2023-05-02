@@ -1,0 +1,13 @@
+/control/execute macros/physics/OpticalPhysics.mac
+
+/nexus/RegisterGeometry LAttMeas
+
+/nexus/RegisterGenerator LED375L
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+
+/nexus/RegisterMacro macros/LEDLAttMeas.config.mac
