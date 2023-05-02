@@ -78,7 +78,7 @@ namespace nexus{
   ref_phsensors_supports_               (true                         ), 
   double_sided_                         (true                         ),
   collectors_are_reflective_            (false                        ),
-  generation_vertex_over_df_            (true                         ),
+  generation_region_                    ("random"                     ),
   path_to_inwards_dichroic_data_        (""                           ),
   path_to_outwards_dichroic_data_       (""                           ),
   world_extra_thickn_                   (100.   *cm                   ),
@@ -268,9 +268,9 @@ namespace nexus{
       msg_->DeclareProperty("collectors_are_reflective", collectors_are_reflective_,
 			    "Whether the test collectors are reflective.");
 
-    G4GenericMessenger::Command& gvod_cmd =
-      msg_->DeclareProperty("generation_vertex_over_df", generation_vertex_over_df_,
-			    "Whether the generation vertex is randomly sampled over any dichroic filter. If not, it is randomly sampled over the whohle DFA, including the frame itself.");
+    G4GenericMessenger::Command& gr_cmd =
+      msg_->DeclareProperty("generation_region", generation_region_,
+			    "Where to place the generation vertex.");
 
     G4GenericMessenger::Command& ptidd_cmd =
       msg_->DeclareProperty("path_to_inwards_dichroic_data", path_to_inwards_dichroic_data_,
@@ -1459,37 +1459,46 @@ namespace nexus{
 
   G4ThreeVector XArapuca::GenerateVertex(const G4String&) const{
 
-    G4double tolerance = 0.1*mm;    // Short distance over the dichroic filter (DF)
-                                    // from which photons are launched. Also, the 
-                                    // width of the outter border projected over the
-                                    // DF from which photons won't be launched
-                                    // (Just see the implementation in x_pos and
-                                    // z_pos below to understand its meaning)
+    G4double tolerance = 0.1*mm;    // Short distance over the dichroic filter assembly 
+                                    // (DFA) from which photons are launched. Also, the 
+                                    // width of the outter border projected over the DF 
+                                    // from which photons won't be launched (Just see the 
+                                    // implementation in x_pos and z_pos below to understand 
+                                    // its meaning)
 
-    std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    std::uniform_int_distribution<> dist(0, df_no_along_wlsplength_*df_no_along_wlspwidth_ -1);
-    G4int filter_no = dist(gen);
-    
-    G4int column_no = filter_no%df_no_along_wlsplength_;                // \in[0, df_no_along_wlsplength -1]  
-    G4int row_no = (int) std::floor(filter_no/df_no_along_wlsplength_); // \in[0, df_no_along_wlspwidth -1]
-
-    G4double selected_filter_x_center =  (-1.*(DFA_length_/2.)) +outter_frame_width_along_wlsplength_   +(column_no*inner_frames_width_along_wlsplength_)   +((column_no+0.5)*DF_length_);
-    G4double selected_filter_z_center =  (-1.*(DFA_width_/2.))  +outter_frame_width_along_wlspwidth_    +(row_no*inner_frames_width_along_wlspwidth_)       +((row_no+0.5)*DF_width_);
     G4double x_pos, z_pos;
     G4double y_pos = (internal_thickn_/2.) +DFA_thickn_ +tolerance;
 
-    if(!generation_vertex_over_df_){
-        x_pos = UniformRandomInRange(  -1.*DFA_length_/2.,
-                                        DFA_length_/2.      );
-        z_pos = UniformRandomInRange(  -1.*DFA_width_/2.,
-                                        DFA_width_/2.       );
+    if(generation_region_=="dichroic"){
+      std::random_device rd;  //Will be used to obtain a seed for the random number engine
+      std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+      std::uniform_int_distribution<> dist(0, df_no_along_wlsplength_*df_no_along_wlspwidth_ -1);
+      G4int filter_no = dist(gen);
+
+      G4int column_no = filter_no%df_no_along_wlsplength_;                // \in[0, df_no_along_wlsplength -1]  
+      G4int row_no = (int) std::floor(filter_no/df_no_along_wlsplength_); // \in[0, df_no_along_wlspwidth -1]
+
+      G4double selected_filter_x_center =  (-1.*(DFA_length_/2.)) +outter_frame_width_along_wlsplength_   +(column_no*inner_frames_width_along_wlsplength_)   +((column_no+0.5)*DF_length_);
+      G4double selected_filter_z_center =  (-1.*(DFA_width_/2.))  +outter_frame_width_along_wlspwidth_    +(row_no*inner_frames_width_along_wlspwidth_)       +((row_no+0.5)*DF_width_);
+
+      x_pos = UniformRandomInRange(  selected_filter_x_center -(DF_length_/2.) +tolerance, 
+                                              selected_filter_x_center +(DF_length_/2.) -tolerance    );
+      z_pos = UniformRandomInRange(  selected_filter_z_center -(DF_width_/2.) +tolerance, 
+                                              selected_filter_z_center +(DF_width_/2.) -tolerance     );
     }
-    else{
-        x_pos = UniformRandomInRange(  selected_filter_x_center -(DF_length_/2.) +tolerance, 
-                                                selected_filter_x_center +(DF_length_/2.) -tolerance    );
-        z_pos = UniformRandomInRange(  selected_filter_z_center -(DF_width_/2.) +tolerance, 
-                                                selected_filter_z_center +(DF_width_/2.) -tolerance     );
+    else if(generation_region_=="center"){
+      x_pos = 0.;
+      z_pos = 0.;
+    }
+    else if(generation_region_=="corner"){
+      x_pos = -1.*DFA_length_/2.  +outter_frame_width_along_wlsplength_ +2.*cm;
+      z_pos = -1.*DFA_width_/2.   +outter_frame_width_along_wlspwidth_  +2.*cm;
+    }
+    else{ // Default behaviour is that of generation_region_=="random"
+      x_pos = UniformRandomInRange(  -1.*DFA_length_/2.,
+                                      DFA_length_/2.      );
+      z_pos = UniformRandomInRange(  -1.*DFA_width_/2.,
+                                      DFA_width_/2.       );
     }
     return G4ThreeVector(x_pos, y_pos, z_pos);
   }
