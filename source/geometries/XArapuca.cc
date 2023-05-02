@@ -1394,9 +1394,9 @@ namespace nexus{
         else{
             HamamatsuS133606050VE sipm; 
             if(PS_config_code_==1){
-                if(num_phsensors_*sipm.GetWidth()>plate_length_) { return true; }
+                if(num_phsensors_*sipm.GetTransverseDim()>plate_length_) { return true; }
                 if(!only_sipms_along_long_sides_){
-                    if(num_phsensors_*sipm.GetWidth()>plate_width_) { return true; }
+                    if(num_phsensors_*sipm.GetTransverseDim()>plate_width_) { return true; }
                 }
 
             }
@@ -1407,7 +1407,7 @@ namespace nexus{
                                                                                             // have the same thickness, so there's no need to distinguish between both
                                                                                             // according to PS_config_code_ value
             internal_geom_width_span = plate_width_+(2.*gap_)+(2.*sipm.GetThickness());
-            internal_geom_thickn_span = std::max(plate_thickn_, sipm.GetHeight());
+            internal_geom_thickn_span = std::max(plate_thickn_, sipm.GetTransverseDim());
         }
     }
     else if(config_code_==2)
