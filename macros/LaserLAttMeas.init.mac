@@ -1,0 +1,13 @@
+/control/execute macros/physics/OpticalPhysics.mac
+
+/nexus/RegisterGeometry LAttMeas
+
+/nexus/RegisterGenerator NPL45C
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+
+/nexus/RegisterMacro macros/LaserLAttMeas.config.mac
