@@ -77,7 +77,12 @@ namespace nexus {
     G4bool ref_phsensors_supports_;                                 ///< Whether photosensors supports are reflective (the FR4 box that supports the SiPM, regardless PS_config_code_)
     G4bool double_sided_;                                           ///< Whether there are dichroic filters on both sides of the WLS plate
     G4bool collectors_are_reflective_;                              ///< Whether the collectors that replace the dichroic filters are reflective or not                                      
-    G4bool generation_vertex_over_df_;                              ///< Whether the generation vertex is randomly sampled over any dichroic filter. If not, it is randomly sampled over the whohle DFA, including the frame itself.
+    G4String generation_region_;                                    ///< Where to place the generation vertex (GV).
+                                                                    ///< 'random'   - The GV is randomly sampled over the DFA (including the frame)
+                                                                    ///< 'dichroic' - The GV is randomly sampled over the DFs (not including the frame)
+                                                                    ///< 'center'   - The GV is placed on top of the geometric center of the XArapuca
+                                                                    ///< 'corner'   - The GV is placed on top of the corner DF (the one placed in x<0 and z<0) 
+                                                                    ///               but 2 cm apart from each side of the DF.
     G4String path_to_inwards_dichroic_data_;                        ///< Absolute path to dichroic data file that is to be sampled for the light trying to enter the XA cavity
     G4String path_to_outwards_dichroic_data_;                       ///< Absolute path to dichroic data file that is to be sampled for the light trying to escape the XA cavity
     G4double world_extra_thickn_;                                   ///< Extra thickness for the surrounding box world to wrap the XArapuca
