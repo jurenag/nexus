@@ -37,6 +37,57 @@ namespace opticalprops {
 
 
 
+
+  /// Air /// < For the time being, the code for this one is copied from
+  // Vacuum(). We should look for further information on the air optical
+  // properties and tune this. 
+  G4MaterialPropertiesTable* Air()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+
+    // REFRACTIVE INDEX
+    std::vector<G4double> photEnergy_rindex = { h_Planck*c_light/(1681.7055*nm), h_Planck*c_light/(1649.4682*nm), h_Planck*c_light/(1610.0732*nm), 
+                                                h_Planck*c_light/(1570.6809*nm), h_Planck*c_light/(1531.2798*nm), h_Planck*c_light/(1491.8881*nm), 
+                                                h_Planck*c_light/(1452.4924*nm), h_Planck*c_light/(1413.0967*nm), h_Planck*c_light/(1373.705*nm), 
+                                                h_Planck*c_light/(1334.31*nm), h_Planck*c_light/(1294.9176*nm), h_Planck*c_light/(1255.5279*nm), 
+                                                h_Planck*c_light/(1216.1356*nm), h_Planck*c_light/(1176.7459*nm), h_Planck*c_light/(1137.359*nm), 
+                                                h_Planck*c_light/(1097.972*nm), h_Planck*c_light/(1058.5863*nm), h_Planck*c_light/(1019.2041*nm), 
+                                                h_Planck*c_light/(979.8211*nm), h_Planck*c_light/(940.4435*nm), h_Planck*c_light/(901.068*nm), 
+                                                h_Planck*c_light/(861.6971*nm), h_Planck*c_light/(822.3296*nm), h_Planck*c_light/(782.9674*nm), 
+                                                h_Planck*c_light/(743.612*nm), h_Planck*c_light/(704.2647*nm), h_Planck*c_light/(664.9287*nm), 
+                                                h_Planck*c_light/(625.6028*nm), h_Planck*c_light/(586.2964*nm), h_Planck*c_light/(547.0115*nm), 
+                                                h_Planck*c_light/(507.7601*nm), h_Planck*c_light/(472.1026*nm), h_Planck*c_light/(443.6127*nm), 
+                                                h_Planck*c_light/(420.4943*nm), h_Planck*c_light/(400.9555*nm), h_Planck*c_light/(383.2187*nm), 
+                                                h_Planck*c_light/(367.2825*nm), h_Planck*c_light/(353.1358*nm), h_Planck*c_light/(340.7813*nm), 
+                                                h_Planck*c_light/(330.2152*nm), h_Planck*c_light/(319.664*nm), h_Planck*c_light/(310.895*nm), 
+                                                h_Planck*c_light/(303.89*nm), h_Planck*c_light/(296.896*nm), h_Planck*c_light/(289.9242*nm), 
+                                                h_Planck*c_light/(282.9709*nm), h_Planck*c_light/(276.0397*nm), h_Planck*c_light/(269.127*nm), 
+                                                h_Planck*c_light/(262.7743*nm), h_Planck*c_light/(258.7874*nm), h_Planck*c_light/(255.368*nm), 
+                                                h_Planck*c_light/(251.9522*nm), h_Planck*c_light/(248.5697*nm)};
+
+    
+    std::vector<G4double> rIndex = {  1.000273071, 1.000273075, 1.000273116, 1.000273175, 1.000273179, 1.000273241, 1.000273279, 1.000273316, 
+                                      1.000273379, 1.00027342, 1.000273478, 1.000273553, 1.000273612, 1.000273687, 1.000273778, 1.00027387, 
+                                      1.00027397, 1.000274091, 1.000274207, 1.000274358, 1.00027452, 1.000274712, 1.000274924, 1.00027517, 
+                                      1.000275458, 1.000275796, 1.000276205, 1.000276676, 1.000277268, 1.000277994, 1.000278928, 1.000279936, 
+                                      1.000280966, 1.000281988, 1.000282995, 1.00028407, 1.000285205, 1.000286331, 1.000287464, 1.000288581, 
+                                      1.000289791, 1.000290946, 1.000291934, 1.00029299, 1.000294183, 1.000295492, 1.000296938, 1.000298498, 
+                                      1.00029983, 1.000301023, 1.000302033, 1.000303065, 1.000304305};
+
+    mpt->AddProperty("RINDEX", photEnergy_rindex, rIndex);
+
+    // ABSORPTION LENGTH
+    std::vector<G4double> photEnergy_abslength = {optPhotMinE_, optPhotMaxE_};
+    std::vector<G4double> absLength = {noAbsLength_, noAbsLength_};
+    mpt->AddProperty("ABSLENGTH", photEnergy_abslength, absLength);
+
+    return mpt;
+  }
+
+
+
+  /// Fused Silica ///
   G4MaterialPropertiesTable* FusedSilica()
   {
     // Optical properties of Suprasil 311/312(c) synthetic fused silica.
