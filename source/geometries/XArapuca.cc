@@ -5,6 +5,8 @@
 #include "FactoryBase.h"  
 #include "WLSPlate.h"
 #include "HamamatsuS133606050VE.h"
+#include "HamamatsuS133605075HQR.h"
+#include "FbkNuvHdCryoTT.h"
 #include "ScalableHamamatsuS133606050VE.h"
 #include "SiPMBoard.h"
 #include "RandomUtils.h"
@@ -72,6 +74,7 @@ namespace nexus{
   remove_DFA_frame_                     (false                        ),
   secondary_wls_attlength_              (1.     *m                    ),
   case_thickn_                          (1.     *mm                   ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
+  SiPM_code_                            (1                            ),
   PS_config_code_                       (1                            ),
   num_phsensors_                        (24                           ),
   gap_                                  (0.5    *mm                   ),
@@ -236,6 +239,12 @@ namespace nexus{
     ct_cmd.SetUnitCategory("Length");
     ct_cmd.SetParameterName("case_thickn", false);
     ct_cmd.SetRange("case_thickn>0.");
+
+    G4GenericMessenger::Command& sc_cmd =
+      msg_->DeclareProperty("SiPM_code", SiPM_code_,
+			    "Integer signalling which SiPM to construct.");
+    sc_cmd.SetParameterName("SiPM_code", false);
+    sc_cmd.SetRange("SiPM_code>=1"); 
 
     G4GenericMessenger::Command& pscc_cmd =
       msg_->DeclareProperty("PS_config_code", PS_config_code_,
@@ -582,12 +591,21 @@ namespace nexus{
     sipm_col.SetForceSolid(true);
 
     if(PS_config_code_==1){
+        SiPMMPPC* sipm_ptr = nullptr;
+        if(SiPM_code_==1){
+          sipm_ptr = new HamamatsuS133606050VE();
+        }
+        else if(SiPM_code_==2){
+          sipm_ptr = new HamamatsuS133605075HQR();
+        }
+        else{
+          sipm_ptr = new FbkNuvHdCryoTT();
+        }
 
-        HamamatsuS133606050VE sipm;
-        sipm.SetReflectiveSupports(ref_phsensors_supports_);
-        sipm.Construct();
-        G4double sipm_thickn = sipm.GetThickness();
-        G4LogicalVolume* sipm_logic_vol = sipm.GetLogicalVolume();
+        sipm_ptr->SetReflectiveSupports(ref_phsensors_supports_);
+        sipm_ptr->Construct();
+        G4double sipm_thickn = sipm_ptr->GetThickness();
+        G4LogicalVolume* sipm_logic_vol = sipm_ptr->GetLogicalVolume();
 
         if (!sipm_logic_vol) {
         G4Exception("[XArapuca]", "ConstructPhotosensors()",
@@ -606,7 +624,7 @@ namespace nexus{
                                 -plate_width_/2. -sipm_thickn/2. -gap_);
 
             new G4PVPlacement(  rot, pos,
-                                "S133606050VE_MPPC", sipm_logic_vol,
+                                sipm_ptr->GetModel(), sipm_logic_vol,
                                 mother_physical, false, phsensor_id, true);
             phsensor_id += 1;
         }
@@ -619,7 +637,7 @@ namespace nexus{
                                 +plate_width_/2. +sipm_thickn/2. +gap_);
 
             new G4PVPlacement(rot2, pos,
-                                "S133606050VE_MPPC", sipm_logic_vol,
+                                sipm_ptr->GetModel(), sipm_logic_vol,
                                 mother_physical, false, phsensor_id, true);
             phsensor_id += 1;
         }
@@ -633,7 +651,7 @@ namespace nexus{
                                     -plate_width_/2. + (0.5 + i) * plate_width_/num_phsensors_);
 
                 new G4PVPlacement(  rot3, pos,
-                                    "S133606050VE_MPPC", sipm_logic_vol,
+                                    sipm_ptr->GetModel(), sipm_logic_vol,
                                     mother_physical, false, phsensor_id, true);
                 phsensor_id += 1;
             }
@@ -646,7 +664,7 @@ namespace nexus{
                                     -plate_width_/2. + (0.5 + i) * plate_width_/num_phsensors_);
 
                 new G4PVPlacement(  rot4, pos,
-                                    "S133606050VE_MPPC", sipm_logic_vol,
+                                    sipm_ptr->GetModel(), sipm_logic_vol,
                                     mother_physical, false, phsensor_id, true);
                 phsensor_id += 1;
             }
@@ -735,6 +753,7 @@ namespace nexus{
         SiPMBoard board1;
         board1.SetBaseID(0);
         board1.SetBoardLength(plate_length_);
+        board1.SetSiPMCode(SiPM_code_);
         board1.SetNumPhsensors(num_phsensors_);
         board1.SetReflectiveSupports(ref_phsensors_supports_);
         board1.Construct();
@@ -752,6 +771,7 @@ namespace nexus{
         SiPMBoard board2;
         board2.SetBaseID(num_phsensors_);
         board2.SetBoardLength(plate_length_);
+        board2.SetSiPMCode(SiPM_code_);
         board2.SetNumPhsensors(num_phsensors_);
         board2.SetReflectiveSupports(ref_phsensors_supports_);
         board2.Construct();
@@ -768,6 +788,7 @@ namespace nexus{
             SiPMBoard board3;
             board3.SetBaseID(2*num_phsensors_);
             board3.SetBoardLength(plate_width_);
+            board3.SetSiPMCode(SiPM_code_);
             board3.SetNumPhsensors(num_phsensors_);
             board3.SetReflectiveSupports(ref_phsensors_supports_);
             board3.Construct();
@@ -783,6 +804,7 @@ namespace nexus{
             SiPMBoard board4;
             board4.SetBaseID(3*num_phsensors_);
             board4.SetBoardLength(plate_width_);
+            board4.SetSiPMCode(SiPM_code_);
             board4.SetNumPhsensors(num_phsensors_);
             board4.SetReflectiveSupports(ref_phsensors_supports_);
             board4.Construct();
@@ -799,11 +821,13 @@ namespace nexus{
     else if(config_code_==2){
         SiPMBoard board1;
         board1.SetBaseID(0);
+        board1.SetSiPMCode(SiPM_code_);
         board1.SetNumPhsensors(num_phsensors_);
         board1.SetReflectiveSupports(ref_phsensors_supports_);
 
         SiPMBoard board2;
         board2.SetBaseID(num_phsensors_);
+        board2.SetSiPMCode(SiPM_code_);
         board2.SetNumPhsensors(num_phsensors_);
         board2.SetReflectiveSupports(ref_phsensors_supports_);
 
@@ -1392,22 +1416,32 @@ namespace nexus{
             internal_geom_thickn_span   = std::max(plate_thickn_, board.GetOverallHeight());
         }
         else{
-            HamamatsuS133606050VE sipm; 
+            SiPMMPPC* sipm_ptr = nullptr;
+            if(SiPM_code_==1){
+              sipm_ptr = new HamamatsuS133606050VE();
+            }
+            else if(SiPM_code_==2){
+              sipm_ptr = new HamamatsuS133605075HQR();
+            }
+            else{
+              sipm_ptr = new FbkNuvHdCryoTT();
+            }
             if(PS_config_code_==1){
-                if(num_phsensors_*sipm.GetTransverseDim()>plate_length_) { return true; }
+                if(num_phsensors_*sipm_ptr->GetTransverseDim()>plate_length_) { return true; }
                 if(!only_sipms_along_long_sides_){
-                    if(num_phsensors_*sipm.GetTransverseDim()>plate_width_) { return true; }
+                    if(num_phsensors_*sipm_ptr->GetTransverseDim()>plate_width_) { return true; }
                 }
 
             }
             // Else if PS_config_code_==2, the scalable SiPM is build with the exact plate 
             // dimensions, so there's no need to care about such case here
 
-            internal_geom_length_span = plate_length_+(2.*gap_)+(2.*sipm.GetThickness());   // Either the HamamatsuS133606050VE and the ScalableHamamatsuS133606050VE
+            internal_geom_length_span = plate_length_+(2.*gap_)+(2.*sipm_ptr->GetThickness());   // Either the HamamatsuS133606050VE and the ScalableHamamatsuS133606050VE
                                                                                             // have the same thickness, so there's no need to distinguish between both
                                                                                             // according to PS_config_code_ value
-            internal_geom_width_span = plate_width_+(2.*gap_)+(2.*sipm.GetThickness());
-            internal_geom_thickn_span = std::max(plate_thickn_, sipm.GetTransverseDim());
+            internal_geom_width_span = plate_width_+(2.*gap_)+(2.*sipm_ptr->GetThickness());
+            internal_geom_thickn_span = std::max(plate_thickn_, sipm_ptr->GetTransverseDim());
+            delete sipm_ptr;
         }
     }
     else if(config_code_==2)
