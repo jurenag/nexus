@@ -71,6 +71,10 @@ namespace nexus {
     G4bool remove_DFA_frame_;                                       ///< Whether to remove the dichroic filters assembly frame
     G4double secondary_wls_attlength_;                              ///< Attenuation length of the secondary WLShifter. For config_code_==1 (resp. 2), this is the attenuation length for the WLS plate (WLS fibers).
     G4double case_thickn_;                                          ///< Reflective foils thickness
+    G4int SiPM_code_;                                               ///< Integer signalling which SiPM to construct
+                                                                    ///< 1                  -> Hamamatsu S13360-6050VE
+                                                                    ///< 2                  -> Hamamatsu S13360-5075HD-HQR
+                                                                    ///< Any other integer  -> FBK-NUV-HD-CRYO-TT
     G4int num_phsensors_;                                           ///< If config_code_==1, this is the number of SiPMs per long side
                                                                     ///< If config_code_==2, this is the number of photosensors per side which is perpendicular to the fibers
     G4double gap_;                                                  ///< Gap between photosensors and WLS material. A negative gap can help modelate the immersion of the SiPMs into the flat dimples. Be careful not to collide the SiPMs into the plate.
@@ -98,7 +102,8 @@ namespace nexus {
     G4bool with_boards_;                                            ///< Whether the photosensors are mounted on a board
     G4int PS_config_code_;                                          ///< Value in (1,2) which labels which photo sensors configuration will be simulated
                                                                     ///< 1 -    num_phsensors_ are evenly distributed along each chosen* side of the WLS plate.
-                                                                    ///< 2 -    one big photosensor (whose transversal dimensions match those of the WLS plate side face) is placed in front of each chosen* WLS plate side face.  
+                                                                    ///< 2 -    one big photosensor (whose transversal dimensions match those of the WLS plate side face) which matches the efficiency curve of HamamatsuS133606050VE is placed in front of each chosen* WLS 
+                                                                    ///<        plate side face. In this case, which specific SiPM to implement cannot be chosen.  
                                                                     ///< WARNING: Currently, PS_config_code_==2 is only available if with_boards_==false, so setting with_boards_==true automatically entails that num_phsensors_ different SiPMs per side will be installed      
                                                                     ///< NOTE: chosen* up to only_sipms_along_long_sides_
     G4bool with_dimples_;                                           ///< Whether the plate has carved dimples on it.
