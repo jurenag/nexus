@@ -374,8 +374,8 @@ namespace nexus{
     // of the "E" chunk are those of the actual SiPM
 
     HamamatsuS133606050VE sipm;
-    G4double sipm_height = sipm.GetHeight();
-    G4double sipm_width = sipm.GetWidth();
+    G4double sipm_height = sipm.GetTransverseDim();
+    G4double sipm_width = sipm.GetTransverseDim();
 
     const G4String central_chunk_name = "CENTRAL_CHUNK";
     const G4String ext_chunk_name = "EXT_CHUNK";
