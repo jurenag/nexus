@@ -67,7 +67,6 @@ namespace nexus{
   inner_frames_width_along_wlspwidth_   (2.     *mm                   ),
   df_no_along_wlsplength_               (2                            ),
   df_no_along_wlspwidth_                (3                            ),
-  DFA_config_code_                      (1                            ),
   DFA_frame_is_reflective_              (false                        ),
   DFA_frame_is_specular_                (true                         ),
   remove_DFs_                           (false                        ),  
