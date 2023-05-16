@@ -1543,10 +1543,6 @@ namespace nexus{
       x_pos = 0.;
       z_pos = 0.;
     }
-    else if(generation_region_=="corner"){
-      x_pos = -1.*DFA_length_/2.  +outter_frame_width_along_wlsplength_ +2.*cm;
-      z_pos = -1.*DFA_width_/2.   +outter_frame_width_along_wlspwidth_  +2.*cm;
-    }
     else if(generation_region_=="custom"){
       G4double random_radius =  UniformRandomInRange(gen_diameter_/2., 0.);
       G4double random_angle =   UniformRandomInRange(twopi, 0.); 
