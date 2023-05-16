@@ -86,7 +86,11 @@ namespace nexus {
                                                                     ///< 'dichroic' - The GV is randomly sampled over the DFs (not including the frame)
                                                                     ///< 'center'   - The GV is placed on top of the geometric center of the XArapuca
                                                                     ///< 'corner'   - The GV is placed on top of the corner DF (the one placed in x<0 and z<0) 
-                                                                    ///               but 2 cm apart from each side of the DF.
+                                                                    ///<              but 2 cm apart from each side of the DF.
+                                                                    ///< 'custom'   - The GV is randomly sampled within a circle centered in (gen_x_, -, gen_z_)
+                                                                    ///<              whose diameter is equal to gen_diameter_.
+    G4double gen_x_, gen_z_;                                        ///< Average GV coordinates. It is only used if generation_region_=='custom' is True.
+    G4double gen_diameter_;                                         ///< Diameter of the circle where the GV could be randomly sampled. It is only used if generation_region_=='custom' is True.
     G4String path_to_inwards_dichroic_data_;                        ///< Absolute path to dichroic data file that is to be sampled for the light trying to enter the XA cavity
     G4String path_to_outwards_dichroic_data_;                       ///< Absolute path to dichroic data file that is to be sampled for the light trying to escape the XA cavity
     G4double world_extra_thickn_;                                   ///< Extra thickness for the surrounding box world to wrap the XArapuca

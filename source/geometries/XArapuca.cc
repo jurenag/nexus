@@ -81,6 +81,9 @@ namespace nexus{
   double_sided_                         (true                         ),
   collectors_are_reflective_            (false                        ),
   generation_region_                    ("random"                     ),
+  gen_x_                                (0.     *cm                   ),
+  gen_z_                                (0.     *cm                   ),
+  gen_diameter_                         (1.*cm                        ),
   path_to_inwards_dichroic_data_        (""                           ),
   path_to_outwards_dichroic_data_       (""                           ),
   world_extra_thickn_                   (100.   *cm                   ),
@@ -279,6 +282,23 @@ namespace nexus{
     G4GenericMessenger::Command& gr_cmd =
       msg_->DeclareProperty("generation_region", generation_region_,
 			    "Where to place the generation vertex.");
+
+    G4GenericMessenger::Command& gx_cmd =
+      msg_->DeclareProperty("gen_x", gen_x_,
+			    "Average X-coordinate of the generation vertex if generation_region_=='custom'.");
+    gx_cmd.SetUnitCategory("Length");
+          
+    G4GenericMessenger::Command& gz_cmd =
+      msg_->DeclareProperty("gen_z", gen_z_,
+			    "Average Z-coordinate of the generation vertex if generation_region_=='custom'.");
+    gz_cmd.SetUnitCategory("Length");
+
+    G4GenericMessenger::Command& gd_cmd =
+      msg_->DeclareProperty("gen_diameter", gen_diameter_,
+			    "Diameter of the circle where the GV could be randomly sampled if generation_region_=='custom' is True.");
+    gd_cmd.SetUnitCategory("Length");
+    gd_cmd.SetParameterName("gen_diameter", false);
+    gd_cmd.SetRange("gen_diameter>0.");
 
     G4GenericMessenger::Command& ptidd_cmd =
       msg_->DeclareProperty("path_to_inwards_dichroic_data", path_to_inwards_dichroic_data_,
@@ -1492,7 +1512,7 @@ namespace nexus{
 
   G4ThreeVector XArapuca::GenerateVertex(const G4String&) const{
 
-    G4double tolerance = 0.1*mm;    // Short distance over the dichroic filter assembly 
+    G4double tolerance = 0.1*mm;    // Small distance over the dichroic filter assembly 
                                     // (DFA) from which photons are launched. Also, the 
                                     // width of the outter border projected over the DF 
                                     // from which photons won't be launched (Just see the 
@@ -1526,6 +1546,12 @@ namespace nexus{
     else if(generation_region_=="corner"){
       x_pos = -1.*DFA_length_/2.  +outter_frame_width_along_wlsplength_ +2.*cm;
       z_pos = -1.*DFA_width_/2.   +outter_frame_width_along_wlspwidth_  +2.*cm;
+    }
+    else if(generation_region_=="custom"){
+      G4double random_radius =  UniformRandomInRange(gen_diameter_/2., 0.);
+      G4double random_angle =   UniformRandomInRange(twopi, 0.); 
+      x_pos = gen_x_ +(random_radius*sin(random_angle));
+      z_pos = gen_z_ +(random_radius*cos(random_angle));
     }
     else{ // Default behaviour is that of generation_region_=="random"
       x_pos = UniformRandomInRange(  -1.*DFA_length_/2.,
