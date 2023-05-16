@@ -30,7 +30,7 @@ namespace nexus {
                                     3.5976*eV, 3.6112*eV, 3.625*eV, 3.6389*eV, 3.6528*eV, 3.6669*eV, 
                                     3.6907*eV, 3.7195*eV, 3.7488*eV, 3.7836*eV, 3.8138*eV, 3.8447*eV, 
                                     opticalprops::optPhotMaxE_};
-    return std::make_pair(72, energy);
+    return std::make_pair(this->GetNPoints(), energy);
   }
 
   std::pair<G4int, G4double*> HamamatsuS133606050VE::GetSensareaEfficiencyArray(){
@@ -42,7 +42,7 @@ namespace nexus {
                                           0.3563, 0.3465, 0.3352, 0.3217, 0.3063, 0.2904, 0.2734, 0.2612, 0.2498, 
                                           0.2319, 0.2201, 0.2103, 0.1993, 0.1859, 0.1741, 0.1656, 0.1546, 0.1461, 
                                           0.1351, 0.127, 0.1107, 0.0928, 0.0752, 0.0586, 0.044, 0.0318, 0.0};
-    return std::make_pair(72, efficiency);
+    return std::make_pair(this->GetNPoints(), efficiency);
   }
 
   std::pair<G4int, G4double*> HamamatsuS133606050VE::GetSensareaReflectivityArray(){
@@ -52,6 +52,6 @@ namespace nexus {
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    return std::make_pair(72, reflectivity);
+    return std::make_pair(this->GetNPoints(), reflectivity);
   }
 }
