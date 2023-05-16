@@ -40,7 +40,7 @@ namespace nexus {
                                     h_Planck*c_light/(315.75*nm), h_Planck*c_light/(308.94*nm), h_Planck*c_light/(301.38*nm), 
                                     h_Planck*c_light/(298.35*nm), h_Planck*c_light/(291.85*nm), h_Planck*c_light/(288.22*nm), 
                                     h_Planck*c_light/(286.58*nm), h_Planck*c_light/(285.25*nm), opticalprops::optPhotMaxE_};
-    return std::make_pair(67, energy);
+    return std::make_pair(this->GetNPoints(), energy);
   }
  
   std::pair<G4int, G4double*> HamamatsuS133605075HQR::GetSensareaEfficiencyArray(){
@@ -51,7 +51,7 @@ namespace nexus {
                                         0.4997, 0.4911, 0.4784, 0.4634, 0.4494, 0.4352, 0.4201, 0.4048, 0.3909, 0.3785, 0.3618, 
                                         0.3547, 0.3388, 0.325, 0.3108, 0.297, 0.2687, 0.2548, 0.2153, 0.1776, 0.1548, 0.1274, 
                                         0.000};
-    return std::make_pair(67, efficiency);
+    return std::make_pair(this->GetNPoints(), efficiency);
   }
 
   std::pair<G4int, G4double*> HamamatsuS133605075HQR::GetSensareaReflectivityArray(){
@@ -59,6 +59,6 @@ namespace nexus {
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    return std::make_pair(67, reflectivity);
+    return std::make_pair(this->GetNPoints(), reflectivity);
   }    
 }

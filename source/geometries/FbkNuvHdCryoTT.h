@@ -22,6 +22,7 @@ namespace nexus {
     G4String const GetModel()                 override  { return "FbkNuvHdCryoTT";}
 
   private:
+    G4int GetNPoints() override { return 3;}
     std::pair<G4int, G4double*> GetSensareaEnergyArray() override;
     std::pair<G4int, G4double*> GetSensareaEfficiencyArray() override;
     std::pair<G4int, G4double*> GetSensareaReflectivityArray() override;
