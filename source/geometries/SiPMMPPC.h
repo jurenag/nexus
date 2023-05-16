@@ -41,6 +41,7 @@ namespace nexus {
     virtual G4String const GetModel() =0;                 ///< Name of the SiPM model   
 
   private:
+    virtual G4int GetNPoints()=0;
     virtual std::pair<G4int, G4double*> GetSensareaEnergyArray()=0;
     virtual std::pair<G4int, G4double*> GetSensareaEfficiencyArray()=0;
     virtual std::pair<G4int, G4double*> GetSensareaReflectivityArray()=0;
