@@ -17,7 +17,7 @@ namespace nexus {
   }
 
   std::pair<G4int, G4double*> HamamatsuS133606050VE::GetSensareaEnergyArray(){
-    G4double* energy = new double[]{opticalprops::optPhotMinE_, 1.384*eV, 1.4003*eV, 1.4255*eV, 1.4516*eV, 
+    G4double* energy = new double[this->GetNPoints()]{opticalprops::optPhotMinE_, 1.384*eV, 1.4003*eV, 1.4255*eV, 1.4516*eV, 
                                     1.4787*eV, 1.5068*eV, 1.536*eV, 1.5663*eV, 1.5979*eV, 1.6279*eV, 
                                     1.6563*eV, 1.6856*eV, 1.716*eV, 1.7475*eV, 1.7802*eV, 1.8107*eV, 
                                     1.8387*eV, 1.8676*eV, 1.8974*eV, 1.9281*eV, 1.9559*eV, 1.9803*eV, 
@@ -34,7 +34,7 @@ namespace nexus {
   }
 
   std::pair<G4int, G4double*> HamamatsuS133606050VE::GetSensareaEfficiencyArray(){
-    G4double* efficiency   = new double[]{0.0, 0.0367, 0.0408, 0.0474, 0.0544, 0.0623, 0.07, 0.0783, 0.0871, 
+    G4double* efficiency   = new double[this->GetNPoints()]{0.0, 0.0367, 0.0408, 0.0474, 0.0544, 0.0623, 0.07, 0.0783, 0.0871, 
                                           0.0961, 0.1056, 0.1151, 0.1248, 0.1348, 0.145, 0.1554, 0.166, 0.1758, 
                                           0.1855, 0.1961, 0.2073, 0.2197, 0.2321, 0.2424, 0.2519, 0.2606, 0.2709, 
                                           0.2809, 0.2912, 0.3018, 0.3124, 0.3224, 0.3333, 0.3433, 0.3536, 0.3628, 
@@ -46,7 +46,7 @@ namespace nexus {
   }
 
   std::pair<G4int, G4double*> HamamatsuS133606050VE::GetSensareaReflectivityArray(){
-    G4double* reflectivity = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    G4double* reflectivity = new double[this->GetNPoints()]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 

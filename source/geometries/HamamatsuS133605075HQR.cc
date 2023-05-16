@@ -17,7 +17,7 @@ namespace nexus {
   }
 
   std::pair<G4int, G4double*> HamamatsuS133605075HQR::GetSensareaEnergyArray(){
-    G4double* energy = new double[]{opticalprops::optPhotMinE_, 
+    G4double* energy = new double[this->GetNPoints()]{opticalprops::optPhotMinE_, 
                                     h_Planck*c_light/(994.74*nm), h_Planck*c_light/(978.11*nm), h_Planck*c_light/(961.47*nm), 
                                     h_Planck*c_light/(944.84*nm), h_Planck*c_light/(928.2*nm), h_Planck*c_light/(911.57*nm), 
                                     h_Planck*c_light/(894.94*nm), h_Planck*c_light/(878.3*nm), h_Planck*c_light/(861.67*nm), 
@@ -44,7 +44,7 @@ namespace nexus {
   }
  
   std::pair<G4int, G4double*> HamamatsuS133605075HQR::GetSensareaEfficiencyArray(){
-    G4double* efficiency = new double[]{0.000, 0.0108, 0.0143, 0.0186, 0.0232, 0.0286, 0.0349, 0.0422, 0.0507, 0.0599, 0.0696, 
+    G4double* efficiency = new double[this->GetNPoints()]{0.000, 0.0108, 0.0143, 0.0186, 0.0232, 0.0286, 0.0349, 0.0422, 0.0507, 0.0599, 0.0696, 
                                         0.0795, 0.0905, 0.1026, 0.1158, 0.129, 0.1423, 0.1566, 0.1706, 0.184, 0.1973, 0.2112, 
                                         0.2256, 0.2393, 0.2526, 0.266, 0.2807, 0.2967, 0.3112, 0.3238, 0.3365, 0.3501, 0.3639, 
                                         0.3778, 0.3915, 0.4059, 0.4204, 0.435, 0.4492, 0.463, 0.476, 0.4891, 0.4998, 0.5028, 
@@ -55,7 +55,7 @@ namespace nexus {
   }
 
   std::pair<G4int, G4double*> HamamatsuS133605075HQR::GetSensareaReflectivityArray(){
-    G4double* reflectivity = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    G4double* reflectivity = new double[this->GetNPoints()]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
