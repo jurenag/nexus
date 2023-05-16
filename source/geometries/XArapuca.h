@@ -84,7 +84,6 @@ namespace nexus {
     G4String generation_region_;                                    ///< Where to place the generation vertex (GV).
                                                                     ///< 'random'   - The GV is randomly sampled over the DFA (including the frame)
                                                                     ///< 'dichroic' - The GV is randomly sampled over the DFs (not including the frame)
-                                                                    ///< 'center'   - The GV is placed on top of the geometric center of the XArapuca
                                                                     ///< 'custom'   - The GV is randomly sampled within a circle centered in (gen_x_, -, gen_z_)
                                                                     ///<              whose diameter is equal to gen_diameter_.
                                                                     ///< Default behaviour is that of generation_region_=='random'.

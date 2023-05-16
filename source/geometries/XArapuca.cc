@@ -1539,10 +1539,6 @@ namespace nexus{
       z_pos = UniformRandomInRange(  selected_filter_z_center -(DF_width_/2.) +tolerance, 
                                               selected_filter_z_center +(DF_width_/2.) -tolerance     );
     }
-    else if(generation_region_=="center"){
-      x_pos = 0.;
-      z_pos = 0.;
-    }
     else if(generation_region_=="custom"){
       G4double random_radius =  UniformRandomInRange(gen_diameter_/2., 0.);
       G4double random_angle =   UniformRandomInRange(twopi, 0.); 
