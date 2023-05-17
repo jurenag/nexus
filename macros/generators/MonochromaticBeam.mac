@@ -1,0 +1,6 @@
+#/Generator/MonochromaticBeam/region whatever
+/Generator/MonochromaticBeam/wavelength_mean    128. nm
+/Generator/MonochromaticBeam/wavelength_std     4   nm
+/Generator/MonochromaticBeam/ed_x               0.
+/Generator/MonochromaticBeam/ed_y               -1.
+/Generator/MonochromaticBeam/ed_z               0.
