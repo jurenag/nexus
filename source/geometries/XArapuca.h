@@ -51,6 +51,11 @@ namespace nexus {
     G4int config_code_;                                             ///< Value in (1,2) which labels which X-ARAPUCA configuration will be simulated
                                                                     ///< 1 -    common X-ARAPUCA (with WLS plate)
                                                                     ///< 2 -    Replace WLS plate with optical fibers with SiPMs attached to its ends                                                                    
+    G4String surrounding_media_;                                    ///< Which media to place the XArapuca in
+                                                                    ///< 'lar'  - The XArapuca is placed in Liquid ARgon
+                                                                    ///< 'gar'  - The XArapuca is placed in Gaseous ARgon
+                                                                    ///< 'air'  - The XArapuca is placed in air - ¡Note that the implemented air has no bulk-absorption length yet!
+                                                                    ///< Default behaviour is that of surrounding_media_=='lar'.
     G4double internal_length_, internal_width_, internal_thickn_;   ///< Internal dimensions of the reflector cavity
     G4double DFA_thickn_;                                           ///< Frame thickness 
     G4double DF_thickn_;                                            ///< Overall thickness of the dichroic filters (MLS+substrate). Must be smaller than the frame thickness.

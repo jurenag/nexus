@@ -46,6 +46,7 @@ namespace nexus{
   GeometryBase(), 
   ///Get internal reflector cavity dimensions from arxiv.org/abs/1912.09191
   config_code_                          (1                            ),
+  surrounding_media_                    ("lar"                        ),
   internal_length_                      (488.   *mm                   ),   ///X
   internal_width_                       (100.   *mm                   ),   ///Z
   internal_thickn_                      (8      *mm                   ),   ///Y
@@ -111,6 +112,10 @@ namespace nexus{
 			    "Configuration code.");
     cc_cmd.SetParameterName("config_code", false);
     cc_cmd.SetRange("config_code>=1"); 
+
+    G4GenericMessenger::Command& sm_cmd =
+      msg_->DeclareProperty("surrounding_media", surrounding_media_,
+			    "Which media to place the XArapuca in.");
     
     G4GenericMessenger::Command& il_cmd =
       msg_->DeclareProperty("internal_length", internal_length_,
@@ -431,34 +436,37 @@ namespace nexus{
       "The given dimensions do not describe a feasible X-Arapuca.");
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////
     // The biggest volume is a vacuum box with the dimensions of the X-ARAPUCA device
     // plus 2*world_extra_thickn_, for each dimension. This volume is the effective 
     // world volume FOR THE NEXUS USER, but it is not the world volume of the overall
     // Geant4 application (afterwards nexus takes the user's biggest volume 
     // and places it inside another world volume whose dimensions are enough so as to 
     // fit the whole span of the biggest volume you implemented). Placed within this
-    // vacuum box, there's a LAr box with dimensions of the X-ARAPUCA device plus 
-    // world_extra_thickn_, along each dimension. The previous version of this class
-    // simply implemented a LAr box as the biggest volume, without the need to encapsulate
-    // it within a bigger volume (apart from that of nexus). However, as of the implementation
-    // of the dichroic filter, the use of G4LogicalBorderSurface class is necessary. 
-    // Objects of such class must be given two ordered physical volumes, so that a particle 
-    // flying from the first one to the second one, interacts with such an optical surface. 
-    // Within this context, it is convenient that we specify the LAr volume which encapsulates 
-    // the X-ARAPUCA as the first physical volume, and the filter physical volume as the second 
-    // volume, so that the filter properties are applied in both cases: 1) when a photon tries 
-    // to enter the dichroic filter volume from outside the X-ARAPUCA, and 2) when a photon 
-    // tries to enter the dichroic filter volume from inside the X-ARAPUCA (indeed, take into 
-    // account that X-ARAPUCA different parts are placed within this LAr box, thus giving room 
-    // to LAr gaps within the X-ARAPUCA cavity that belong to the LAr box mother volume). Since 
-    // the nexus user seems not to have access to the physical placement of the biggest volume 
-    // (in our case, the vacuum box) which is implemented in line 80 of 
-    // source/base/DetectorConstruction.cc, AFTER calling GeometryBase::Construct() (i.e. your
-    // geometry must be constructed before placing your biggest volume in nexus world volume,
-    // so you cannot possibly have access to the physical placement of your biggest volume
-    // when you Construct() it.), one way around this issue is adding this intermediate LAr box.   
-    // LAr ///////////////////////////////////////////////////////////
-    // Liquid argon box that contains all other volumes.
+    // vacuum box, there's a box, made out of surrounding_media_, with dimensions of 
+    // the X-ARAPUCA device plus world_extra_thickn_, along each dimension. The previous 
+    // version of this class simply implemented a surrounding_media_ box as the biggest 
+    // volume, without the need to encapsulate it within a bigger volume (apart from 
+    // that of nexus). However, as of the implementation of the dichroic filter, the 
+    // use of G4LogicalBorderSurface class is necessary. Objects of such class must 
+    // be given two ordered physical volumes, so that a particle flying from the first 
+    // one to the second one, interacts with such an optical surface. Within this 
+    // context, it is convenient that we specify the surrounding_media_ volume which 
+    // encapsulates the X-ARAPUCA as the first physical volume, and the filter physical 
+    // volume as the second volume, so that the filter properties are applied in both 
+    // cases: 1) when a photon tries to enter the dichroic filter volume from outside 
+    // the X-ARAPUCA, and 2) when a photon tries to enter the dichroic filter volume 
+    // from inside the X-ARAPUCA (indeed, take into account that X-ARAPUCA different 
+    // parts are placed within this surrounding_media_ box, thus giving room to 
+    // surrounding_media_ gaps within the X-ARAPUCA cavity that belong to the 
+    // surrounding_media_ box mother volume). Since the nexus user seems not to have 
+    // access to the physical placement of the biggest volume (in our case, the vacuum 
+    // box) which is implemented in line 80 of source/base/DetectorConstruction.cc, 
+    // AFTER calling GeometryBase::Construct() (i.e. your geometry must be constructed 
+    // before placing your biggest volume in nexus world volume,so you cannot possibly 
+    // have access to the physical placement of your biggest volume when you Construct() 
+    // it.), one way around this issue is adding this intermediate surrounding_media_ box.   
+    /////////////////////////////////////////////////////////////////////////////////////
     
     // VACUUM CAPSULE
     const G4String world_name = "VACUUM_CAPSULE";
@@ -478,26 +486,46 @@ namespace nexus{
 
     this->SetLogicalVolume(world_logic);
 
-    // LAr BOX
-    const G4String LAr_box_name = "LAr";
+    // surrounding_media_ box that contains all other volumes.
 
-    G4Box* LAr_box_solid =
-      new G4Box(LAr_box_name,
+    G4String sm_name;
+    G4MaterialPropertiesTable* mpt_ptr;
+    if(surrounding_media_=="gar"){
+      sm_name = "G4_Ar";
+      mpt_ptr = opticalprops::GAr(10000/MeV);
+    }
+    else if(surrounding_media_=="air"){
+      sm_name = "G4_AIR";
+      mpt_ptr = opticalprops::Air();
+    }
+    else{
+      sm_name = "G4_lAr";
+      mpt_ptr = opticalprops::LAr();
+    }
+
+    const G4String sm_box_name = sm_name+"_BOX";
+
+    G4Box* sm_box_solid =
+      new G4Box(sm_box_name,
                 (internal_length_ +case_thickn_ +world_extra_thickn_)/2.,
                 (internal_thickn_ +case_thickn_ +world_extra_thickn_)/2.,
                 (internal_width_ +case_thickn_ +world_extra_thickn_)/2.);
 
-    G4Material* LAr = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
-    LAr->SetMaterialPropertiesTable(opticalprops::LAr());
+    G4Material* sm_material = G4NistManager::Instance()->FindOrBuildMaterial(sm_name);
+    sm_material->SetMaterialPropertiesTable(mpt_ptr);
 
-    G4LogicalVolume* LAr_box_logic =
-      new G4LogicalVolume(LAr_box_solid, LAr, LAr_box_name);
-    LAr_box_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+    G4LogicalVolume* sm_box_logic =
+      new G4LogicalVolume(sm_box_solid, sm_material, sm_box_name);
+    sm_box_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     G4VPhysicalVolume* mother_physical = 
         dynamic_cast<G4VPhysicalVolume*>(
-        new G4PVPlacement (new G4RotationMatrix(), G4ThreeVector(0., 0., 0.), LAr_box_logic, 
-                        LAr_box_name, world_logic, false, 0, true));
+        new G4PVPlacement(new G4RotationMatrix(), 
+                          G4ThreeVector(0., 0., 0.), 
+                          sm_box_logic, 
+                          sm_box_name, 
+                          world_logic, 
+                          false, 0, true));
 
     ConstructReflectiveCase(mother_physical);
     //ConstructCollectors(mother_physical); 
@@ -1128,7 +1156,7 @@ namespace nexus{
     // the incident light beam is (hopefully) WLSed by the coating, which, in turn, emits the light
     // isotropic-ly. Thus, the light that impinges into the DF not only has a random angle within the
     // coating, but also such angle won't match the angle of the photon in case it is transmitted
-    // through the DF into the surrouding media, say LAr. Such final angle should be computed applying
+    // through the DF into the surrounding media, say LAr. Such final angle should be computed applying
     // snell's law towards LAr, from the coating volume or any other volume where the photon still
     // preserves the snell's invariant ( {n, \theta}, for face-parallel geometries) of the coating-emission.
     // -----------------------------------------------------------------------------------------------
