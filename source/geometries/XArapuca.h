@@ -74,7 +74,8 @@ namespace nexus {
     G4bool DFA_frame_is_specular_;                                  ///< Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.
     G4bool remove_DFs_;                                             ///< Whether to remove the dichroic filters or not
     G4bool remove_DFA_frame_;                                       ///< Whether to remove the dichroic filters assembly frame
-    G4double secondary_wls_attlength_;                              ///< Attenuation length of the secondary WLShifter. For config_code_==1 (resp. 2), this is the attenuation length for the WLS plate (WLS fibers).
+    G4double secondary_wls_attlength_;                              ///< Attenuation length of the secondary WLShifter, in case EJ286 is used. For config_code_==1 (resp. 2), this is the attenuation length for the WLS plate (WLS fibers).
+    G4double cromophore_concentration_;                             ///< Cromophore concentration (in miligrams of cromophore per kilogram of PMMA) of the secondary WLShifter, in case G2P_FB118 is used. For config_code_==1 (resp. 2), this is the cromophore concentration for the WLS plate (WLS fibers).
     G4double case_thickn_;                                          ///< Reflective foils thickness
     G4int SiPM_code_;                                               ///< Integer signalling which SiPM to construct
                                                                     ///< 1                  -> Hamamatsu S13360-6050VE

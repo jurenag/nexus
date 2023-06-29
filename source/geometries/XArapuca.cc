@@ -73,6 +73,7 @@ namespace nexus{
   remove_DFs_                           (false                        ),  
   remove_DFA_frame_                     (false                        ),
   secondary_wls_attlength_              (1.     *m                    ),
+  cromophore_concentration_             (40.                          ),
   case_thickn_                          (1.     *mm                   ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   SiPM_code_                            (1                            ),
   PS_config_code_                       (1                            ),
@@ -235,10 +236,16 @@ namespace nexus{
 
     G4GenericMessenger::Command& swlsal_cmd =
       msg_->DeclareProperty("secondary_wls_attlength", secondary_wls_attlength_,
-			    "Attenuation length of the secondary WLShifter.");
+			    "Attenuation length of the secondary WLShifter, in case EJ286 is used.");
     swlsal_cmd.SetUnitCategory("Length");
     swlsal_cmd.SetParameterName("secondary_wls_attlength", false);
     swlsal_cmd.SetRange("secondary_wls_attlength>0.");
+
+    G4GenericMessenger::Command& crco_cmd =
+      msg_->DeclareProperty("cromophore_concentration", cromophore_concentration_,
+			    "Cromophore concentration (in miligrams of cromophore per kilogram of PMMA) of the secondary WLShifter, in case G2P_FB118 is used.");
+    crco_cmd.SetParameterName("cromophore_concentration", false);
+    crco_cmd.SetRange("cromophore_concentration>0.");
 
     G4GenericMessenger::Command& ct_cmd =
       msg_->DeclareProperty("case_thickn", case_thickn_,
@@ -552,8 +559,8 @@ namespace nexus{
   { 
 
     WLSPlate* plate = new WLSPlate  (plate_length_, plate_thickn_, plate_width_, 
-                                    //opticalprops::G2P_FB118(secondary_wls_attlength_), false,
-                                    opticalprops::EJ286(secondary_wls_attlength_), false,
+                                    opticalprops::G2P_FB118(cromophore_concentration_, 1.502, true), false,
+                                    //opticalprops::EJ286(secondary_wls_attlength_), false,
                                     with_dimples_, dimple_type_, num_phsensors_, 
                                     !only_sipms_along_long_sides_, flat_dimple_width_, 
                                     flat_dimple_depth_, curvy_dimple_radius_);
@@ -588,6 +595,7 @@ namespace nexus{
     G4Tubs* fiber_solid = new G4Tubs(fiber_name, 0., fiber_radius_, fiber_length_/2., 0., twopi);
     G4Material* pvt = G4NistManager::Instance()->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
     pvt->SetMaterialPropertiesTable(opticalprops::EJ286(secondary_wls_attlength_));
+    //pvt->SetMaterialPropertiesTable(opticalprops::G2P_FB118(cromophore_concentration_));
     G4LogicalVolume* fiber_logic = new G4LogicalVolume(fiber_solid, pvt, fiber_name);
     fiber_logic->SetUserLimits(ul_);
 
