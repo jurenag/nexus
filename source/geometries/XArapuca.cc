@@ -77,7 +77,6 @@ namespace nexus{
   cromophore_concentration_             (40.                          ),
   case_thickn_                          (1.     *mm                   ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   SiPM_code_                            (1                            ),
-  PS_config_code_                       (1                            ),
   num_phsensors_                        (24                           ),
   gap_                                  (0.5    *mm                   ),
   ref_phsensors_supports_               (true                         ), 
@@ -95,6 +94,7 @@ namespace nexus{
   plate_thickn_                         (3.5    *mm                   ),   ///Y
   only_sipms_along_long_sides_          (true                         ),
   with_boards_                          (true                         ),
+  PS_config_code_                       (1                            ),
   with_dimples_                         (true                         ),
   dimple_type_                          ("cylindrical"                ),
   flat_dimple_width_                    (6.1    *mm                   ),
@@ -261,12 +261,6 @@ namespace nexus{
     sc_cmd.SetParameterName("SiPM_code", false);
     sc_cmd.SetRange("SiPM_code>=1"); 
 
-    G4GenericMessenger::Command& pscc_cmd =
-      msg_->DeclareProperty("PS_config_code", PS_config_code_,
-			    "Photo sensors configuration code.");
-    pscc_cmd.SetParameterName("PS_config_code", false);
-    pscc_cmd.SetRange("PS_config_code>=1"); 
-
     G4GenericMessenger::Command& np_cmd =
       msg_->DeclareProperty("num_phsensors", num_phsensors_,
 			    "Number of photosensors per long side.");
@@ -349,6 +343,12 @@ namespace nexus{
     G4GenericMessenger::Command& wb_cmd =
       msg_->DeclareProperty("with_boards", with_boards_,
 			    "Whether the SiPMs are mounted on boards or floating.");
+
+    G4GenericMessenger::Command& pscc_cmd =
+      msg_->DeclareProperty("PS_config_code", PS_config_code_,
+			    "Photo sensors configuration code.");
+    pscc_cmd.SetParameterName("PS_config_code", false);
+    pscc_cmd.SetRange("PS_config_code>=1"); 
 
     G4GenericMessenger::Command& wd_cmd =
       msg_->DeclareProperty("with_dimples", with_dimples_,
@@ -968,15 +968,15 @@ namespace nexus{
     G4SubtractionSolid* ref_case_solid =    new G4SubtractionSolid(ref_case_name, aux_outter_box, aux_inner_box, 
                                             nullptr, G4ThreeVector(0., 0., 0.));
 
-    // The reflective case is 'open' on both sides. If the X-ARAPUCA is not double sided, then ConstructDichroicAssemblies will take care of placing
-    // a reflective cover. 
+    // The reflective case is 'open' on both sides. If the X-ARAPUCA DS is not 
+    // double sided, then Construct() will take care of placing a reflective cover.
 
     G4LogicalVolume* ref_case_logic = 
       new G4LogicalVolume(ref_case_solid, materials::FR4(), ref_case_name);
 
     // Set its color for visualization purposes
     G4VisAttributes ref_case_col = nexus::WhiteAlpha();
-    ref_case_col.SetForceSolid(true);
+    //ref_case_col.SetForceSolid(true);
     ref_case_logic->SetVisAttributes(ref_case_col);
 
     //Now create the reflectivie optical surface
@@ -1422,8 +1422,6 @@ namespace nexus{
             }
         }
     }
-
-
     return;
   }
 
