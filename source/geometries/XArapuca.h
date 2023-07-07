@@ -80,7 +80,8 @@ namespace nexus {
     G4int SiPM_code_;                                               ///< Integer signalling which SiPM to construct
                                                                     ///< 1                  -> Hamamatsu S13360-6050VE
                                                                     ///< 2                  -> Hamamatsu S13360-5075HD-HQR
-                                                                    ///< Any other integer  -> FBK-NUV-HD-CRYO-TT
+                                                                    ///< 3                  -> FBK-NUV-HD-CRYO-TT
+                                                                    ///< Any other integer  -> PerfectSiPMMPPC (100% efficiency)
     G4int num_phsensors_;                                           ///< If config_code_==1, this is the number of SiPMs per long side
                                                                     ///< If config_code_==2, this is the number of photosensors per side which is perpendicular to the fibers
     G4double gap_;                                                  ///< Gap between photosensors and WLS material. A negative gap can help modelate the immersion of the SiPMs into the flat dimples. Be careful not to collide the SiPMs into the plate.

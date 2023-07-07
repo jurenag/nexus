@@ -7,6 +7,7 @@
 #include "HamamatsuS133606050VE.h"
 #include "HamamatsuS133605075HQR.h"
 #include "FbkNuvHdCryoTT.h"
+#include "PerfectSiPMMPPC.h"
 #include "ScalableHamamatsuS133606050VE.h"
 #include "SiPMBoard.h"
 #include "RandomUtils.h"
@@ -653,8 +654,11 @@ namespace nexus{
         else if(SiPM_code_==2){
           sipm_ptr = new HamamatsuS133605075HQR();
         }
-        else{
+        else if(SiPM_code_==3){
           sipm_ptr = new FbkNuvHdCryoTT();
+        }
+        else{
+          sipm_ptr = new PerfectSiPMMPPC();
         }
 
         sipm_ptr->SetReflectiveSupports(ref_phsensors_supports_);
@@ -1478,8 +1482,11 @@ namespace nexus{
             else if(SiPM_code_==2){
               sipm_ptr = new HamamatsuS133605075HQR();
             }
-            else{
+            else if(SiPM_code_==3){
               sipm_ptr = new FbkNuvHdCryoTT();
+            }
+            else{
+              sipm_ptr = new PerfectSiPMMPPC();
             }
             if(PS_config_code_==1){
                 if(num_phsensors_*sipm_ptr->GetTransverseDim()>plate_length_) { return true; }
