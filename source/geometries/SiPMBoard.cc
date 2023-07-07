@@ -3,6 +3,7 @@
 #include "HamamatsuS133606050VE.h"
 #include "HamamatsuS133605075HQR.h"
 #include "FbkNuvHdCryoTT.h"
+#include "PerfectSiPMMPPC.h"
 
 #include "OpticalMaterialProperties.h"
 #include "MaterialsList.h"
@@ -49,8 +50,11 @@ namespace nexus {
     else if(SiPM_code_==2){
       sipm_ptr = new HamamatsuS133605075HQR();
     }
-    else{
+    else if(SiPM_code_==3){
       sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    else{
+      sipm_ptr = new PerfectSiPMMPPC();
     }
     G4double sipm_height = sipm_ptr->GetTransverseDim();
     delete sipm_ptr;
@@ -67,8 +71,11 @@ namespace nexus {
     else if(SiPM_code_==2){
       sipm_ptr = new HamamatsuS133605075HQR();
     }
-    else{
+    else if(SiPM_code_==3){
       sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    else{
+      sipm_ptr = new PerfectSiPMMPPC();
     }
     G4double sipm_thickn = sipm_ptr->GetThickness();
     delete sipm_ptr;
@@ -109,8 +116,11 @@ namespace nexus {
     else if(SiPM_code_==2){
       sipm_ptr = new HamamatsuS133605075HQR();
     }
-    else{
+    else if(SiPM_code_==3){
       sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    else{
+      sipm_ptr = new PerfectSiPMMPPC();
     }
     G4double sipm_width = sipm_ptr->GetTransverseDim();
     delete sipm_ptr;
@@ -211,9 +221,13 @@ namespace nexus {
       sipm = dynamic_cast<HamamatsuS133605075HQR*>(sipm);
       sipm = new HamamatsuS133605075HQR();
     }
-    else{
+    else if(SiPM_code_==3){
       sipm = dynamic_cast<FbkNuvHdCryoTT*>(sipm);
       sipm = new FbkNuvHdCryoTT();
+    }
+    else{
+      sipm = dynamic_cast<PerfectSiPMMPPC*>(sipm);
+      sipm = new PerfectSiPMMPPC();
     }
     sipm->SetReflectiveSupports(ref_phsensors_supports_);  
     sipm->Construct();
