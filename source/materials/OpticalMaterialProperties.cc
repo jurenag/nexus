@@ -769,7 +769,7 @@ namespace opticalprops {
     return mpt;
   }
 
-  G4MaterialPropertiesTable* PTP(){
+  G4MaterialPropertiesTable* PTP(G4double refractive_index){
     // This material is meant to model p-Terphenyl, which is a wavelength shifter commonly used to WLS the 
     // LAr VUV scintillation light. The emission spectrum was taken from
     // sciencedirect.com/science/article/abs/pii/016890029390701I ,
@@ -780,7 +780,7 @@ namespace opticalprops {
 
     // Refractive index (RINDEX)
     G4double energies_rindex[] =    {optPhotMinE_, optPhotMaxE_};
-    G4double rindex[] =             {1.65, 1.65};
+    G4double rindex[] =             {refractive_index, refractive_index};
     mpt->AddProperty("RINDEX", energies_rindex, rindex, 2);
 
     // Absorption length (ABSLENGTH)
