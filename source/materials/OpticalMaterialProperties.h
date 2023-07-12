@@ -57,7 +57,7 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* LAr();
 
-  G4MaterialPropertiesTable* PTP();
+  G4MaterialPropertiesTable* PTP(G4double refractive_index = 1.65);
 
   G4MaterialPropertiesTable* LArPTPArtifact();
   
