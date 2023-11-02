@@ -63,6 +63,7 @@ namespace nexus{
                                                                           // This, together with the pTP density, (1.24g/cm3, found in
                                                                           // en.wikipedia.org/wiki/Terphenyl), gives a pTP film thickness of 
                                                                           // 3.226 micrometers
+  coating_rindex_                       (1.65                         ),  
   outter_frame_width_along_wlsplength_  (10.    *mm                   ),
   outter_frame_width_along_wlspwidth_   (10.    *mm                   ),
   inner_frames_width_along_wlsplength_  (6.     *mm                   ),
@@ -178,6 +179,12 @@ namespace nexus{
     ptpct_cmd.SetUnitCategory("Length");
     ptpct_cmd.SetParameterName("coating_thickn", false);
     ptpct_cmd.SetRange("coating_thickn>0.");
+
+    G4GenericMessenger::Command& ptpcr_cmd =
+      msg_->DeclareProperty("coating_rindex", coating_rindex_,
+			    "Refractive index of the coating layer.");
+    ptpcr_cmd.SetParameterName("coating_rindex", false);
+    ptpcr_cmd.SetRange("coating_rindex>1.");
 
     G4GenericMessenger::Command& ofwawl_cmd =
       msg_->DeclareProperty("outter_frame_width_along_wlsplength", outter_frame_width_along_wlsplength_,
@@ -1363,7 +1370,7 @@ namespace nexus{
         // COATINGS //
         if(DF_are_coated_){
             G4Material* coatings_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TERPHENYL");
-            coatings_mat->SetMaterialPropertiesTable(opticalprops::PTP());
+            coatings_mat->SetMaterialPropertiesTable(opticalprops::PTP(coating_rindex_));
             G4LogicalVolume* coatings_multiunion_logic = 
                                 new G4LogicalVolume(coatings_multiunion_solid, coatings_mat, "DF_COATINGS");   
 
