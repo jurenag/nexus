@@ -3,6 +3,7 @@
 #include "OpticalMaterialProperties.h"
 #include "MaterialsList.h"
 #include "SensorSD.h"
+#include "Visibilities.h"
 
 #include <G4Box.hh>
 #include <G4SubtractionSolid.hh>
@@ -12,6 +13,7 @@
 #include <G4NistManager.hh>
 #include <G4OpticalSurface.hh>
 #include <G4LogicalSkinSurface.hh>
+#include <G4VisAttributes.hh>
 #include <G4SystemOfUnits.hh>
 #include <G4SDManager.hh>
 
@@ -73,6 +75,10 @@ namespace nexus {
                             materials::FR4(), 
                             "MPPC_SUPPORT");
 
+    G4VisAttributes support_col = nexus::LightGreen();
+    support_col.SetForceSolid(true);
+    support_logic->SetVisAttributes(support_col);
+
     if(reflective_support_){
         //VIKUITI coating for the support
         G4OpticalSurface* support_coating = 
@@ -130,6 +136,10 @@ namespace nexus {
       new G4LogicalVolume(sensarea_solid,
                           G4NistManager::Instance()->FindOrBuildMaterial("G4_Si"),
                           "MPPC_SENSAREA");
+
+    G4VisAttributes sensarea_col = nexus::LightGrey();
+    sensarea_col.SetForceSolid(true);
+    sensarea_logic->SetVisAttributes(sensarea_col);
 
     new G4PVPlacement(  nullptr, 
                         G4ThreeVector(  0., 
