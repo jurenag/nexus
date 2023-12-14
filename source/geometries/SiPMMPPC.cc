@@ -63,12 +63,19 @@ namespace nexus {
                   (this->GetSensareaThickness())/2., 
                   (this->GetSensareaTransverseDim())/2.);
 
+    G4double tolerance = 0.1*mm;
+    G4Box* subtrahend_solid =
+      new G4Box(  "AUX_SUBTRAHEND", 
+                  (this->GetSensareaTransverseDim())/2., 
+                  (this->GetSensareaThickness()+tolerance)/2.,      // Thicker than the sensarea, to prevent
+                  (this->GetSensareaTransverseDim())/2.);           // matching surfaces in boolean subtraction
+
     G4SubtractionSolid* support_solid = 
-        new G4SubtractionSolid("MPPC_SUPPORT", aux_solid, sensarea_solid, 
-                            new G4RotationMatrix{},
-                            G4ThreeVector(  0., 
-                                            (aux/2.) -((this->GetSensareaThickness())/2.), 
-                                            0.));
+        new G4SubtractionSolid( "MPPC_SUPPORT", aux_solid, subtrahend_solid, 
+                                new G4RotationMatrix{},
+                                G4ThreeVector(0., 
+                                              (aux/2.) -((this->GetSensareaThickness())/2.) +(tolerance/2.), 
+                                              0.));
 
     G4LogicalVolume* support_logic =
       new G4LogicalVolume(  support_solid, 
