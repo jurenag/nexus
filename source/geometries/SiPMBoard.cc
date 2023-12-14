@@ -234,10 +234,6 @@ namespace nexus {
     G4double sipm_thickn = sipm->GetThickness();
     G4LogicalVolume* sipm_logic_vol = sipm->GetLogicalVolume();
 
-    G4VisAttributes sipm_col = nexus::Red();
-    sipm_col.SetForceSolid(true);
-    sipm_logic_vol->SetVisAttributes(sipm_col);
-
     if (!sipm_logic_vol) {
       G4Exception("[SiPMBoard]", "ConstructSiPMs()",
                   FatalException, "Null pointer to logical volume.");
