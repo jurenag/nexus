@@ -7,6 +7,7 @@
 #include "HamamatsuS133606050VE.h"
 #include "HamamatsuS133605075HQR.h"
 #include "FbkNuvHdCryoTT.h"
+#include "BroadcomAFBRS4N44P044M.h"
 #include "PerfectSiPMMPPC.h"
 #include "ScalableHamamatsuS133606050VE.h"
 #include "SiPMBoard.h"
@@ -663,6 +664,9 @@ namespace nexus{
         }
         else if(SiPM_code_==3){
           sipm_ptr = new FbkNuvHdCryoTT();
+        }
+        else if(SiPM_code_==4){
+          sipm_ptr = new BroadcomAFBRS4N44P044M();
         }
         else{
           sipm_ptr = new PerfectSiPMMPPC();
@@ -1468,10 +1472,35 @@ namespace nexus{
 
         }
 
+        SiPMMPPC* sipm_ptr = nullptr;
+        if(SiPM_code_==1){
+          sipm_ptr = new HamamatsuS133606050VE();
+        }
+        else if(SiPM_code_==2){
+          sipm_ptr = new HamamatsuS133605075HQR();
+        }
+        else if(SiPM_code_==3){
+          sipm_ptr = new FbkNuvHdCryoTT();
+        }
+        else if(SiPM_code_==4){
+          sipm_ptr = new BroadcomAFBRS4N44P044M();
+        }
+        else{
+          sipm_ptr = new PerfectSiPMMPPC();
+        }
+
+        if(with_dimples_==true && dimple_type_=="flat"){
+          if(flat_dimple_width_<=sipm_ptr->GetTransverseDim()){
+            G4Exception("[XArapuca]", "geometry_is_ill_formed()", FatalException,
+            "The chosen SiPM does not fit in the specified flat dimple.");
+          }
+        }
+
         if(with_boards_){
             // If with_boards_==true, then PS_config_code_ is ignored, the geometry is loaded
             // as if PS_config_code_==1, so there's no need to distinguish cases here
             SiPMBoard board;
+            board.SetSiPMCode(SiPM_code_);
             internal_geom_length_span   = plate_length_;
             if(!only_sipms_along_long_sides_){
                 internal_geom_length_span   += (2.*gap_)+(2.*board.GetOverallThickness());    
@@ -1480,19 +1509,6 @@ namespace nexus{
             internal_geom_thickn_span   = std::max(plate_thickn_, board.GetOverallHeight());
         }
         else{
-            SiPMMPPC* sipm_ptr = nullptr;
-            if(SiPM_code_==1){
-              sipm_ptr = new HamamatsuS133606050VE();
-            }
-            else if(SiPM_code_==2){
-              sipm_ptr = new HamamatsuS133605075HQR();
-            }
-            else if(SiPM_code_==3){
-              sipm_ptr = new FbkNuvHdCryoTT();
-            }
-            else{
-              sipm_ptr = new PerfectSiPMMPPC();
-            }
             if(PS_config_code_==1){
                 if(num_phsensors_*sipm_ptr->GetTransverseDim()>plate_length_) { return true; }
                 if(!only_sipms_along_long_sides_){
@@ -1508,8 +1524,8 @@ namespace nexus{
                                                                                             // according to PS_config_code_ value
             internal_geom_width_span = plate_width_+(2.*gap_)+(2.*sipm_ptr->GetThickness());
             internal_geom_thickn_span = std::max(plate_thickn_, sipm_ptr->GetTransverseDim());
-            delete sipm_ptr;
         }
+        delete sipm_ptr;
     }
     else if(config_code_==2)
     {
