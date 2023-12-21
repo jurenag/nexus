@@ -3,6 +3,7 @@
 #include "HamamatsuS133606050VE.h"
 #include "HamamatsuS133605075HQR.h"
 #include "FbkNuvHdCryoTT.h"
+#include "BroadcomAFBRS4N44P044M.h"
 #include "PerfectSiPMMPPC.h"
 
 #include "OpticalMaterialProperties.h"
@@ -53,6 +54,9 @@ namespace nexus {
     else if(SiPM_code_==3){
       sipm_ptr = new FbkNuvHdCryoTT();
     }
+    else if(SiPM_code_==4){
+      sipm_ptr = new BroadcomAFBRS4N44P044M();
+    }
     else{
       sipm_ptr = new PerfectSiPMMPPC();
     }
@@ -73,6 +77,9 @@ namespace nexus {
     }
     else if(SiPM_code_==3){
       sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    else if(SiPM_code_==4){
+      sipm_ptr = new BroadcomAFBRS4N44P044M();
     }
     else{
       sipm_ptr = new PerfectSiPMMPPC();
@@ -118,6 +125,9 @@ namespace nexus {
     }
     else if(SiPM_code_==3){
       sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    else if(SiPM_code_==4){
+      sipm_ptr = new BroadcomAFBRS4N44P044M();
     }
     else{
       sipm_ptr = new PerfectSiPMMPPC();
@@ -225,6 +235,10 @@ namespace nexus {
     else if(SiPM_code_==3){
       sipm = dynamic_cast<FbkNuvHdCryoTT*>(sipm);
       sipm = new FbkNuvHdCryoTT();
+    }
+    else if(SiPM_code_==4){
+      sipm = dynamic_cast<BroadcomAFBRS4N44P044M*>(sipm);
+      sipm = new BroadcomAFBRS4N44P044M();
     }
     else{
       sipm = dynamic_cast<PerfectSiPMMPPC*>(sipm);

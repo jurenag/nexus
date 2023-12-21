@@ -49,6 +49,7 @@ namespace nexus {
                                         ///< 1                  -> Hamamatsu S13360-6050VE
                                         ///< 2                  -> Hamamatsu S13360-5075HD-HQR
                                         ///< 3                  -> FBK-NUV-HD-CRYO-TT
+                                        ///< 4                  -> Broadcom AFBR-S4N44P044M
                                         ///< Any other integer  -> PerfectSiPMMPPC (100% efficiency)
     G4double board_thickn_;             ///< Thickness of the mounting board
     G4double board_length_;             ///< Board length
