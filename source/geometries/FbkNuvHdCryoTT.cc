@@ -23,8 +23,8 @@ namespace nexus {
   }
 
   std::pair<G4int, G4double*> FbkNuvHdCryoTT::GetSensareaEfficiencyArray(){
-    G4double* efficiency = new double[this->GetNPoints()]{0.000, 0.425, 0.000}; // This is he only 
-                                                              // data we've got so far
+    G4double* efficiency = new double[this->GetNPoints()]{0.000, 0.425, 0.000}; // This is the only 
+                                                                                // data we've got so far
     return std::make_pair(this->GetNPoints(), efficiency);
   }
 
