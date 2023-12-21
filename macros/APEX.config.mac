@@ -1,0 +1,46 @@
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+#---- Parameters used for every configuration ----#
+
+/Geometry/APEX/surrounding_media                    lar
+/Geometry/APEX/MLS_thickn                           1.0     mm
+/Geometry/APEX/MLS_rindex                           1.68
+/Geometry/APEX/coating_thickn                       3.226   um
+/Geometry/APEX/coating_rindex                       1.65
+/Geometry/APEX/remove_coating                       false
+/Geometry/APEX/remove_MLS                           false
+/Geometry/APEX/plate_length                         450.    mm  # SiPMS are placed along the short side, which is 450 mm long
+/Geometry/APEX/plate_thickn                         6.0     mm
+/Geometry/APEX/plate_width                          495.    mm
+/Geometry/APEX/WLSp_rindex                          1.502
+/Geometry/APEX/secondary_wls_attlength              1.5     m
+/Geometry/APEX/cromophore_concentration             16.
+/Geometry/APEX/reflective_foil_thickn               0.065   mm
+#/Geometry/APEX/reflective_foil_thickn              1.0     mm
+/Geometry/APEX/SiPM_code                            4
+/Geometry/APEX/num_phsensors                        30
+/Geometry/APEX/board_position_code                  1
+/Geometry/APEX/gap                                  0.0     mm
+/Geometry/APEX/ref_phsensors_supports               true
+/Geometry/APEX/with_dimples                         false
+/Geometry/APEX/dimple_type                          flat
+/Geometry/APEX/flat_dimple_width                    8.      mm
+/Geometry/APEX/flat_dimple_depth                    1.2     mm
+/Geometry/APEX/curvy_dimple_radius                  4.0     mm
+/Geometry/APEX/generation_region                    randon
+/Geometry/APEX/gen_x                                0.      cm
+/Geometry/APEX/gen_z                                0.      cm
+/Geometry/APEX/gen_diameter                         1.      cm
+#/Geometry/APEX/path_to_inwards_dichroic_data /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
+#/Geometry/APEX/path_to_outwards_dichroic_data /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
+/Geometry/APEX/path_to_inwards_dichroic_data        /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_G2p
+/Geometry/APEX/path_to_outwards_dichroic_data       /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_G2p
+
+/control/execute macros/generators/LArScintillationGeneratorY.mac
+#/control/execute macros/generators/MonochromaticBeam128.mac
+
+/nexus/persistency/output_file /home/jurenag/installations/nexus-source/output/TrashCan
