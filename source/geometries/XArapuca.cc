@@ -1594,10 +1594,10 @@ namespace nexus{
       z_pos = gen_z_ +(random_radius*cos(random_angle));
     }
     else{ // Default behaviour is that of generation_region_=="random"
-      x_pos = UniformRandomInRange(  -1.*DFA_length_/2.,
-                                      DFA_length_/2.      );
-      z_pos = UniformRandomInRange(  -1.*DFA_width_/2.,
-                                      DFA_width_/2.       );
+      x_pos = UniformRandomInRange( DFA_length_/2.,
+                                    -1.*DFA_length_/2.);
+      z_pos = UniformRandomInRange( DFA_width_/2.,
+                                    -1.*DFA_width_/2.);
     }
     return G4ThreeVector(x_pos, y_pos, z_pos);
   }
