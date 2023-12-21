@@ -82,6 +82,7 @@ namespace nexus {
                                                                     ///< 1                  -> Hamamatsu S13360-6050VE
                                                                     ///< 2                  -> Hamamatsu S13360-5075HD-HQR
                                                                     ///< 3                  -> FBK-NUV-HD-CRYO-TT
+                                                                    ///< 4                  -> Broadcom AFBR-S4N44P044M (2x2 SiPM array)
                                                                     ///< Any other integer  -> PerfectSiPMMPPC (100% efficiency)
     G4int num_phsensors_;                                           ///< If config_code_==1, this is the number of SiPMs per long side
                                                                     ///< If config_code_==2, this is the number of photosensors per side which is perpendicular to the fibers
