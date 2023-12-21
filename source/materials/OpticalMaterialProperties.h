@@ -26,6 +26,8 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* Air();
 
+  G4MaterialPropertiesTable* TunableRIMat(G4double rindex=1.5);
+
   G4MaterialPropertiesTable* GlassEpoxy();
 
   G4MaterialPropertiesTable* HamamatsuEpoxy();
