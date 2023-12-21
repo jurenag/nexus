@@ -345,6 +345,23 @@ namespace opticalprops {
 
 
 
+    /// Non-absorbent and r. index-tunable material ///
+  G4MaterialPropertiesTable* TunableRIMat(G4double refractive_index)
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    // Refractive index (RINDEX)
+    G4double energies_rindex[] =    { optPhotMinE_,           optPhotMinE_+(0.1*eV),  optPhotMinE_+(0.2*eV),  optPhotMinE_+(0.3*eV), 
+                                      optPhotMaxE_-(0.3*eV),  optPhotMaxE_-(0.2*eV),  optPhotMaxE_-(0.1*eV),  optPhotMaxE_            };
+    G4double rindex[] =             { refractive_index,       refractive_index,       refractive_index,       refractive_index,
+                                      refractive_index,       refractive_index,       refractive_index,       refractive_index        };
+    mpt->AddProperty("RINDEX", energies_rindex, rindex, 8);
+
+    return mpt;
+  }
+
+
+
   /// Glass Epoxy ///
   G4MaterialPropertiesTable* GlassEpoxy()
   {
