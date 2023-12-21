@@ -10,6 +10,7 @@
 #include <G4RotationMatrix.hh>
 #include <G4LogicalVolume.hh>
 #include <G4PVPlacement.hh>
+#include <G4MultiUnion.hh>
 #include <G4NistManager.hh>
 #include <G4OpticalSurface.hh>
 #include <G4LogicalSkinSurface.hh>
@@ -32,6 +33,7 @@ namespace nexus {
 
   void SiPMMPPC::Construct()
   {
+
     /// PHOTOSENSOR ENCASING
 
     G4Box* encasing_solid =
@@ -57,35 +59,56 @@ namespace nexus {
                   aux/2., 
                   (this->GetTransverseDim())/2.);
 
-    G4Box* sensarea_solid =
-      new G4Box(  "MPPC_SENSAREA", 
-                  (this->GetSensareaTransverseDim())/2., 
-                  (this->GetSensareaThickness())/2., 
-                  (this->GetSensareaTransverseDim())/2.);
-
     G4double tolerance = 0.1*mm;
     G4Box* subtrahend_solid =
       new G4Box(  "AUX_SUBTRAHEND", 
-                  (this->GetSensareaTransverseDim())/2., 
-                  (this->GetSensareaThickness()+tolerance)/2.,      // Thicker than the sensarea, to prevent
-                  (this->GetSensareaTransverseDim())/2.);           // matching surfaces in boolean subtraction
+                  (this->GetSensareaTransverseDimAlongX())/2., 
+                  (this->GetSensareaThickness()+tolerance)/2.,    // Thicker than the sensarea, to prevent
+                  (this->GetSensareaTransverseDimAlongZ())/2.);   // matching surfaces in boolean subtraction
+
+    G4MultiUnion* support_carvings_multiunion_solid   = new G4MultiUnion("SUPPORT_CARVINGS");
+
+    G4double x_pos, z_pos;
+    G4Transform3D* transform_ptr = nullptr;
+    G4RotationMatrix* rot = new G4RotationMatrix();
+
+    for(G4int i=0; i<this->GetSiPMsNoAlongX(); i++){
+        for(G4int j=0; j<this->GetSiPMsNoAlongZ(); j++){
+
+            x_pos = (-1.*(this->GetTransverseDim()/2.))  
+                    +this->GetOuterFrameWidthAlongX()
+                    +(i*this->GetInnerFramesWidthAlongX())
+                    +((i+0.5)*this->GetSensareaTransverseDimAlongX());
+
+            z_pos = (-1.*(this->GetTransverseDim()/2.))  
+                    +this->GetOuterFrameWidthAlongZ()
+                    +(j*this->GetInnerFramesWidthAlongZ())
+                    +((j+0.5)*this->GetSensareaTransverseDimAlongZ());
+
+            transform_ptr = new G4Transform3D(*rot, G4ThreeVector(x_pos, 0., z_pos));
+
+            support_carvings_multiunion_solid->AddNode(*subtrahend_solid,       *transform_ptr);            
+        }
+    }
+
+    support_carvings_multiunion_solid->Voxelize();
 
     G4SubtractionSolid* support_solid = 
-        new G4SubtractionSolid( "MPPC_SUPPORT", aux_solid, subtrahend_solid, 
+        new G4SubtractionSolid( "MPPC_SUPPORT", aux_solid, support_carvings_multiunion_solid, 
                                 new G4RotationMatrix{},
                                 G4ThreeVector(0., 
                                               (aux/2.) -((this->GetSensareaThickness())/2.) +(tolerance/2.), 
                                               0.));
-
     G4LogicalVolume* support_logic =
       new G4LogicalVolume(  support_solid, 
                             materials::FR4(), 
                             "MPPC_SUPPORT");
 
-    G4VisAttributes support_col = nexus::LightGreen();
-    support_col.SetForceSolid(true);
-    support_logic->SetVisAttributes(support_col);
-
+    //G4VisAttributes support_col = nexus::LightGreen();
+    //support_col.SetForceSolid(true);
+    //support_logic->SetVisAttributes(support_col);
+    support_logic->SetVisAttributes(G4VisAttributes::GetInvisible());   // OpenGL struggles to display the support geometry
+                                                                        // (It is the boolean subtraction of a solid and a multi-union solid)
     if(reflective_support_){
         //VIKUITI coating for the support
         G4OpticalSurface* support_coating = 
@@ -100,7 +123,7 @@ namespace nexus {
                                   support_logic, 
                                   support_coating); 
     }
-
+    
     new G4PVPlacement(nullptr,
                       G4ThreeVector(  0., 
                                       (-1.*(this->GetThickness())/2.) +(aux/2.), 
@@ -111,6 +134,7 @@ namespace nexus {
                       false, 
                       0, 
                       true);
+
 
     /// OPTICAL WINDOW
     G4Material* op_sil = materials::OpticalSilicone();
@@ -139,6 +163,13 @@ namespace nexus {
                         true);
 
     /// PHOTOSENSITIVE AREA
+
+    G4Box* sensarea_solid =
+      new G4Box(  "MPPC_SENSAREA", 
+                  (this->GetSensareaTransverseDimAlongX())/2., 
+                  (this->GetSensareaThickness())/2., 
+                  (this->GetSensareaTransverseDimAlongZ())/2.);
+    
     G4LogicalVolume* sensarea_logic =
       new G4LogicalVolume(sensarea_solid,
                           G4NistManager::Instance()->FindOrBuildMaterial("G4_Si"),
@@ -148,16 +179,33 @@ namespace nexus {
     sensarea_col.SetForceSolid(true);
     sensarea_logic->SetVisAttributes(sensarea_col);
 
-    new G4PVPlacement(  nullptr, 
-                        G4ThreeVector(  0., 
-                                        ((this->GetThickness())/2.) -(this->GetWindowThickness()) -((this->GetSensareaThickness())/2.), 
-                                        0.),          
-                        sensarea_logic, 
-                        "MPPC_SENSAREA", 
-                        encasing_logic, 
-                        false, 
-                        0, 
-                        true);
+    G4int copy_no = 0;
+    for(G4int i=0; i<this->GetSiPMsNoAlongX(); i++){
+        for(G4int j=0; j<this->GetSiPMsNoAlongZ(); j++){
+
+            x_pos = (-1.*(this->GetTransverseDim()/2.))  
+                    +this->GetOuterFrameWidthAlongX()
+                    +(i*this->GetInnerFramesWidthAlongX())
+                    +((i+0.5)*this->GetSensareaTransverseDimAlongX());
+
+            z_pos = (-1.*(this->GetTransverseDim()/2.))  
+                    +this->GetOuterFrameWidthAlongZ()
+                    +(j*this->GetInnerFramesWidthAlongZ())
+                    +((j+0.5)*this->GetSensareaTransverseDimAlongZ());
+
+            new G4PVPlacement(  nullptr, 
+                                G4ThreeVector(  x_pos, 
+                                                ((this->GetThickness())/2.) -(this->GetWindowThickness()) -((this->GetSensareaThickness())/2.), 
+                                                z_pos),
+                                sensarea_logic, 
+                                "MPPC_SENSAREA", 
+                                encasing_logic, 
+                                true, 
+                                copy_no, 
+                                true);
+            copy_no += 1;
+        }
+    }
 
     /// OPTICAL PROPERTIES
     std::pair<G4int, G4double*> sensarea_energy = GetSensareaEnergyArray();
@@ -174,7 +222,7 @@ namespace nexus {
 
     if(energy_size!=efficiency_size || efficiency_size!=reflectivity_size){
       G4Exception("[SiPMMPPC]", "Construct()",
-                  FatalException, "Sizes of energy, effciency and reflectivity arrays must match.");
+                  FatalException, "Sizes of energy, efficiency and reflectivity arrays must match.");
     }
 
     G4double test_energy[]  = {opticalprops::optPhotMinE_, opticalprops::optPhotMaxE_};
@@ -206,4 +254,21 @@ namespace nexus {
 
     return;
   }
+
+  G4double SiPMMPPC::GetSensareaTransverseDimAlongX()
+  {     
+      G4double result = this->GetTransverseDim();
+      result -= 2.*(this->GetOuterFrameWidthAlongX());
+      result -= (-1+this->GetSiPMsNoAlongX())*(this->GetInnerFramesWidthAlongX());
+      return result/(this->GetSiPMsNoAlongX());
+  }
+
+  G4double SiPMMPPC::GetSensareaTransverseDimAlongZ()
+  {     
+      G4double result = this->GetTransverseDim();
+      result -= 2.*(this->GetOuterFrameWidthAlongZ());
+      result -= (-1+this->GetSiPMsNoAlongZ())*(this->GetInnerFramesWidthAlongZ());
+      return result/(this->GetSiPMsNoAlongZ());
+  }
+
 }

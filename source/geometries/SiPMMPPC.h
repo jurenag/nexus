@@ -11,9 +11,10 @@ namespace nexus {
   class SiPMMPPC: public GeometryBase
   {
   public:
-    // Constructor for a the base (abstract) clase from which to derive the classes
+    // Constructor for a base (abstract) clase from which to derive the classes
     // for every SiPM MPPC, such as HPK S13360-5075-HD-HQR, HPK S13360-6050-VE or
-    // FBK NUV HD CRYO TT.
+    // FBK NUV HD CRYO TT. This class can also model SiPMMPPC arrays, such as 
+    // Broadcom AFBR-S4N44P044M.
     SiPMMPPC();
 
     // Destructor
@@ -27,19 +28,30 @@ namespace nexus {
   
     //Get methods
 
-    virtual G4double const GetTransverseDim() =0;         ///< One of the overall transverse dimensions 
-                                                          ///  (the MPPC section is square)
-    virtual G4double const GetSensareaTransverseDim() =0; ///< One of the transverse dimensions for the 
-                                                          ///  sensitive volume (its section is also an square) 
-    virtual G4double const GetThickness() =0;             ///< Overall thickness of the MPPC
-    virtual G4double const GetWindowThickness() =0;       ///< Thickness of the epoxy window    
-    virtual G4double const GetSensareaThickness() =0;     ///< Thickness of the sensitive volume. This is an 
-                                                          ///  approximation. This dimension does not 
-                                                          ///  matter since the sensarea will be coated with 
-                                                          ///  a sensitive optical surface and the only exposed 
-                                                          ///  face is the front one.
-    virtual G4String const GetModel() =0;                 ///< Name of the SiPM model   
+    virtual G4double GetTransverseDim() =0;           ///< One of the overall transverse dimensions 
+                                                      ///< (the MPPC section is square).
+    virtual G4int GetSiPMsNoAlongX() =0;              ///< Number of SiPMs along the x axis.
+    virtual G4int GetSiPMsNoAlongZ() =0;              ///< Number of SiPMs along the z axis.
+    virtual G4double GetOuterFrameWidthAlongX() =0;   ///< Let the 'frame' be the dead space in between
+                                                      ///< the different SiPMs of this SiPMMPPC array.
+                                                      ///< Then this function returns the width of the
+                                                      ///< outer frame along the x axis.
+    virtual G4double GetOuterFrameWidthAlongZ() =0;   ///< The width of the outer frame along the z axis.
+    virtual G4double GetInnerFramesWidthAlongX() =0;  ///< The width of the inner frames along the x axis.
+    virtual G4double GetInnerFramesWidthAlongZ() =0;  ///< The width of the inner frames along the z axis.
+    virtual G4double GetThickness() =0;               ///< Overall thickness of the MPPC.
+    virtual G4double GetWindowThickness() =0;         ///< Thickness of the epoxy window.   
+    virtual G4double GetSensareaThickness() =0;       ///< Thickness of the sensitive volume. This is an 
+                                                      ///  approximation. This dimension does not 
+                                                      ///  matter since the sensarea will be coated with 
+                                                      ///  a sensitive optical surface and the only exposed 
+                                                      ///  face is the front one.
+    virtual G4String GetModel() =0;                   ///< Name of the SiPM model.
 
+    G4double GetSensareaTransverseDimAlongX();        ///< Transverse dimension of the 
+                                                      ///< sensitive areas along the x axis the 
+    G4double GetSensareaTransverseDimAlongZ();        ///< Transverse dimension of the 
+                                                      ///< sensitive areas along the z axis the 
   private:
     virtual G4int GetNPoints()=0;
     virtual std::pair<G4int, G4double*> GetSensareaEnergyArray()=0;
