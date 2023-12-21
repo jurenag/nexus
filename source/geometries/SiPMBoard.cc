@@ -144,9 +144,10 @@ namespace nexus {
 
     //ENCASING
     G4String encasing_name = "BOARD_ENCASING";
+    const G4double encasing_height = GetOverallHeight();
     const G4double encasing_thickn = GetOverallThickness();
     G4Box* encasing_solid = 
-        new G4Box(encasing_name, board_length_/2., board_height_/2., encasing_thickn/2.);
+        new G4Box(encasing_name, board_length_/2., encasing_height/2., encasing_thickn/2.);
 
     G4Material* lAr = G4NistManager::Instance()->FindOrBuildMaterial("G4_lAr");
     lAr->SetMaterialPropertiesTable(opticalprops::LAr());
