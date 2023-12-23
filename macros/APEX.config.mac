@@ -31,7 +31,7 @@
 /Geometry/APEX/flat_dimple_width                    8.      mm
 /Geometry/APEX/flat_dimple_depth                    1.2     mm
 /Geometry/APEX/curvy_dimple_radius                  4.0     mm
-/Geometry/APEX/generation_region                    randon
+/Geometry/APEX/generation_region                    random
 /Geometry/APEX/gen_x                                0.      cm
 /Geometry/APEX/gen_z                                0.      cm
 /Geometry/APEX/gen_diameter                         1.      cm
