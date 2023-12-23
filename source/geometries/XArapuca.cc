@@ -441,6 +441,7 @@ namespace nexus{
     ul_->SetUserMaxTrackLength(100*m);
   }
 
+
   XArapuca::~XArapuca()
   {
       if(ul_) delete ul_;
@@ -618,6 +619,7 @@ namespace nexus{
     
     return;
   }
+
 
   void XArapuca::ConstructFibers(G4VPhysicalVolume* mother_physical) const
   {
@@ -1006,6 +1008,7 @@ namespace nexus{
 
   }
 
+
   void XArapuca::ConstructReflectiveCase(G4VPhysicalVolume* mother_physical) const
   {
     
@@ -1065,6 +1068,7 @@ namespace nexus{
     return;
 
   }
+
 
   void XArapuca::ConstructCollectors(G4VPhysicalVolume* mother_physical) const
   {
@@ -1484,6 +1488,7 @@ namespace nexus{
     return;
   }
 
+
   G4bool XArapuca::geometry_is_ill_formed()
   {
 
@@ -1517,7 +1522,6 @@ namespace nexus{
         if(plate_length_<plate_width_){
             G4Exception("[XArapuca]", "geometry_is_ill_formed()", FatalException,
             "For consistency with the code, plate_length_ must be greater than plate_width_.");
-
         }
 
         SiPMMPPC* sipm_ptr = nullptr;
@@ -1636,6 +1640,7 @@ namespace nexus{
 
     return !(check1*check2*check3);
   }
+
 
   G4ThreeVector XArapuca::GenerateVertex(const G4String&) const{
 
