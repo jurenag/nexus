@@ -25,18 +25,27 @@ REGISTER_CLASS(WLSPlate, GeometryBase)
 
 namespace nexus{
 
-  WLSPlate::WLSPlate(G4bool with_LAr, G4bool with_dimples, G4String dimple_type, 
-                    G4int dimples_no, G4bool along_both_directions, G4double flat_dimple_width, 
-                    G4double flat_dimple_depth, G4double curvy_dimple_radius):
+  WLSPlate::WLSPlate( G4bool with_LAr, 
+                      G4bool dimples_at_x_plus, 
+                      G4bool dimples_at_x_minus,
+                      G4bool dimples_at_z_plus, 
+                      G4bool dimples_at_z_minus, 
+                      G4String dimple_type,
+                      G4int how_many_dimples, 
+                      G4double flat_dimple_width, 
+                      G4double flat_dimple_depth, 
+                      G4double curvy_dimple_radius):
   GeometryBase(),
   dx_(487.*mm),
   dy_(3.5*mm),
   dz_(93.*mm), //<Default WLS plate dimensions taken from FD1 TDR vol. IX
   with_LAr_env_(with_LAr),
-  with_dimples_(with_dimples),
+  dimples_at_x_plus_(dimples_at_x_plus),
+  dimples_at_x_minus_(dimples_at_x_minus),
+  dimples_at_z_plus_(dimples_at_z_plus),
+  dimples_at_z_minus_(dimples_at_z_minus),
   dimple_type_(dimple_type),
-  how_many_dimples_(dimples_no),
-  along_both_directions_(along_both_directions),
+  how_many_dimples_(how_many_dimples),
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
   curvy_dimple_radius_(curvy_dimple_radius),
@@ -72,19 +81,30 @@ namespace nexus{
 
   }
 
-  WLSPlate::WLSPlate(G4double dx, G4double dy, G4double dz, G4bool with_LAr, 
-                    G4bool with_dimples, G4String dimple_type, G4int dimples_no,
-                    G4bool along_both_directions, G4double flat_dimple_width, 
-                    G4double flat_dimple_depth, G4double curvy_dimple_radius):
+  WLSPlate::WLSPlate( G4double dx, 
+                      G4double dy, 
+                      G4double dz, 
+                      G4bool with_LAr, 
+                      G4bool dimples_at_x_plus, 
+                      G4bool dimples_at_x_minus, 
+                      G4bool dimples_at_z_plus, 
+                      G4bool dimples_at_z_minus, 
+                      G4String dimple_type, 
+                      G4int how_many_dimples,
+                      G4double flat_dimple_width, 
+                      G4double flat_dimple_depth, 
+                      G4double curvy_dimple_radius):
   GeometryBase(),
   dx_(dx),
   dy_(dy),
   dz_(dz),
   with_LAr_env_(with_LAr),
-  with_dimples_(with_dimples),
+  dimples_at_x_plus_(dimples_at_x_plus),
+  dimples_at_x_minus_(dimples_at_x_minus),
+  dimples_at_z_plus_(dimples_at_z_plus),
+  dimples_at_z_minus_(dimples_at_z_minus),
   dimple_type_(dimple_type),
-  how_many_dimples_(dimples_no),
-  along_both_directions_(along_both_directions),
+  how_many_dimples_(how_many_dimples),
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
   curvy_dimple_radius_(curvy_dimple_radius),
@@ -92,23 +112,35 @@ namespace nexus{
   {
   }
 
-  WLSPlate::WLSPlate(G4double dx, G4double dy, G4double dz, G4MaterialPropertiesTable* mpt, 
-                    G4bool with_LAr, G4bool with_dimples, G4String dimple_type, G4int dimples_no, 
-                    G4bool along_both_directions, G4double flat_dimple_width, 
-                    G4double flat_dimple_depth, G4double curvy_dimple_radius):
+  WLSPlate::WLSPlate( G4double dx, 
+                      G4double dy, 
+                      G4double dz, 
+                      G4MaterialPropertiesTable* mpt, 
+                      G4bool with_LAr, 
+                      G4bool dimples_at_x_plus,
+                      G4bool dimples_at_x_minus,
+                      G4bool dimples_at_z_plus,
+                      G4bool dimples_at_z_minus,
+                      G4String dimple_type, 
+                      G4int how_many_dimples,
+                      G4double flat_dimple_width, 
+                      G4double flat_dimple_depth, 
+                      G4double curvy_dimple_radius):
   GeometryBase(),
   dx_(dx),
   dy_(dy),
   dz_(dz),
   mpt_(mpt),
-  with_dimples_(with_dimples),
+  with_LAr_env_(with_LAr),
+  dimples_at_x_plus_(dimples_at_x_plus),
+  dimples_at_x_minus_(dimples_at_x_minus),
+  dimples_at_z_plus_(dimples_at_z_plus),
+  dimples_at_z_minus_(dimples_at_z_minus),
   dimple_type_(dimple_type),
-  how_many_dimples_(dimples_no),
-  along_both_directions_(along_both_directions),
+  how_many_dimples_(how_many_dimples),
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
-  curvy_dimple_radius_(curvy_dimple_radius),
-  with_LAr_env_(with_LAr)
+  curvy_dimple_radius_(curvy_dimple_radius)
   {
   }
 
@@ -152,9 +184,13 @@ namespace nexus{
     G4VSolid* geometry_solid = nullptr;
     G4Box* whole_plate_solid = new G4Box(plate_name, dx_/2., dy_/2., dz_/2.);
 
-    if(with_dimples_ && how_many_dimples_>=1)
-    {
+    G4bool has_at_least_one_dimple;
+    has_at_least_one_dimple = dimples_at_x_plus_ || dimples_at_x_minus_;
+    has_at_least_one_dimple = has_at_least_one_dimple || dimples_at_z_plus_ || dimples_at_z_minus_;
+    has_at_least_one_dimple = has_at_least_one_dimple && (how_many_dimples_>=1);
 
+    if(has_at_least_one_dimple)
+    {
         G4double tolerance = 0.5*mm; // To avoid boolean subtraction of matching surfaces
         G4VSolid* carving_solid = nullptr;
         if(dimple_type_=="flat"){
@@ -177,25 +213,39 @@ namespace nexus{
 
         G4Transform3D* transform_ptr = nullptr;
         G4MultiUnion* carvings_multiunion_solid = new G4MultiUnion("CARVINGS");
-        for(G4int i=0; i<how_many_dimples_; i++){
+
+        if(dimples_at_z_plus_){
+          for(G4int i=0; i<how_many_dimples_; i++){
             transform_ptr = new G4Transform3D(*rot, G4ThreeVector((-1.*dx_/2.)+(1.*(0.5+i)*dx_/(1.*how_many_dimples_)), 0., +dz_/2.));
             carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
+          }
+        }
+
+        if(dimples_at_z_minus_){
+          for(G4int i=0; i<how_many_dimples_; i++){
             transform_ptr = new G4Transform3D(*rot, G4ThreeVector((-1.*dx_/2.)+(1.*(0.5+i)*dx_/(1.*how_many_dimples_)), 0., -1.*dz_/2.));
             carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
+          }
         }
 
         if(dimple_type_=="flat"){
             rot->rotateY(+90.*deg);
         }
 
-        if(along_both_directions_){
-            for(G4int i=0; i<how_many_dimples_; i++){
-                transform_ptr = new G4Transform3D(*rot, G4ThreeVector(+dx_/2., 0., (-1.*dz_/2.)+(1.*(0.5+i)*dz_/(1.*how_many_dimples_))));
-                carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
-                transform_ptr = new G4Transform3D(*rot, G4ThreeVector(-1.*dx_/2., 0., (-1.*dz_/2.)+(1.*(0.5+i)*dz_/(1.*how_many_dimples_))));
-                carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
-            }
+        if(dimples_at_x_plus_){
+          for(G4int i=0; i<how_many_dimples_; i++){
+            transform_ptr = new G4Transform3D(*rot, G4ThreeVector(+dx_/2., 0., (-1.*dz_/2.)+(1.*(0.5+i)*dz_/(1.*how_many_dimples_))));
+            carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
+          }
         }
+
+        if(dimples_at_x_minus_){
+          for(G4int i=0; i<how_many_dimples_; i++){
+            transform_ptr = new G4Transform3D(*rot, G4ThreeVector(-1.*dx_/2., 0., (-1.*dz_/2.)+(1.*(0.5+i)*dz_/(1.*how_many_dimples_))));
+            carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
+          }
+        }
+
         carvings_multiunion_solid->Voxelize();
 
         G4SubtractionSolid* dimpled_plate_solid = new G4SubtractionSolid(plate_name, 
