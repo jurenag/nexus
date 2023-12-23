@@ -109,7 +109,10 @@ namespace nexus {
 
     ///---- config_code_==1 parameters ----///
     G4double plate_length_, plate_width_, plate_thickn_;            ///< WLS plate thickness
-    G4bool only_sipms_along_long_sides_;                            ///< Whether the photo sensors are installed only along the long sides of the X-ARAPUCA (i.e. the 'length' dimension), or along every side.
+    G4bool sipms_at_x_plus_;                                        ///< Whether to place sipms at the XA side which is contained in x>0.0
+    G4bool sipms_at_x_minus_;                                       ///< Whether to place sipms at the XA side which is contained in x<0.0
+    G4bool sipms_at_z_plus_;                                        ///< Whether to place sipms at the XA side which is contained in z>0.0
+    G4bool sipms_at_z_minus_;                                       ///< Whether to place sipms at the XA side which is contained in z<0.0
     G4bool with_boards_;                                            ///< Whether the photosensors are mounted on a board
     G4int PS_config_code_;                                          ///< Value in (1,2) which labels which photo sensors configuration will be simulated
                                                                     ///< 1 -    num_phsensors_ are evenly distributed along each chosen* side of the WLS plate.
