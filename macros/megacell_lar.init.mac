@@ -1,0 +1,14 @@
+/control/execute macros/physics/OpticalPhysics.mac
+
+/nexus/RegisterGeometry XArapuca
+
+/nexus/RegisterGenerator LArScintillationGenerator
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+#/nexus/RegisterSteppingAction SaveAllSteppingAction
+
+/nexus/RegisterMacro macros/megacell_lar.config.mac
