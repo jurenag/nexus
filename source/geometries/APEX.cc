@@ -371,12 +371,24 @@ namespace nexus{
 
   void APEX::ConstructWLSPlate(G4VPhysicalVolume* mother_physical) const
   { 
-    WLSPlate* plate = new WLSPlate  (plate_length_, plate_thickn_, plate_width_, 
-                                    opticalprops::G2P_FB118(cromophore_concentration_, WLSp_rindex_, true), false,
-                                    //opticalprops::EJ286(secondary_wls_attlength_), false,
-                                    with_dimples_, dimple_type_, num_phsensors_, 
-                                    false, flat_dimple_width_, 
-                                    flat_dimple_depth_, curvy_dimple_radius_);
+
+    G4bool dimples_at_z_minus = board_position_code_==1 ? false : with_dimples_; 
+
+    WLSPlate* plate = new WLSPlate  ( plate_length_, 
+                                      plate_thickn_, 
+                                      plate_width_, 
+                                      opticalprops::G2P_FB118(cromophore_concentration_, WLSp_rindex_, true),
+                                      //opticalprops::EJ286(secondary_wls_attlength_),
+                                      false,
+                                      false,                // dimples_at_x_plus_
+                                      false,                // dimples_at_x_minus_
+                                      false,                // dimples_at_z_plus_
+                                      dimples_at_z_minus,   // dimples_at_z_minus_
+                                      dimple_type_, 
+                                      num_phsensors_, 
+                                      flat_dimple_width_, 
+                                      flat_dimple_depth_, 
+                                      curvy_dimple_radius_);
     plate->Construct();
     G4LogicalVolume* plate_logic = plate->GetLogicalVolume();
     plate_logic->SetUserLimits(ul_);
