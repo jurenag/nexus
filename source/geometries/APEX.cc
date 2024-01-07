@@ -609,9 +609,6 @@ namespace nexus{
                                       0.);
     if(board_position_code_!=1){
 
-      SiPMBoard board;
-      board.SetSiPMCode(SiPM_code_);
-
       vec = G4ThreeVector(0.,
                           0.,
                           -1.*(plate_width_/2.)-1.*(reflective_foil_thickn_/2.));   // Minus half the width of the plate
