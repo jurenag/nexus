@@ -275,7 +275,7 @@ namespace nexus{
   void APEX::Construct()
   {
 
-    // Compute internal attributes  // COME BACK HERE AND COMPUTE THESE !!!!
+    // Compute internal attributes
     // overall_length_ = ... ;  
     // overall_thickn_ = ... ;
     // overall_width_  = ... ;
@@ -580,8 +580,8 @@ namespace nexus{
                                                                 //  1)  if board_position_code_==1, the carved hole is a pass-through hole
                                                                 //  2)  if board_position_code_==2, we prevent matching surfaces in the boolean subtraction
                                                                 //      In this second case, the value of the tolerance actually matters. It must be big 
-                                                                //      enough so as to prevent matching surfaces, but small enough so as to not carve to 
-                                                                //      match the horizontal portion of the reflective foil.
+                                                                //      enough so as to prevent matching surfaces, but small enough so as to not carve too 
+                                                                //      much the horizontal portion of the reflective foil.
                                     sipm_transverse_dim/2.);
 
     G4MultiUnion* reflective_foil_holes = new G4MultiUnion("REF_FOIL_HOLES");
