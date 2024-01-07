@@ -614,7 +614,7 @@ namespace nexus{
 
       vec = G4ThreeVector(0.,
                           0.,
-                          -1.*(plate_length_/2.)-1.*(reflective_foil_thickn_/2.));  // Minus half the length of the plate
+                          -1.*(plate_width_/2.)-1.*(reflective_foil_thickn_/2.));   // Minus half the width of the plate
                                                                                     // minus half the reflective-foil thickness
     }
 
