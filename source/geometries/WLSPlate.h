@@ -26,7 +26,8 @@ namespace nexus {
                 G4int how_many_dimples = 24, 
                 G4double flat_dimple_width = 6.1*mm, 
                 G4double flat_dimple_depth = 2.*mm, 
-                G4double curvy_dimple_radius = 3.1*mm);
+                G4double curvy_dimple_radius = 3.1*mm,
+                G4double tunneling_probability = 0.0);
     ///Construct a WLSPlate with given dimensions
     WLSPlate(   G4double, 
                 G4double, 
@@ -40,7 +41,8 @@ namespace nexus {
                 G4int how_many_dimples = 24, 
                 G4double flat_dimple_width = 6.1*mm, 
                 G4double flat_dimple_depth = 2.*mm, 
-                G4double curvy_dimple_radius = 3.1*mm);
+                G4double curvy_dimple_radius = 3.1*mm,
+                G4double tunneling_probability = 0.0);
     ///Construct a WLSPlate with given dimensions and optical properties
     WLSPlate(   G4double, 
                 G4double, 
@@ -55,7 +57,8 @@ namespace nexus {
                 G4int how_many_dimples = 24, 
                 G4double flat_dimple_width = 6.1*mm, 
                 G4double flat_dimple_depth = 2.*mm, 
-                G4double curvy_dimple_radius = 3.1*mm);
+                G4double curvy_dimple_radius = 3.1*mm,
+                G4double tunneling_probability = 0.0);
     ///Destructor
     ~WLSPlate();
 
@@ -75,6 +78,9 @@ namespace nexus {
     G4int how_many_dimples_;                            ///< How many dimples to carve on EACH selected side of the plate
     G4double flat_dimple_width_, flat_dimple_depth_;    ///< Used for flat dimples. The width of the dimple (along the board direction) and its depth, perpendicular to the plate surface.
     G4double curvy_dimple_radius_;                      ///< Used for cylindrical or spherical dimples. Radius of the dimple.
+    G4double tunneling_probability_;                    ///< Probability that a photon tunnels through the surface of the WLSPlate (inwards or outwards), meaning that it is 
+                                                        ///< straightfoward-ly transmitted (no deflection due to Frensel refraction). The goal of this parameter is to let 
+                                                        ///< us model surface imperfections of the WLS plate.
     G4MaterialPropertiesTable* mpt_;                    ///< WLS optical properties
     G4bool with_LAr_env_;                               ///< Whether to build a LAr environment or not 
 

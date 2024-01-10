@@ -7,6 +7,8 @@
 
 #include <G4VSolid.hh>
 #include <G4MultiUnion.hh>
+#include <G4OpticalSurface.hh>
+#include <G4LogicalSkinSurface.hh>
 #include <G4SubtractionSolid.hh>
 #include <G4Transform3D.hh>
 #include <G4Box.hh>
@@ -34,7 +36,8 @@ namespace nexus{
                       G4int how_many_dimples, 
                       G4double flat_dimple_width, 
                       G4double flat_dimple_depth, 
-                      G4double curvy_dimple_radius):
+                      G4double curvy_dimple_radius,
+                      G4double tunneling_probability):
   GeometryBase(),
   dx_(487.*mm),
   dy_(3.5*mm),
@@ -49,6 +52,7 @@ namespace nexus{
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
   curvy_dimple_radius_(curvy_dimple_radius),
+  tunneling_probability_(tunneling_probability),
   mpt_(opticalprops::EJ286())
   {
 
@@ -93,7 +97,8 @@ namespace nexus{
                       G4int how_many_dimples,
                       G4double flat_dimple_width, 
                       G4double flat_dimple_depth, 
-                      G4double curvy_dimple_radius):
+                      G4double curvy_dimple_radius,
+                      G4double tunneling_probability):
   GeometryBase(),
   dx_(dx),
   dy_(dy),
@@ -108,6 +113,7 @@ namespace nexus{
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
   curvy_dimple_radius_(curvy_dimple_radius),
+  tunneling_probability_(tunneling_probability),
   mpt_(opticalprops::EJ286())
   {
   }
@@ -125,7 +131,8 @@ namespace nexus{
                       G4int how_many_dimples,
                       G4double flat_dimple_width, 
                       G4double flat_dimple_depth, 
-                      G4double curvy_dimple_radius):
+                      G4double curvy_dimple_radius,
+                      G4double tunneling_probability):
   GeometryBase(),
   dx_(dx),
   dy_(dy),
@@ -140,7 +147,8 @@ namespace nexus{
   how_many_dimples_(how_many_dimples),
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
-  curvy_dimple_radius_(curvy_dimple_radius)
+  curvy_dimple_radius_(curvy_dimple_radius),
+  tunneling_probability_(tunneling_probability)
   {
   }
 
@@ -267,6 +275,18 @@ namespace nexus{
 
     G4LogicalVolume* geometry_logic =
       new G4LogicalVolume(geometry_solid, pvt, plate_name);
+
+    if(tunneling_probability_!=0.0)
+    {
+      G4String surface_name = "IMPERFECT_SURFACE";
+      G4OpticalSurface* imperfect_surface =
+                new G4OpticalSurface( surface_name, 
+                                      unified, 
+                                      polished, 
+                                      dielectric_dielectric);
+      imperfect_surface->SetMaterialPropertiesTable(opticalprops::ImperfectDielectricDielectricSurface(tunneling_probability_));
+      new G4LogicalSkinSurface(surface_name, geometry_logic, imperfect_surface);
+    }
 
     if(world_logic_vol){
         new G4PVPlacement(nullptr, G4ThreeVector{}, geometry_logic, plate_name, 
