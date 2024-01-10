@@ -94,6 +94,7 @@ namespace nexus{
   plate_length_                         (487.   *mm                   ),   ///X
   plate_width_                          (93.    *mm                   ),   ///Z
   plate_thickn_                         (3.5    *mm                   ),   ///Y
+  tunneling_probability_                (0.0                          ),
   sipms_at_x_plus_                      (true                         ),
   sipms_at_x_minus_                     (true                         ),
   sipms_at_z_plus_                      (true                         ),
@@ -347,6 +348,13 @@ namespace nexus{
     pt_cmd.SetParameterName("plate_thickn", false);
     pt_cmd.SetRange("plate_thickn>0.");
 
+    G4GenericMessenger::Command& tp_cmd =
+      msg_->DeclareProperty("tunneling_probability", tunneling_probability_,
+			    "Probability that a photon tunnels through the surface of the WLSPlate (inwards or outwards).");
+    tp_cmd.SetParameterName("tunneling_probability", false);
+    tp_cmd.SetRange("tunneling_probability>=0.");
+    tp_cmd.SetRange("tunneling_probability<=1.");
+
     G4GenericMessenger::Command& saxp_cmd =
       msg_->DeclareProperty("sipms_at_x_plus", sipms_at_x_plus_,
 			    "Whether to place sipms at the XA side which is contained in x>0.0");
@@ -597,7 +605,8 @@ namespace nexus{
                                     num_phsensors_, 
                                     flat_dimple_width_,
                                     flat_dimple_depth_, 
-                                    curvy_dimple_radius_);
+                                    curvy_dimple_radius_,
+                                    tunneling_probability_);
 
     plate->Construct();
     G4LogicalVolume* plate_logic = plate->GetLogicalVolume();
