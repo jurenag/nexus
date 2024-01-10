@@ -109,6 +109,9 @@ namespace nexus {
 
     ///---- config_code_==1 parameters ----///
     G4double plate_length_, plate_width_, plate_thickn_;            ///< WLS plate thickness
+    G4double tunneling_probability_;                                ///< Probability that a photon tunnels through the surface of the WLSPlate (inwards or outwards), meaning that it is 
+                                                                    ///< straightfoward-ly transmitted (no deflection due to Frensel refraction). The goal of this parameter is to let 
+                                                                    ///< us model surface imperfections of the WLS plate.
     G4bool sipms_at_x_plus_;                                        ///< Whether to place sipms at the XA side which is contained in x>0.0
     G4bool sipms_at_x_minus_;                                       ///< Whether to place sipms at the XA side which is contained in x<0.0
     G4bool sipms_at_z_plus_;                                        ///< Whether to place sipms at the XA side which is contained in z>0.0
