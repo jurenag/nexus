@@ -47,7 +47,11 @@
 /Geometry/XArapuca/plate_length                         100.    mm
 /Geometry/XArapuca/plate_width                          100.    mm
 /Geometry/XArapuca/plate_thickn                         3.5     mm
-/Geometry/XArapuca/only_sipms_along_long_sides          false
+/Geometry/XArapuca/tunneling_probability                0.0
+/Geometry/XArapuca/sipms_at_x_plus                      true
+/Geometry/XArapuca/sipms_at_x_minus                     false
+/Geometry/XArapuca/sipms_at_z_plus                      false
+/Geometry/XArapuca/sipms_at_z_minus                     false
 /Geometry/XArapuca/with_boards                          false
 /Geometry/XArapuca/with_dimples                         false
 /Geometry/XArapuca/dimple_type                          flat
@@ -64,7 +68,7 @@
 
 /control/execute macros/generators/LArScintillationGeneratorY.mac
 
-/nexus/persistency/outputFile /home/jurenag/installations/nexus-source/output/MiniArapucaStudies/SideSensitivity/TrashCan
+/nexus/persistency/output_file /home/jurenag/installations/nexus-source/output/MiniArapucaStudies/SideSensitivity/TrashCan
 
 
 #Typical gap for immersion of sipms within flat dimples: -1.15*mm

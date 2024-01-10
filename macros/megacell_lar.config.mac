@@ -54,6 +54,7 @@
 /Geometry/XArapuca/plate_length                         619.    mm
 /Geometry/XArapuca/plate_width                          619.    mm
 /Geometry/XArapuca/plate_thickn                         5.5     mm
+/Geometry/XArapuca/tunneling_probability                0.01
 /Geometry/XArapuca/sipms_at_x_plus                      true
 /Geometry/XArapuca/sipms_at_x_minus                     true
 /Geometry/XArapuca/sipms_at_z_plus                      true
