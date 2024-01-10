@@ -37,6 +37,8 @@ namespace opticalprops {
   G4MaterialPropertiesTable* FakeFusedSilica(G4double transparency = .9,
                                             G4double thickness    = 1. * mm);
 
+  G4MaterialPropertiesTable* ImperfectDielectricDielectricSurface(G4double escaping_probability=.01);
+
   G4MaterialPropertiesTable* ITO();
 
   G4MaterialPropertiesTable* PEDOT();
