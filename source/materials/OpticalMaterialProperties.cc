@@ -299,6 +299,42 @@ namespace opticalprops {
 
 
 
+  /// Imperfect Dielectric-dielectric surface ///
+  G4MaterialPropertiesTable* ImperfectDielectricDielectricSurface(G4double tunneling_probability)
+  {
+    // This surface has a certain probability for photons, regarless their energy, to be 
+    // straightforward transmitted without being fresnel-refracted or -reflected. Such 
+    // probability is the one that is given to the tunneling_probability parameter. This 
+    // is based on the following chunk of documentation of Geant4, which can be found in:
+    // https://geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/TrackingAndPhysics/physicsProcess.html#optical-photon-processes
+    // 
+    // "It is possible to specify that a given fraction of photons are absorbed at the surface, 
+    // or transmitted without change in direction or polarization. This is applicable for 
+    // dielectric_dielectric interfaces that are not backpainted. The material properties 
+    // REFLECTIVITY and TRANSMITTANCE are used. By default, REFLECTIVITY equals 1 and 
+    // TRANSMITTANCE equals 0. At a surface interaction, a random number is chosen. If the 
+    // random number is greater than the sum of the values of REFLECTIVITY and TRANSMITTANCE 
+    // at the photon energy, the photon is absorbed. Otherwise, if the random number is greater 
+    // than the REFLECTIVITY value, the photon is transmitted. Otherwise, the usual calculation 
+    // of scattering takes place."
+    
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    G4double energy[] =         { optPhotMinE_,             optPhotMinE_+(0.1*eV),    optPhotMinE_+(0.2*eV),    optPhotMinE_+(0.3*eV), 
+                                  optPhotMaxE_-(0.3*eV),    optPhotMaxE_-(0.2*eV),    optPhotMaxE_-(0.1*eV),    optPhotMaxE_            };
+    G4double transmittance[] =  { tunneling_probability,    tunneling_probability,    tunneling_probability,    tunneling_probability,
+                                  tunneling_probability,    tunneling_probability,    tunneling_probability,    tunneling_probability    };
+    G4double reflectivity[] =   { 1.-tunneling_probability, 1.-tunneling_probability, 1.-tunneling_probability, 1.-tunneling_probability,
+                                  1.-tunneling_probability, 1.-tunneling_probability, 1.-tunneling_probability, 1.-tunneling_probability };
+
+    mpt->AddProperty("TRANSMITTANCE", energy, transmittance,  8);
+    mpt->AddProperty("REFLECTIVITY",  energy, reflectivity,   8);
+    return mpt;
+  }
+
+
+
+  /// ITO ///
   G4MaterialPropertiesTable* ITO()
   {
     // Input data: complex refraction index obtained from:

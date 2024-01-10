@@ -39,6 +39,8 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* Epoxy();
 
+  G4MaterialPropertiesTable* ImperfectDielectricDielectricSurface(G4double escaping_probability=.01);
+
   G4MaterialPropertiesTable* ITO();
 
   G4MaterialPropertiesTable* PEDOT();
