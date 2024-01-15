@@ -100,6 +100,7 @@ namespace nexus{
   sipms_at_z_plus_                      (true                         ),
   sipms_at_z_minus_                     (true                         ),
   with_boards_                          (true                         ),
+  add_blocks_between_sipms_             (false                        ),
   PS_config_code_                       (1                            ),
   with_dimples_                         (true                         ),
   dimple_type_                          ("cylindrical"                ),
@@ -374,6 +375,10 @@ namespace nexus{
     G4GenericMessenger::Command& wb_cmd =
       msg_->DeclareProperty("with_boards", with_boards_,
 			    "Whether the SiPMs are mounted on boards or floating.");
+
+    G4GenericMessenger::Command& abbs_cmd =
+      msg_->DeclareProperty("add_blocks_between_sipms", add_blocks_between_sipms_,
+			    "Whether to add reflective blocks filling the gaps in between the SiPMs.");
 
     G4GenericMessenger::Command& pscc_cmd =
       msg_->DeclareProperty("PS_config_code", PS_config_code_,
@@ -878,6 +883,7 @@ namespace nexus{
         board1.SetSiPMCode(SiPM_code_);
         board1.SetNumPhsensors(num_phsensors_);
         board1.SetReflectiveSupports(ref_phsensors_supports_);
+        board1.SetAddBlocks(add_blocks_between_sipms_);
         board1.Construct();
         G4LogicalVolume* board1_logic_vol = board1.GetLogicalVolume();
 
@@ -899,6 +905,7 @@ namespace nexus{
         board2.SetSiPMCode(SiPM_code_);
         board2.SetNumPhsensors(num_phsensors_);
         board2.SetReflectiveSupports(ref_phsensors_supports_);
+        board2.SetAddBlocks(add_blocks_between_sipms_);
         board2.Construct();
         G4LogicalVolume* board2_logic_vol = board2.GetLogicalVolume();
 
@@ -917,6 +924,7 @@ namespace nexus{
         board3.SetSiPMCode(SiPM_code_);
         board3.SetNumPhsensors(num_phsensors_);
         board3.SetReflectiveSupports(ref_phsensors_supports_);
+        board3.SetAddBlocks(add_blocks_between_sipms_);
         board3.Construct();
         G4LogicalVolume* board3_logic_vol = board3.GetLogicalVolume();
 
@@ -935,6 +943,7 @@ namespace nexus{
         board4.SetSiPMCode(SiPM_code_);
         board4.SetNumPhsensors(num_phsensors_);
         board4.SetReflectiveSupports(ref_phsensors_supports_);
+        board4.SetAddBlocks(add_blocks_between_sipms_);
         board4.Construct();
         G4LogicalVolume* board4_logic_vol = board4.GetLogicalVolume();
 
@@ -953,12 +962,14 @@ namespace nexus{
         board1.SetSiPMCode(SiPM_code_);
         board1.SetNumPhsensors(num_phsensors_);
         board1.SetReflectiveSupports(ref_phsensors_supports_);
+        board1.SetAddBlocks(add_blocks_between_sipms_);
 
         SiPMBoard board2;
         board2.SetBaseID(num_phsensors_);
         board2.SetSiPMCode(SiPM_code_);
         board2.SetNumPhsensors(num_phsensors_);
         board2.SetReflectiveSupports(ref_phsensors_supports_);
+        board2.SetAddBlocks(add_blocks_between_sipms_);
 
         if(along_long_side_){
             board1.SetBoardLength(internal_width_);
@@ -1576,6 +1587,17 @@ namespace nexus{
                 internal_geom_width_span += (2.*gap_)+(2.*board.GetOverallThickness());    
             }
             internal_geom_thickn_span = std::max(plate_thickn_, board.GetOverallHeight());
+
+            // The following one is an extra test which should be done in 
+            // the case where config_code_ is 1 and with_boards_ is True
+            if(gap_<0.0 && add_blocks_between_sipms_){  // A negative gap is allowed to model with-dimples where the 
+                                                        // SiPM protrudes into the dimple. However, if that's the case, 
+                                                        // blocks cannot be added between SiPMs, because those blocks 
+                                                        // would collide into the WLSplate.
+              G4Exception("[XArapuca]", "geometry_is_ill_formed()",
+                          FatalException, "The blocks in between the SiPMs will protrude into the WLS plate.");
+
+            }
         }
         else{
             if(PS_config_code_==1){
