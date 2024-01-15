@@ -18,7 +18,8 @@
 #include <G4OpticalSurface.hh>
 #include <G4LogicalSkinSurface.hh>
 #include <G4SystemOfUnits.hh>
-
+#include <G4MultiUnion.hh>
+#include <G4SubtractionSolid.hh>
 
 namespace nexus {
 
@@ -28,6 +29,7 @@ namespace nexus {
     board_height_(8.*mm),   ///< Y
     board_thickn_(1.*mm),   ///< Z
     ref_phsensors_supports_(true),
+    add_blocks_between_sipms_(false),
     base_id_(0),
     num_phsensors_(24),
     SiPM_code_(1)
@@ -88,6 +90,7 @@ namespace nexus {
     delete sipm_ptr;
     return board_thickn_ + sipm_thickn;
   }
+  G4double SiPMBoard::GetHasBlocks()        const   { return add_blocks_between_sipms_; }
 
   G4bool SiPMBoard::GeometryIsIllFormed() const
   {
@@ -186,8 +189,61 @@ namespace nexus {
 
     //FR4 piece (the board itself)
     G4String board_name = "BOARD";
-    G4Box* board_solid =
-        new G4Box(board_name, board_length_/2., board_height_/2., board_thickn_/2.);
+    G4VSolid* board_solid = nullptr;
+
+    if(!add_blocks_between_sipms_){
+      board_solid = dynamic_cast<G4VSolid*>(new G4Box(board_name, board_length_/2., 
+                                                                  board_height_/2., 
+                                                                  board_thickn_/2.));
+    }
+    else{
+      SiPMMPPC* sipm_ptr = nullptr;
+      if(SiPM_code_==1){
+        sipm_ptr = new HamamatsuS133606050VE();
+      }
+      else if(SiPM_code_==2){
+        sipm_ptr = new HamamatsuS133605075HQR();
+      }
+      else if(SiPM_code_==3){
+        sipm_ptr = new FbkNuvHdCryoTT();
+      }
+      else if(SiPM_code_==4){
+        sipm_ptr = new BroadcomAFBRS4N44P044M();
+      }
+      else{
+        sipm_ptr = new PerfectSiPMMPPC();
+      }
+      board_solid = dynamic_cast<G4VSolid*>(new G4Box(board_name, board_length_/2., 
+                                                                  board_height_/2., 
+                                                                  GetOverallThickness()/2.));
+
+      sipm_ptr->Construct();  // I won't be able to get its logical volume unless the SiPMMPPC::Construct()
+                              // method has been previosly called. Otherwise you get a segmentation fault.
+
+      G4double tolerance = 1.*mm; // Some tolerance to prevent matching surfaces in boolean subtraction
+      G4Box* sipm_wide_carvings = new G4Box(board_name, sipm_ptr->GetTransverseDim()/2., 
+                                                        (board_height_+tolerance)/2.,             // Add tolerance at both, the height
+                                                        (sipm_ptr->GetThickness()+tolerance)/2.); // dimension and the thickness dimension.
+
+      G4MultiUnion* board_carvings = new G4MultiUnion("BOARD_CARVINGS");
+      G4double x_pos, z_pos;
+      G4Transform3D* transform_ptr = nullptr;
+      G4RotationMatrix* rot = new G4RotationMatrix();
+
+      for(G4int i=0; i<num_phsensors_; i++){
+        x_pos = (-1.*board_length_/2.) + ((0.5 + i)*board_length_/num_phsensors_);
+        transform_ptr = new G4Transform3D(*rot, G4ThreeVector(x_pos, 0., 0.));
+        board_carvings->AddNode(*sipm_wide_carvings, *transform_ptr);
+      }
+      board_carvings->Voxelize();
+
+      z_pos = (GetOverallThickness()/2.) -GetBoardThickness() -(sipm_ptr->GetThickness()/2.) -(tolerance/2.);
+      board_solid = dynamic_cast<G4VSolid*>(new G4SubtractionSolid( board_name, board_solid,
+                                                                    board_carvings, 
+                                                                    nullptr, G4ThreeVector(0., 0., z_pos)));
+      delete sipm_ptr;
+    }
+
     G4LogicalVolume* board_logic = 
         new G4LogicalVolume(board_solid, materials::FR4(), board_name);
 
@@ -203,10 +259,18 @@ namespace nexus {
     board_coating->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
     new G4LogicalSkinSurface(bc_name, board_logic, board_coating); 
 
+    G4double pos;
+    if(!add_blocks_between_sipms_){
+      pos = (GetOverallThickness()-board_thickn_)/2.;
+    }
+    else{         // In this case, the geometric
+      pos = 0.0;  // center of board_solid matches
+    }             // that of the encasing volume
+
     //Place it
     G4double aux = GetOverallThickness();
     new G4PVPlacement(nullptr, 
-        G4ThreeVector(0., 0., (aux-board_thickn_)/2.),
+        G4ThreeVector(0., 0., pos),
         board_logic, "COATED_BOARD", 
         encasing_logic_vol,
         false, 0, true);
