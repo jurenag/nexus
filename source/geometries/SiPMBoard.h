@@ -22,6 +22,7 @@ namespace nexus {
     inline void SetBoardHeight(G4double input)      { board_height_             = input; }
     inline void SetBoardThickness(G4double input)   { board_thickn_             = input; }
     inline void SetReflectiveSupports(G4bool input) { ref_phsensors_supports_   = input; }
+    inline void SetAddBlocks(G4bool input)          { add_blocks_between_sipms_ = input; }
 
     G4int GetNumPhsensors()         const;  ///< Returns the number of photosensors attached to the board 
     G4int GetSiPMCode()             const;  ///< Returns the SiPM code
@@ -33,6 +34,7 @@ namespace nexus {
     G4double GetBoardThickness()    const;  ///< Returns the thickness of the board alone
     G4double GetOverallThickness()  const;  ///< Returns the span of the geometry along the thickness axis 
                                             ///< (i.e. the sum of the thickness of the board plus the SiPM thickness)
+    G4double GetHasBlocks()         const;  ///< Returns teh add_blocks_between_sipms_ attribute
 
     G4bool GeometryIsIllFormed() const;     ///< Whether the provided parameters describe a feasible geometry
 
@@ -55,6 +57,10 @@ namespace nexus {
     G4double board_length_;             ///< Board length
     G4double board_height_;             ///< Board height (width)
     G4bool   ref_phsensors_supports_;   ///< Whether the FR4 supports of the SiPMs are vikuiti-coated    
+    G4bool   add_blocks_between_sipms_; ///< Whether to add blocks filling the space in between each two
+                                        ///< two sipms. Blocks are also added at both ends of the board.
+                                        ///< Analogously to no-blocks case, when the blocks are placed
+                                        ///< they are wrapped by a reflective vikuiti-like G4LogicalSkinSurface.
   };
 
 } // namespace nexus
