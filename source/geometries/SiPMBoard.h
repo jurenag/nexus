@@ -39,7 +39,9 @@ namespace nexus {
     G4bool GeometryIsIllFormed() const;     ///< Whether the provided parameters describe a feasible geometry
 
     void Construct();
-    void ConstructBoard(G4LogicalVolume*);
+    void ConstructBoard(G4LogicalVolume*);  ///< Constructs the board where the SiPMs are placed. By default, this 
+                                            ///< board is wrapped by a G4LogicalSkinSurface with 
+                                            ///< opticalprops::specularspikeVIKUITI() G4MaterialPropertiesTable.
     void ConstructSiPMs(G4LogicalVolume*);
 
   private:
