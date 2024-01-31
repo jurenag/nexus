@@ -34,7 +34,7 @@ namespace nexus {
     G4double GetBoardThickness()    const;  ///< Returns the thickness of the board alone
     G4double GetOverallThickness()  const;  ///< Returns the span of the geometry along the thickness axis 
                                             ///< (i.e. the sum of the thickness of the board plus the SiPM thickness)
-    G4double GetHasBlocks()         const;  ///< Returns teh add_blocks_between_sipms_ attribute
+    G4double GetHasBlocks()         const;  ///< Returns the add_blocks_between_sipms_ attribute
 
     G4bool GeometryIsIllFormed() const;     ///< Whether the provided parameters describe a feasible geometry
 
