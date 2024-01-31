@@ -873,6 +873,8 @@ namespace nexus{
   void XArapuca::ConstructBoards(G4VPhysicalVolume* mother_physical) const
   {
 
+    G4double sipm_protrusion = 0.1*mm;  // According to the add_blocks_between_sipms_ attribute documentation 
+                                        // in XArapuca.h. Check such documentation for more information.
     if(config_code_==1){
       G4double z_pos, x_pos;
 
@@ -884,6 +886,7 @@ namespace nexus{
         board1.SetNumPhsensors(num_phsensors_);
         board1.SetReflectiveSupports(ref_phsensors_supports_);
         board1.SetAddBlocks(add_blocks_between_sipms_);
+        board1.SetSiPMProtrusion(sipm_protrusion);
         board1.Construct();
         G4LogicalVolume* board1_logic_vol = board1.GetLogicalVolume();
 
@@ -906,6 +909,7 @@ namespace nexus{
         board2.SetNumPhsensors(num_phsensors_);
         board2.SetReflectiveSupports(ref_phsensors_supports_);
         board2.SetAddBlocks(add_blocks_between_sipms_);
+        board2.SetSiPMProtrusion(sipm_protrusion);
         board2.Construct();
         G4LogicalVolume* board2_logic_vol = board2.GetLogicalVolume();
 
@@ -925,6 +929,7 @@ namespace nexus{
         board3.SetNumPhsensors(num_phsensors_);
         board3.SetReflectiveSupports(ref_phsensors_supports_);
         board3.SetAddBlocks(add_blocks_between_sipms_);
+        board3.SetSiPMProtrusion(sipm_protrusion);
         board3.Construct();
         G4LogicalVolume* board3_logic_vol = board3.GetLogicalVolume();
 
@@ -944,6 +949,7 @@ namespace nexus{
         board4.SetNumPhsensors(num_phsensors_);
         board4.SetReflectiveSupports(ref_phsensors_supports_);
         board4.SetAddBlocks(add_blocks_between_sipms_);
+        board4.SetSiPMProtrusion(sipm_protrusion);
         board4.Construct();
         G4LogicalVolume* board4_logic_vol = board4.GetLogicalVolume();
 
@@ -963,6 +969,7 @@ namespace nexus{
         board1.SetNumPhsensors(num_phsensors_);
         board1.SetReflectiveSupports(ref_phsensors_supports_);
         board1.SetAddBlocks(add_blocks_between_sipms_);
+        board1.SetSiPMProtrusion(sipm_protrusion);
 
         SiPMBoard board2;
         board2.SetBaseID(num_phsensors_);
@@ -970,6 +977,7 @@ namespace nexus{
         board2.SetNumPhsensors(num_phsensors_);
         board2.SetReflectiveSupports(ref_phsensors_supports_);
         board2.SetAddBlocks(add_blocks_between_sipms_);
+        board2.SetSiPMProtrusion(sipm_protrusion);
 
         if(along_long_side_){
             board1.SetBoardLength(internal_width_);
