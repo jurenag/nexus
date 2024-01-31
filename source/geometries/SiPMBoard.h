@@ -23,6 +23,7 @@ namespace nexus {
     inline void SetBoardThickness(G4double input)   { board_thickn_             = input; }
     inline void SetReflectiveSupports(G4bool input) { ref_phsensors_supports_   = input; }
     inline void SetAddBlocks(G4bool input)          { add_blocks_between_sipms_ = input; }
+    inline void SetSiPMProtrusion(G4double input)   { sipm_protrusion_          = input; }
 
     G4int GetNumPhsensors()         const;  ///< Returns the number of photosensors attached to the board 
     G4int GetSiPMCode()             const;  ///< Returns the SiPM code
@@ -35,6 +36,7 @@ namespace nexus {
     G4double GetOverallThickness()  const;  ///< Returns the span of the geometry along the thickness axis 
                                             ///< (i.e. the sum of the thickness of the board plus the SiPM thickness)
     G4double GetHasBlocks()         const;  ///< Returns the add_blocks_between_sipms_ attribute
+    G4double GetSiPMProtrusion()    const;  ///< Returns the sipm_protrusion_ attribute
 
     G4bool GeometryIsIllFormed() const;     ///< Whether the provided parameters describe a feasible geometry
 
@@ -63,6 +65,12 @@ namespace nexus {
                                         ///< two sipms. Blocks are also added at both ends of the board.
                                         ///< Analogously to no-blocks case, when the blocks are placed
                                         ///< they are wrapped by a reflective vikuiti-like G4LogicalSkinSurface.
+    G4double sipm_protrusion_;          ///< This parameter only makes a difference if add_blocks_between_sipms_ 
+                                        ///< is True. In that case, this parameter is a length which must have 
+                                        ///< a value in between 0.0 and the sipm thickness. It gives the distance 
+                                        ///< which the SiPM protrudes from the surrounding blocks. The case where
+                                        ///< sipm_protrusion_ is 0.0 means that the blocks are coplanar with the
+                                        ///< SiPMs surface. If it matches the sipm thickness, no blocks are placed.
   };
 
 } // namespace nexus

@@ -30,6 +30,7 @@ namespace nexus {
     board_thickn_(1.*mm),   ///< Z
     ref_phsensors_supports_(true),
     add_blocks_between_sipms_(false),
+    sipm_protrusion_(0.0*mm),
     base_id_(0),
     num_phsensors_(24),
     SiPM_code_(1)
@@ -91,6 +92,7 @@ namespace nexus {
     return board_thickn_ + sipm_thickn;
   }
   G4double SiPMBoard::GetHasBlocks()        const   { return add_blocks_between_sipms_; }
+  G4double SiPMBoard::GetSiPMProtrusion()   const   { return sipm_protrusion_; }
 
   G4bool SiPMBoard::GeometryIsIllFormed() const
   {
@@ -191,34 +193,31 @@ namespace nexus {
     G4String board_name = "BOARD";
     G4VSolid* board_solid = nullptr;
 
-    if(!add_blocks_between_sipms_){
-      board_solid = dynamic_cast<G4VSolid*>(new G4Box(board_name, board_length_/2., 
-                                                                  board_height_/2., 
-                                                                  board_thickn_/2.));
+    SiPMMPPC* sipm_ptr = nullptr;
+    if(SiPM_code_==1){
+      sipm_ptr = new HamamatsuS133606050VE();
+    }
+    else if(SiPM_code_==2){
+      sipm_ptr = new HamamatsuS133605075HQR();
+    }
+    else if(SiPM_code_==3){
+      sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    else if(SiPM_code_==4){
+      sipm_ptr = new BroadcomAFBRS4N44P044M();
     }
     else{
-      SiPMMPPC* sipm_ptr = nullptr;
-      if(SiPM_code_==1){
-        sipm_ptr = new HamamatsuS133606050VE();
-      }
-      else if(SiPM_code_==2){
-        sipm_ptr = new HamamatsuS133605075HQR();
-      }
-      else if(SiPM_code_==3){
-        sipm_ptr = new FbkNuvHdCryoTT();
-      }
-      else if(SiPM_code_==4){
-        sipm_ptr = new BroadcomAFBRS4N44P044M();
-      }
-      else{
-        sipm_ptr = new PerfectSiPMMPPC();
-      }
+      sipm_ptr = new PerfectSiPMMPPC();
+    }
+    sipm_ptr->Construct();  // I won't be able to get its logical volume unless the SiPMMPPC::Construct()
+                            // method has been previosly called. Otherwise you get a segmentation fault.
+    
+    if(add_blocks_between_sipms_ && sipm_protrusion_<sipm_ptr->GetThickness()){   // If the sipm protrusion is set to be bigger or equal to 
+                                                                                  // the sipm thickness, no blocks can be added. Therefore, 
+                                                                                  // such condition should be checked as well.
       board_solid = dynamic_cast<G4VSolid*>(new G4Box(board_name, board_length_/2., 
                                                                   board_height_/2., 
-                                                                  GetOverallThickness()/2.));
-
-      sipm_ptr->Construct();  // I won't be able to get its logical volume unless the SiPMMPPC::Construct()
-                              // method has been previosly called. Otherwise you get a segmentation fault.
+                                                                  (GetOverallThickness()-sipm_protrusion_)/2.));
 
       G4double tolerance = 1.*mm; // Some tolerance to prevent matching surfaces in boolean subtraction
       G4Box* sipm_wide_carvings = new G4Box(board_name, sipm_ptr->GetTransverseDim()/2., 
@@ -241,8 +240,13 @@ namespace nexus {
       board_solid = dynamic_cast<G4VSolid*>(new G4SubtractionSolid( board_name, board_solid,
                                                                     board_carvings, 
                                                                     nullptr, G4ThreeVector(0., 0., z_pos)));
-      delete sipm_ptr;
     }
+    else{
+      board_solid = dynamic_cast<G4VSolid*>(new G4Box(board_name, board_length_/2., 
+                                                                  board_height_/2., 
+                                                                  board_thickn_/2.));
+    }
+    delete sipm_ptr;
 
     G4LogicalVolume* board_logic = 
         new G4LogicalVolume(board_solid, materials::FR4(), board_name);
