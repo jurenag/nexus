@@ -137,6 +137,18 @@ namespace nexus {
     G4String dimple_type_;                                          ///< Type of the dimple, i.e. "cylindrical", "spherical" etc.
     G4double flat_dimple_width_, flat_dimple_depth_;                ///< Used for flat dimples. The width of the dimple (along the board direction) and its depth, perpendicular to the plate surface.
     G4double curvy_dimple_radius_;                                  ///< Used for cylindrical or spherical dimples. Radius of the dimple.
+    G4bool cut_plate_;                                              ///< Whether to split the WLS plate up into two pieces.
+                                                                    ///< WARNING: Although the application works fine, the visualization may break
+                                                                    ///<          down when with_dimples_ and cut_plate_ are simultaneously true.
+    G4double cut_angle_;                                            ///< This parameter only makes a difference if cut_plate_ is true. Angle of the cut, with respect to the Z axis (the axis along which the WLS plate is dz_ long)
+    G4double cut_thickness_;                                        ///< This parameter only makes a difference if cut_plate_ is true. Thickness of the cut/crack that is carved from the plate.
+    G4bool place_foil_at_the_cut_;                                  ///< This parameter only makes a difference if cut_plate_ is true. Whether to place (two) pieces of foil covering the inner faces of the cut.
+                                                                    ///< If that's the case, then the material properties table of such foils is opticalprops::specularspikeVIKUITI() and their thickness match cut_thickness_/5.
+                                                                    ///< These foils are in optical contact contact with the WLS plate volume (meaning that there's no gab in between a foil and the WLS plate). Hence, if 
+                                                                    ///< tunneling_probability_ is different from 0.0, the foils G4LogicalSkinSurface's match (in space) that of the WLS plate. However, in this case (contrary
+                                                                    ///< to the one explained in the add_blocks_between_sipms_ attribute documentation) the photons which arrive at the cut behave as expected (are reflected with
+                                                                    ///< the vikuiti reflection probability).
+
     ///---- config_code_==2 parameters ---///
     G4int fibers_no_;                                               ///< Total number of fibers are installed within the X-ARAPUCA. Must be divisible by fiber_planes_no_
     G4int fiber_planes_no_;                                         ///< How many fibers-horizontal-planes are installed within the X-ARAPUCA

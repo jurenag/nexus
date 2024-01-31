@@ -21,6 +21,7 @@
 #include <G4UserLimits.hh>
 #include <G4Box.hh>
 #include <G4Tubs.hh>
+#include <G4Para.hh>
 #include <G4Transform3D.hh>
 #include <G4MultiUnion.hh>
 #include <G4LogicalVolume.hh>
@@ -107,6 +108,10 @@ namespace nexus{
   flat_dimple_width_                    (6.1    *mm                   ),
   flat_dimple_depth_                    (2.     *mm                   ),
   curvy_dimple_radius_                  (1.5    *mm                   ),
+  cut_plate_                            (false                        ),
+  cut_angle_                            (40.*deg                      ),
+  cut_thickness_                        (1.*mm                        ),
+  place_foil_at_the_cut_                (false                        ),
   fibers_no_                            (6                            ),
   fiber_planes_no_                      (1                            ),    
   fiber_radius_                         (5.     *mm                   ),
@@ -415,6 +420,28 @@ namespace nexus{
     cdr_cmd.SetParameterName("curvy_dimple_radius", false);
     cdr_cmd.SetRange("curvy_dimple_radius>0.");
 
+    G4GenericMessenger::Command& cp_cmd =
+      msg_->DeclareProperty("cut_plate", cut_plate_,
+			    "Whether to split the WLS plate up into two pieces.");
+
+    G4GenericMessenger::Command& ca_cmd =
+      msg_->DeclareProperty("cut_angle", cut_angle_,
+			    "Angle of the cut, with respect to the Z axis.");
+    ca_cmd.SetParameterName("cut_angle", false);
+    ca_cmd.SetRange("cut_angle>=0.");
+    ca_cmd.SetRange("cut_angle<=1.57079632679");  // pi/2 ~ 1.57079632679
+
+    G4GenericMessenger::Command& cut_cmd =
+      msg_->DeclareProperty("cut_thickness", cut_thickness_,
+			    "Thickness of the cut/crack that is carved from the plate.");
+    cut_cmd.SetUnitCategory("Length");
+    cut_cmd.SetParameterName("cut_thickness", false);
+    cut_cmd.SetRange("cut_thickness>0.");
+
+    G4GenericMessenger::Command& pfatc_cmd =
+      msg_->DeclareProperty("place_foil_at_the_cut", place_foil_at_the_cut_,
+			    "Whether to place (two) pieces of foil covering the inner faces of the cut..");
+
     G4GenericMessenger::Command& fn_cmd =
       msg_->DeclareProperty("fibers_number", fibers_no_,
 			    "Number of fibers within the X-ARAPUCA.");
@@ -611,6 +638,9 @@ namespace nexus{
                                     flat_dimple_width_,
                                     flat_dimple_depth_, 
                                     curvy_dimple_radius_,
+                                    cut_plate_,
+                                    cut_angle_,
+                                    cut_thickness_,
                                     tunneling_probability_);
 
     plate->Construct();
@@ -630,6 +660,43 @@ namespace nexus{
 
     new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), plate_logic->GetName(), 
                     plate_logic, mother_physical, false, 0, true);
+
+    if(cut_plate_ && place_foil_at_the_cut_){
+
+      const G4String cut_foil_name = "CUT_FOIL";
+      G4Para* cut_foil_solid = new G4Para(cut_foil_name,
+                                          (cut_thickness_/5.)/2.,
+                                          plate_thickn_/2., 
+                                          plate_width_/2.,
+                                          0.0,
+                                          cut_angle_,                   // Parallelepiped angle with respect to the
+                                                                        // WLS-plate side which is plate_width_ long
+                                          0.0);            
+      G4LogicalVolume* cut_foil_logic = 
+        new G4LogicalVolume(cut_foil_solid, materials::FR4(), cut_foil_name);
+
+      G4OpticalSurface* opsurf = 
+        new G4OpticalSurface("CUT_FOIL_REF_SURFACE", unified, ground, dielectric_metal, 1);
+    
+      opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+      new G4LogicalSkinSurface("CUT_FOIL_REF_SURFACE", cut_foil_logic, opsurf);
+
+      new G4PVPlacement(nullptr,  G4ThreeVector(  (1e-6*plate_length_) -1.*cut_thickness_/2. +(cut_thickness_/5.)/2.,   // The 1e-6*plate_length_ shift is in agreement 
+                                                  0.,                                                                   // with what's done in WLSPlate::ConstructWLSPlate
+                                                  0.),
+                                  cut_foil_name, 
+                                  cut_foil_logic, 
+                                  mother_physical, 
+                                  true, 0, true);
+
+      new G4PVPlacement(nullptr,  G4ThreeVector(  +cut_thickness_/2. -(cut_thickness_/5.)/2., 
+                                                  0., 
+                                                  0.),
+                                  cut_foil_name, 
+                                  cut_foil_logic, 
+                                  mother_physical, 
+                                  true, 1, true);
+    }
     
     return;
   }
