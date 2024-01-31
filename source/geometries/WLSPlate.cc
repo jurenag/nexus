@@ -60,6 +60,8 @@ namespace nexus{
   cut_angle_(cut_angle),
   cut_thickness_(cut_thickness),
   tunneling_probability_(tunneling_probability),
+  generation_y_pos_(0.0), // Generating the photons inside the WLSPlate
+  generation_mode_("random"),
   mpt_(opticalprops::EJ286())
   {
 
@@ -127,6 +129,8 @@ namespace nexus{
   cut_angle_(cut_angle),
   cut_thickness_(cut_thickness),
   tunneling_probability_(tunneling_probability),
+  generation_y_pos_(1.*cm),
+  generation_mode_("random"),
   mpt_(opticalprops::EJ286())
   {
   }
@@ -168,6 +172,8 @@ namespace nexus{
   cut_angle_(cut_angle),
   cut_thickness_(cut_thickness),
   tunneling_probability_(tunneling_probability),
+  generation_y_pos_(1.*cm),
+  generation_mode_("random"),
   {
   }
 
@@ -362,6 +368,17 @@ namespace nexus{
 
   G4ThreeVector WLSPlate::GenerateVertex(const G4String&) const
   {
-    return G4ThreeVector(0., 100.*mm, 0.);
+    if(generation_mode_=="random"){
+      G4double tolerance = 1.*mm;
+      G4double x_pos =  UniformRandomInRange( (dx_/2.)-tolerance, 
+                                              (-dx_/2.)+tolerance);
+      G4double z_pos =  UniformRandomInRange( (dz_/2.)-tolerance, 
+                                              (-dz_/2)+tolerance); 
+      return G4ThreeVector(x_pos, generation_y_pos_, z_pos);
+
+    }
+    else{
+      return G4ThreeVector(0., generation_y_pos_, 0.);
+    }
   }
 }

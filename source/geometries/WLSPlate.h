@@ -95,6 +95,11 @@ namespace nexus {
     G4double tunneling_probability_;                    ///< Probability that a photon tunnels through the surface of the WLSPlate (inwards or outwards), meaning that it is 
                                                         ///< straightfoward-ly transmitted (no deflection due to Frensel refraction). The goal of this parameter is to let 
                                                         ///< us model surface imperfections of the WLS plate.
+    G4double generation_y_pos_;                         ///< The y-position of the generation vertex of photons.
+    G4String generation_mode_;                          ///< Controls the generation vertex of photons. It can take the following values
+                                                        ///< "random"       - The x- and z-positions of the generation vertex are randomly sampled 
+                                                        ///<                  in the intervals (-dx_/2, dx_/2) and (-dz_/2, dz_/2), respectively.
+                                                        ///< any other case - The x- and z-positions of the generation vertex are set to 0.0.
     G4MaterialPropertiesTable* mpt_;                    ///< WLS optical properties
     G4bool with_LAr_env_;                               ///< Whether to build a LAr environment or not 
 
