@@ -14,6 +14,7 @@
 #include <G4Box.hh>
 #include <G4Tubs.hh>
 #include <G4Orb.hh>
+#include <G4Para.hh>
 #include <G4RotationMatrix.hh>
 #include <G4LogicalVolume.hh>
 #include <G4PVPlacement.hh>
@@ -37,6 +38,9 @@ namespace nexus{
                       G4double flat_dimple_width, 
                       G4double flat_dimple_depth, 
                       G4double curvy_dimple_radius,
+                      G4bool cut_plate,
+                      G4double cut_angle,
+                      G4double cut_thickness,
                       G4double tunneling_probability):
   GeometryBase(),
   dx_(487.*mm),
@@ -52,6 +56,9 @@ namespace nexus{
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
   curvy_dimple_radius_(curvy_dimple_radius),
+  cut_plate_(cut_plate),
+  cut_angle_(cut_angle),
+  cut_thickness_(cut_thickness),
   tunneling_probability_(tunneling_probability),
   mpt_(opticalprops::EJ286())
   {
@@ -98,6 +105,9 @@ namespace nexus{
                       G4double flat_dimple_width, 
                       G4double flat_dimple_depth, 
                       G4double curvy_dimple_radius,
+                      G4bool cut_plate,
+                      G4double cut_angle,
+                      G4double cut_thickness,
                       G4double tunneling_probability):
   GeometryBase(),
   dx_(dx),
@@ -113,6 +123,9 @@ namespace nexus{
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
   curvy_dimple_radius_(curvy_dimple_radius),
+  cut_plate_(cut_plate),
+  cut_angle_(cut_angle),
+  cut_thickness_(cut_thickness),
   tunneling_probability_(tunneling_probability),
   mpt_(opticalprops::EJ286())
   {
@@ -132,6 +145,9 @@ namespace nexus{
                       G4double flat_dimple_width, 
                       G4double flat_dimple_depth, 
                       G4double curvy_dimple_radius,
+                      G4bool cut_plate,
+                      G4double cut_angle,
+                      G4double cut_thickness,
                       G4double tunneling_probability):
   GeometryBase(),
   dx_(dx),
@@ -148,7 +164,10 @@ namespace nexus{
   flat_dimple_width_(flat_dimple_width),
   flat_dimple_depth_(flat_dimple_depth),
   curvy_dimple_radius_(curvy_dimple_radius),
-  tunneling_probability_(tunneling_probability)
+  cut_plate_(cut_plate),
+  cut_angle_(cut_angle),
+  cut_thickness_(cut_thickness),
+  tunneling_probability_(tunneling_probability),
   {
   }
 
@@ -263,6 +282,49 @@ namespace nexus{
     else{
         geometry_solid = dynamic_cast<G4VSolid*>(whole_plate_solid);
     }
+
+    if(cut_plate_){
+
+      G4Para* subtrahend_solid = new G4Para("SUBTRAHEND",
+                                            (dx_/2.)+(cut_thickness_/2.),
+                                            2.*(dy_/2.), 
+                                            2.*(dz_/2.),
+                                            0.0,
+                                            cut_angle_,                   // Parallelepiped angle with respect to 
+                                                                          // the WLS-plate side which is dz_ long
+                                            0.0);
+      
+      G4SubtractionSolid* half_plate_solid = new G4SubtractionSolid(plate_name, 
+                                                                    geometry_solid, 
+                                                                    subtrahend_solid, 
+                                                                    nullptr, 
+                                                                    G4ThreeVector(dx_/2., 0., 0.)); // Placing the geometric center of the parallelepiped
+                                                                                                    // (subtrahend) right onto the edge of the WLS plate, 
+                                                                                                    // so that we are left with one half of the plate minus 
+                                                                                                    // half of the cut. The other half of the cut is carved 
+                                                                                                    // from the other half of the plate.
+      G4MultiUnion* multiunion_geometry_solid = new G4MultiUnion(plate_name);
+
+      G4RotationMatrix* rot_2 = new G4RotationMatrix();
+      rot_2->rotateY(180.*deg);
+
+      multiunion_geometry_solid->AddNode( half_plate_solid, 
+                                          G4Transform3D(  G4RotationMatrix{}, 
+                                                          G4ThreeVector(0., 0., 0.)));  // Note that the geometric center of half_plate_solid 
+                                                                                        // is that of the original (uncut) WLS plate, which is 
+                                                                                        // geometrically outside the half_plate_solid volume.
+      multiunion_geometry_solid->AddNode( half_plate_solid, 
+                                          G4Transform3D(  *rot_2,                               // G4Transform3D is a typedef of HepGeom::Transform3D, whose .cc
+                                                          G4ThreeVector((1e-6*dx_), 0., 0.)));  // source code is here: 
+                                                                                                // apc.u-paris.fr/~franco/g4doxy4.10/html/_transform3_d_8cc_source.html#l00142
+                                                                                                // I had to add a residual displacement (1e-6 of dx_), because otherwise, 
+                                                                                                // apparently the affine transformation has no inverse (i.e. its inverse 
+                                                                                                // transformation has zero determinant) and the error at line 157 of 
+                                                                                                // Transform3D.cc pops up. I.e. an affine transformation which consists 
+                                                                                                // just of a 180º rotation about the Y axis apparently has no inverse.
+      multiunion_geometry_solid->Voxelize();                                                                                  
+      geometry_solid = dynamic_cast<G4VSolid*>(multiunion_geometry_solid);
+    }                          
 
     G4Material* pvt = G4NistManager::Instance()->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
     if(mpt_ && pvt){
