@@ -117,7 +117,16 @@ namespace nexus {
     G4bool sipms_at_z_plus_;                                        ///< Whether to place sipms at the XA side which is contained in z>0.0
     G4bool sipms_at_z_minus_;                                       ///< Whether to place sipms at the XA side which is contained in z<0.0
     G4bool with_boards_;                                            ///< Whether the photosensors are mounted on a board
-    G4bool add_blocks_between_sipms_;                               ///< Whether to add reflective blocks filling the gaps in between the board-mounted SiPMs. This option is only available if with_boards_ is true.
+    G4bool add_blocks_between_sipms_;                               ///< Whether to add reflective blocks filling the gaps in between the board-mounted SiPMs. This option is only available 
+                                                                    ///< if with_boards_ is true. These blocks are nearly coplanar with the SiPM surface: Their surface is 0.1 millimeters
+                                                                    ///< behind the SiPMs surface - i.e. the SiPMs protrude 0.1 mm from these blocks. There are two reasons for this offset:
+                                                                    ///<    1)  These blocks are part of a SiPMBoard object, whose logical volume is wrapped with a G4LogicalSkinSurface.
+                                                                    ///<        On the other hand, if tunneling_probability_ is different from 0.0, then the WLSPlate logical volume will 
+                                                                    ///<        also be wrapped with a G4LogicalSkinSurface. If that's the case, two G4LogicalSkinSurface's match in space,
+                                                                    ///<        giving an undefined behaviour which is prone to bugs. P.e. last time this surfaces-match was observed,
+                                                                    ///<        photons arriving to that surface from within the WLSPlate were absorbed.
+                                                                    ///<    2)  Setting the blocks to be perfectly coplanar with the SiPM surface is not realistic either way, so we are
+                                                                    ///<        safe introducing this 0.1 mm gap in between the WLSPlate and the SiPMs surface.
     G4int PS_config_code_;                                          ///< Value in (1,2) which labels which photo sensors configuration will be simulated
                                                                     ///< 1 -    num_phsensors_ are evenly distributed along each chosen* side of the WLS plate.
                                                                     ///< 2 -    one big photosensor (whose transversal dimensions match those of the WLS plate side face) which matches the efficiency curve of HamamatsuS133606050VE is placed in front of each chosen* WLS 
