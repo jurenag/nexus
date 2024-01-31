@@ -653,7 +653,7 @@ namespace nexus{
     plate_logic->SetVisAttributes(wlsp_col);
     */
 
-    if (!plate_logic) {
+    if(!plate_logic){
       G4Exception("[XArapuca]", "ConstructWLSPlate()",
                   FatalException, "Null pointer to logical volume.");
     }
@@ -1136,7 +1136,7 @@ namespace nexus{
     //ref_case_col.SetForceSolid(true);
     ref_case_logic->SetVisAttributes(ref_case_col);
 
-    //Now create the reflectivie optical surface
+    //Now create the reflective optical surface
     const G4String refsurf_name = "REF_SURFACE";
     G4OpticalSurface* refsurf_opsurf = 
       new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
