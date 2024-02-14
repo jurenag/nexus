@@ -62,9 +62,11 @@ namespace nexus{
   tunneling_probability_(tunneling_probability),
   generation_y_pos_(0.0), // Generating the photons inside the WLSPlate
   generation_mode_("random"),
-  mpt_(opticalprops::EJ286())
+  wrap_with_collector_(true),
+  mpt_(opticalprops::G2P_FB118( 16., 
+                                1.502, 
+                                true))
   {
-
     msg_ = new G4GenericMessenger(this, "/Geometry/WLSPlate/",
 				"Control commands of geometry WLSPlate.");
     
@@ -131,7 +133,10 @@ namespace nexus{
   tunneling_probability_(tunneling_probability),
   generation_y_pos_(1.*cm),
   generation_mode_("random"),
-  mpt_(opticalprops::EJ286())
+  wrap_with_collector_(false),
+  mpt_(opticalprops::G2P_FB118( 16., 
+                                1.502, 
+                                true))
   {
   }
 
@@ -174,6 +179,7 @@ namespace nexus{
   tunneling_probability_(tunneling_probability),
   generation_y_pos_(1.*cm),
   generation_mode_("random"),
+  wrap_with_collector_(false)
   {
   }
 
@@ -205,6 +211,7 @@ namespace nexus{
         this->SetLogicalVolume(sphere_logic);
     }
     ConstructWLSPlate(sphere_logic);
+    if(wrap_with_collector_) ConstructCollector(sphere_logic);
     return;
 
   }
@@ -363,6 +370,33 @@ namespace nexus{
     else{
         this->SetLogicalVolume(geometry_logic);
     }
+    return;
+  }
+
+  void WLSPlate::ConstructCollector(G4LogicalVolume* world_logic_vol){
+
+    G4double collector_thickn = 1.*mm;
+    G4double plate_collector_gap = 0.1*mm;
+
+    G4String collector_name = "SURROUNDING_COLLECTOR";
+
+    G4Box* aux = new G4Box( "AUX",    (dx_/2.)+plate_collector_gap+collector_thickn, 
+                                      (dy_/2.)+plate_collector_gap+collector_thickn, 
+                                      (dz_/2.)+plate_collector_gap+collector_thickn);
+
+    G4Box* subtrahend = new G4Box("AUX",  (dx_/2.)+plate_collector_gap,   
+                                          (dy_/2.)+plate_collector_gap,
+                                          (dz_/2.)+plate_collector_gap);
+
+    G4SubtractionSolid* collector_solid = new G4SubtractionSolid( collector_name, 
+                                                                  aux, subtrahend);
+
+    G4Material* concrete = G4NistManager::Instance()->FindOrBuildMaterial("G4_CONCRETE");
+
+    G4LogicalVolume* collector_logic = new G4LogicalVolume(collector_solid, concrete, collector_name);
+
+    new G4PVPlacement(nullptr, G4ThreeVector{}, collector_logic, collector_name, 
+                      world_logic_vol, false, 0, true);
     return;
   }
 

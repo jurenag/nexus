@@ -75,6 +75,8 @@ namespace nexus {
     void          SetOpticalProperties(G4MaterialPropertiesTable*);
     void Construct();
     void ConstructWLSPlate(G4LogicalVolume*);
+    void ConstructCollector(G4LogicalVolume*);            ///< Called if the wrap_with_collector_ attribute is true. 
+                                                          ///< Check such attribute documentation for more information.
     G4ThreeVector GenerateVertex(const G4String&) const;
 
   private:
@@ -100,6 +102,9 @@ namespace nexus {
                                                         ///< "random"       - The x- and z-positions of the generation vertex are randomly sampled 
                                                         ///<                  in the intervals (-dx_/2, dx_/2) and (-dz_/2, dz_/2), respectively.
                                                         ///< any other case - The x- and z-positions of the generation vertex are set to 0.0.
+    G4bool wrap_with_collector_;                        ///< If True, the WLSPlate is placed within a box which is made out of a fully absorbent 
+                                                        ///< material. There's a 0.1 mm gap between the inner faces of the box and the WLSPlate faces
+                                                        ///< so that there's no optical contact between both.
     G4MaterialPropertiesTable* mpt_;                    ///< WLS optical properties
     G4bool with_LAr_env_;                               ///< Whether to build a LAr environment or not 
 
