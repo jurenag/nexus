@@ -372,8 +372,9 @@ namespace nexus{
   void APEX::ConstructWLSPlate(G4VPhysicalVolume* mother_physical) const
   { 
 
-    G4bool dimples_at_z_minus = board_position_code_==1 ? false : with_dimples_; 
-
+    G4bool dimples_at_z_minus = board_position_code_==2 ? with_dimples_ : false; 
+    G4bool dimples_at_z_plus = board_position_code_>=3 ? with_dimples_ : false;   // board_position_code_ is limited to >=1 
+                                                                                  // via a G4GenericMessenger::Command
     WLSPlate* plate = new WLSPlate  ( plate_length_, 
                                       plate_thickn_, 
                                       plate_width_, 
@@ -382,7 +383,7 @@ namespace nexus{
                                       false,
                                       false,                // dimples_at_x_plus_
                                       false,                // dimples_at_x_minus_
-                                      false,                // dimples_at_z_plus_
+                                      dimples_at_z_plus,    // dimples_at_z_plus_
                                       dimples_at_z_minus,   // dimples_at_z_minus_
                                       dimple_type_, 
                                       num_phsensors_, 
@@ -454,24 +455,50 @@ namespace nexus{
                     -1.*(plate_thickn_/2.)-1.*(sipm_thickn/2.)-gap_,    // Note that what's placed in the global origin of 
                                                                         // coordinates is the plate, not the reflective foil. 
                     0.);
+
+      G4int phsensor_id = 0;
+      for (G4int i=0; i<num_phsensors_; ++i) {
+        new G4PVPlacement(sipm_rot, base_pos+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
+                          sipm->GetModel(), sipm_logic_vol,
+                          mother_physical, true, phsensor_id, true);
+
+        phsensor_id += 1;
+      }
     }
-    else
+    else  // board_position_code_ is 2 or 3
     {
       sipm_rot->rotateX(-90.*deg);
       base_pos.set( (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
                     0.,
                     -1.*(plate_width_/2.)-1.*(sipm_thickn/2.)-gap_);
+
+      G4int phsensor_id = 0;
+      for (G4int i=0; i<num_phsensors_; ++i) {
+        new G4PVPlacement(sipm_rot, base_pos+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
+                          sipm->GetModel(), sipm_logic_vol,
+                          mother_physical, true, phsensor_id, true);
+        phsensor_id += 1;
+      }
+
+      if(board_position_code_>=3)
+      {
+        G4RotationMatrix* sipm_rot_2 = new G4RotationMatrix();
+        G4ThreeVector base_pos_2;
+
+        sipm_rot_2->rotateX(+90.*deg);
+        base_pos_2.set( (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
+                        0.,
+                        (plate_width_/2.)+(sipm_thickn/2.)+gap_);
+
+        phsensor_id = 0;
+        for (G4int i=0; i<num_phsensors_; ++i) {
+          new G4PVPlacement(sipm_rot_2, base_pos_2+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
+                            sipm->GetModel(), sipm_logic_vol,
+                            mother_physical, true, phsensor_id, true);
+          phsensor_id += 1;
+        }
+      }
     }
-
-    G4int phsensor_id = 0;
-    for (G4int i=0; i<num_phsensors_; ++i) {
-      new G4PVPlacement(sipm_rot, base_pos+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
-                        sipm->GetModel(), sipm_logic_vol,
-                        mother_physical, true, phsensor_id, true);
-
-      phsensor_id += 1;
-    }
-
 
     // Then construct the board (Vikuiti-coated FR4 piece)
     G4String board_name = "BOARD";
@@ -510,22 +537,42 @@ namespace nexus{
                     -sipm_thickn-1.*(board_thickn/2.),  // Note that what's placed in the global origin of 
                                                         // coordinates is the plate, not the reflective foil. 
                     0.);
+      //Place it
+      new G4PVPlacement(board_rot, board_pos,
+                        "COATED_BOARD", board_logic,
+                        mother_physical,
+                        false, 0, true);
     }
-    else
+    else  // board_position_code_ is 2 or 3
     {
       board_rot->rotateX(0.0*deg);
       board_pos.set(0.,
                     0.,
                     -1.*(plate_width_/2.)-gap_
                     -sipm_thickn-1.*(board_thickn/2.));
+      //Place it
+      new G4PVPlacement(board_rot, board_pos,
+                        "COATED_BOARD", board_logic,
+                        mother_physical,
+                        false, 0, true);
+
+      if(board_position_code_>=3)
+      {
+        G4RotationMatrix* board_rot_2 = new G4RotationMatrix();
+        G4ThreeVector board_pos_2;
+
+        board_rot_2->rotateX(0.0*deg);
+        board_pos_2.set(0.,
+                        0.,
+                        (plate_width_/2.)+gap_
+                        +sipm_thickn+(board_thickn/2.));
+        //Place it
+        new G4PVPlacement(board_rot_2, board_pos_2,
+                          "COATED_BOARD", board_logic,
+                          mother_physical,
+                          false, 0, true);
+      }
     }
-
-    //Place it
-    new G4PVPlacement(board_rot, board_pos,
-                      "COATED_BOARD", board_logic,
-                      mother_physical,
-                      false, 0, true);
-
     return;
   }
 
@@ -578,7 +625,7 @@ namespace nexus{
                                     sipm_transverse_dim/2., 
                                     thickness_of_dummy_sipm/2., // Setting here the reflective-foil thickness plus some tolerance so that:
                                                                 //  1)  if board_position_code_==1, the carved hole is a pass-through hole
-                                                                //  2)  if board_position_code_==2, we prevent matching surfaces in the boolean subtraction
+                                                                //  2)  if board_position_code_>=2, we prevent matching surfaces in the boolean subtraction
                                                                 //      In this second case, the value of the tolerance actually matters. It must be big 
                                                                 //      enough so as to prevent matching surfaces, but small enough so as to not carve too 
                                                                 //      much the horizontal portion of the reflective foil.
@@ -618,6 +665,17 @@ namespace nexus{
     ref_foil_solid = new G4SubtractionSolid(ref_foil_name, 
                                             ref_foil_solid, reflective_foil_holes, 
                                             nullptr, vec);
+    if(board_position_code_>=3){
+                                              // If board_position_code_ is 3, then also carve the holes for a second strip of SiPMs
+      G4ThreeVector vec_2 = G4ThreeVector(0.,
+                                          0.,
+                                          (plate_width_/2.)+(reflective_foil_thickn_/2.));  // Minus half the width of the plate
+                                                                                            // minus half the reflective-foil thickness
+      ref_foil_solid = new G4SubtractionSolid(ref_foil_name, 
+                                              ref_foil_solid, reflective_foil_holes, 
+                                              nullptr, vec_2);
+    }
+    
     G4LogicalVolume* ref_case_logic = 
       new G4LogicalVolume(ref_foil_solid, materials::FR4(), ref_foil_name);
 
