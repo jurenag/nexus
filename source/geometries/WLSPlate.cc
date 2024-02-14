@@ -92,9 +92,94 @@ namespace nexus{
     dz_cmd.SetParameterName("width", false);
     dz_cmd.SetRange("width>0.");
 
-    msg_->DeclareProperty("LAr", with_LAr_env_,
-    "Build a LAr sphere surrounding the WLSPlate.");
+    G4GenericMessenger::Command& daxp_cmd =
+      msg_->DeclareProperty("dimples_at_x_plus", dimples_at_x_plus_,
+			    "Whether to carve dimples at the WLSPlate side which is contained within x>0.0.");
 
+    G4GenericMessenger::Command& daxm_cmd =
+      msg_->DeclareProperty("dimples_at_x_minus", dimples_at_x_minus_,
+			    "Whether to carve dimples at the WLSPlate side which is contained within x<0.0.");
+
+    G4GenericMessenger::Command& dazp_cmd =
+      msg_->DeclareProperty("dimples_at_z_plus", dimples_at_z_plus_,
+			    "Whether to carve dimples at the WLSPlate side which is contained within z>0.0.");
+
+    G4GenericMessenger::Command& dazm_cmd =
+      msg_->DeclareProperty("dimples_at_z_minus", dimples_at_z_minus_,
+			    "Whether to carve dimples at the WLSPlate side which is contained within z<0.0.");
+
+    G4GenericMessenger::Command& dt_cmd =
+      msg_->DeclareProperty("dimple_type", dimple_type_,
+			    "Dimple type. Might be 'flat', 'cylindrical' or 'spherical'.");
+
+    G4GenericMessenger::Command& hmd_cmd =
+      msg_->DeclareProperty("how_many_dimples", how_many_dimples_,
+			    "How many dimples to carve on EACH selected side of the plate.");
+    hmd_cmd.SetParameterName("how_many_dimples", false);
+    hmd_cmd.SetRange("how_many_dimples>=0"); 
+
+    G4GenericMessenger::Command& fdw_cmd =
+      msg_->DeclareProperty("flat_dimple_width", flat_dimple_width_,
+			    "Width of the flat dimples.");
+    fdw_cmd.SetUnitCategory("Length");
+    fdw_cmd.SetParameterName("flat_dimple_width", false);
+    fdw_cmd.SetRange("flat_dimple_width>0.");
+
+    G4GenericMessenger::Command& fdd_cmd =
+      msg_->DeclareProperty("flat_dimple_depth", flat_dimple_depth_,
+			    "Depth of the flat dimples.");
+    fdd_cmd.SetUnitCategory("Length");
+    fdd_cmd.SetParameterName("flat_dimple_depth", false);
+    fdd_cmd.SetRange("flat_dimple_depth>0.");
+
+    G4GenericMessenger::Command& cdr_cmd =
+      msg_->DeclareProperty("curvy_dimple_radius", curvy_dimple_radius_,
+			    "Used for cylindrical or spherical dimples. Radius of the dimple.");
+    cdr_cmd.SetUnitCategory("Length");
+    cdr_cmd.SetParameterName("curvy_dimple_radius", false);
+    cdr_cmd.SetRange("curvy_dimple_radius>0.");
+
+    G4GenericMessenger::Command& cp_cmd =
+      msg_->DeclareProperty("cut_plate", cut_plate_,
+			    "Whether to split the WLS plate up into two pieces.");
+
+    G4GenericMessenger::Command& ca_cmd =
+      msg_->DeclareProperty("cut_angle", cut_angle_,
+			    "Angle of the cut, with respect to the Z axis (the axis along which the WLS plate is dz_ long).");
+    ca_cmd.SetParameterName("cut_angle", false);
+    ca_cmd.SetRange("cut_angle>=0.");
+    ca_cmd.SetRange("cut_angle<=1.57079632679");  // pi/2 ~ 1.57079632679
+
+    G4GenericMessenger::Command& ct_cmd =
+      msg_->DeclareProperty("cut_thickness", cut_thickness_,
+			    "Thickness of the cut/crack that is carved from the plate.");
+    ct_cmd.SetUnitCategory("Length");
+    ct_cmd.SetParameterName("cut_thickness", false);
+    ct_cmd.SetRange("cut_thickness>=0.");
+
+    G4GenericMessenger::Command& tp_cmd =
+      msg_->DeclareProperty("tunneling_probability", tunneling_probability_,
+			    "Probability that a photon tunnels through the surface of the WLSPlate (inwards or outwards).");
+    tp_cmd.SetParameterName("tunneling_probability", false);
+    tp_cmd.SetRange("tunneling_probability>=0.");
+    tp_cmd.SetRange("tunneling_probability<=1.");
+
+    G4GenericMessenger::Command& gyp_cmd =
+      msg_->DeclareProperty("generation_y_pos", generation_y_pos_,
+			    "The y-position of the generation vertex of photons.");
+    gyp_cmd.SetUnitCategory("Length");
+
+    G4GenericMessenger::Command& gm_cmd =
+      msg_->DeclareProperty("generation_mode", generation_mode_,
+			    "Controls the generation vertex of photons. Might be 'random' or 'center'.");
+  
+    G4GenericMessenger::Command& wwc_cmd =
+      msg_->DeclareProperty("wrap_with_collector", wrap_with_collector_,
+			    "Whether to place the WLSPlate within a box which is made out of a fully absorbent material.");
+
+    G4GenericMessenger::Command& wl_cmd =
+      msg_->DeclareProperty("with_LAr_env", with_LAr_env_,
+			    "Whether to build a LAr sphere surrounding the WLSPlate..");
   }
 
   WLSPlate::WLSPlate( G4double dx, 
