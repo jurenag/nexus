@@ -77,9 +77,10 @@ namespace nexus {
                                                                     ///< 4                  -> Broadcom AFBR-S4N44P044M (2x2 SiPM array)
                                                                     ///< Any other integer  -> PerfectSiPMMPPC (100% efficiency)
     G4int num_phsensors_;                                           ///< Number of photosensors per board
-    G4int board_position_code_;                                     ///< Integer signalling where to place the SiPM board. In any case, the board is arranged parallely to the APEX sides which are plate_length_ long.
-                                                                    ///< 1                  -> Facing the middle of one of the two largest WLS plate faces.
-                                                                    ///< Any other integer  -> Facing one of the smallest WLS plate faces.
+    G4int board_position_code_;                                     ///< Integer signalling where to place the SiPM boards. In any case, the boards are arranged parallely to the APEX sides which are plate_length_ long.
+                                                                    ///< 1                  -> One board facing the middle of one of the two largest WLS plate faces.
+                                                                    ///< 2                  -> One board facing one of the smallest WLS plate faces.
+                                                                    ///< Any other integer  -> One board facing each one of the smallest WLS plate faces (two boards in total).
     G4double gap_;                                                  ///< Gap between the photosensors and the WLS plate. A negative gap can help modelate the immersion of the SiPMs into the dimples. Be careful not to collide the SiPMs into the plate.
     G4bool ref_phsensors_supports_;                                 ///< Whether photosensors supports are reflective (the FR4 box that supports the SiPM)
     /// Dimples may be used in the future, but not for now ----------------------------------------------------------------------------------------------------
