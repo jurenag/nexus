@@ -100,6 +100,7 @@ namespace nexus{
   sipms_at_x_minus_                     (true                         ),
   sipms_at_z_plus_                      (true                         ),
   sipms_at_z_minus_                     (true                         ),
+  wrap_plate_in_ref_foil_               (false                        ),
   with_boards_                          (true                         ),
   add_blocks_between_sipms_             (false                        ),
   PS_config_code_                       (1                            ),
@@ -377,6 +378,10 @@ namespace nexus{
       msg_->DeclareProperty("sipms_at_z_minus", sipms_at_z_minus_,
 			    "Whether to place sipms at the XA side which is contained in z<0.0");
 
+    G4GenericMessenger::Command& wpirf_cmd =
+      msg_->DeclareProperty("wrap_plate_in_ref_foil", wrap_plate_in_ref_foil_,
+			    "Whether to wrap the WLS plate in a reflective foil a la APEX");
+
     G4GenericMessenger::Command& wb_cmd =
       msg_->DeclareProperty("with_boards", with_boards_,
 			    "Whether the SiPMs are mounted on boards or floating.");
@@ -604,6 +609,7 @@ namespace nexus{
     if(!remove_DFs_ || !remove_DFA_frame_) ConstructDichroicAssemblies(mother_physical);
     if(config_code_==1){
         ConstructWLSPlate(mother_physical);
+        if(double_sided_==false && with_boards_==false && wrap_plate_in_ref_foil_==true) ConstructPlateReflectiveWrap(mother_physical);
         if(with_boards_) ConstructBoards(mother_physical);
         else ConstructPhotosensors(mother_physical);
     }
@@ -1583,6 +1589,159 @@ namespace nexus{
     return;
   }
 
+
+  void XArapuca::ConstructPlateReflectiveWrap(G4VPhysicalVolume* mother_physical) const
+  {
+
+    G4double reflective_foil_thickn = 0.065*mm; // Typical thickness of the 3M ESR film
+
+    const G4String ref_wrap_name = "REF_WRAP";
+
+    // The reflective wrap covers every face of the plate but one
+    // Get its volume as a subtraction solid from two boxes
+
+    G4Box* aux_outer_box = new G4Box(  "AUX_OUTER_BOX", 
+                                        (plate_length_  + (2.*reflective_foil_thickn))/2., 
+                                        (plate_thickn_+reflective_foil_thickn)/2., 
+                                        (plate_width_  + (2.*reflective_foil_thickn))/2.);
+
+    // Extra thickness to prevent boolean subtraction of solids with matching surfaces
+    // See geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/Detector/Geometry/geomSolids.html#solids-made-by-boolean-operations
+
+    G4double tolerance = 1.*mm; // To prevent matching surfaces in the boolean subtraction
+    G4Box* aux_inner_box =  new G4Box(  "AUX_INNER_BOX", 
+                                        plate_length_/2., 
+                                        (plate_thickn_/2.)+tolerance, 
+                                        plate_width_/2.);
+
+    G4SubtractionSolid* ref_wrap_solid =    new G4SubtractionSolid( ref_wrap_name, 
+                                                                    aux_outer_box, aux_inner_box, 
+                                                                    nullptr, G4ThreeVector(0., (reflective_foil_thickn/2.)+tolerance, 0.));
+    SiPMMPPC* sipm_ptr = nullptr;
+    if(SiPM_code_==1){
+      sipm_ptr = new HamamatsuS133606050VE();
+    }
+    else if(SiPM_code_==2){
+      sipm_ptr = new HamamatsuS133605075HQR();
+    }
+    else if(SiPM_code_==3){
+      sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    else if(SiPM_code_==4){
+      sipm_ptr = new BroadcomAFBRS4N44P044M();
+    }
+    else{
+      sipm_ptr = new PerfectSiPMMPPC();
+    }
+
+    G4double sipm_transverse_dim = sipm_ptr->GetTransverseDim();
+    G4double sipm_thickness = sipm_ptr->GetThickness();
+
+    G4double thickness_of_dummy_sipm = reflective_foil_thickn+(0.1*mm);
+    G4Box* dummy_sipm =  new G4Box( "DUMMY_SIPM", 
+                                    sipm_transverse_dim/2., 
+                                    thickness_of_dummy_sipm/2., // Setting here the reflective-foil thickness plus some tolerance so that:
+                                                                //  1)  if board_position_code_==1, the carved hole is a pass-through hole
+                                                                //  2)  if board_position_code_>=2, we prevent matching surfaces in the boolean subtraction
+                                                                //      In this second case, the value of the tolerance actually matters. It must be big 
+                                                                //      enough so as to prevent matching surfaces, but small enough so as to not carve too 
+                                                                //      much the horizontal portion of the reflective foil.
+                                    sipm_transverse_dim/2.);
+
+    if(sipms_at_x_plus_ || sipms_at_x_minus_ || sipms_at_z_plus_ || sipms_at_z_minus_)  // Carve holes in the reflective foils only if we are going to place any SiPMs
+    {                                                                                   // The X-Arapuca is dumb if no SiPMs are placed are at all, but I'll keep this
+                                                                                        // functionality because it may be helpful for intermediate-analysis.
+      G4MultiUnion* ref_wrap_holes = new G4MultiUnion("REF_FOIL_HOLES");
+      G4Transform3D* transform_ptr = nullptr;
+
+      if(sipms_at_x_plus_){
+        G4RotationMatrix* rot_1 = new G4RotationMatrix();
+        rot_1->rotateZ(90.0*deg);
+        for(G4int i=0; i<num_phsensors_; i++){
+          transform_ptr = new G4Transform3D(*rot_1, 
+                                            G4ThreeVector((plate_length_/2.)+(reflective_foil_thickn/2.), 
+                                                          0., 
+                                                          (-1.*plate_width_/2.) + ((0.5 + i)*plate_width_/num_phsensors_)));
+
+          ref_wrap_holes->AddNode(*dummy_sipm, *transform_ptr);    
+        }
+      }
+      if(sipms_at_x_minus_){
+        G4RotationMatrix* rot_2 = new G4RotationMatrix();
+        rot_2->rotateZ(90.0*deg);
+        for(G4int i=0; i<num_phsensors_; i++){
+          transform_ptr = new G4Transform3D(*rot_2, 
+                                            G4ThreeVector(-1.*(plate_length_/2.)-1*(reflective_foil_thickn/2.), 
+                                                          0., 
+                                                          (-1.*plate_width_/2.) + ((0.5 + i)*plate_width_/num_phsensors_)));
+
+          ref_wrap_holes->AddNode(*dummy_sipm, *transform_ptr);    
+        }
+      }
+      if(sipms_at_z_plus_){
+        G4RotationMatrix* rot_3 = new G4RotationMatrix();
+        rot_3->rotateX(90.0*deg);
+        for(G4int i=0; i<num_phsensors_; i++){
+          transform_ptr = new G4Transform3D(*rot_3, 
+                                            G4ThreeVector((-1.*plate_length_/2.) + ((0.5 + i)*plate_length_/num_phsensors_), 
+                                                          0., 
+                                                          (plate_width_/2.)+(reflective_foil_thickn/2.)));
+
+          ref_wrap_holes->AddNode(*dummy_sipm, *transform_ptr);    
+        }
+      }
+      if(sipms_at_z_minus_){
+        G4RotationMatrix* rot_4 = new G4RotationMatrix();
+        rot_4->rotateX(90.0*deg);
+        for(G4int i=0; i<num_phsensors_; i++){
+          transform_ptr = new G4Transform3D(*rot_4, 
+                                            G4ThreeVector((-1.*plate_length_/2.) + ((0.5 + i)*plate_length_/num_phsensors_), 
+                                                          0., 
+                                                          -1.*(plate_width_/2.)-1.*(reflective_foil_thickn/2.)));
+
+          ref_wrap_holes->AddNode(*dummy_sipm, *transform_ptr);    
+        }
+      }
+
+      ref_wrap_holes->Voxelize();
+      ref_wrap_solid = new G4SubtractionSolid(ref_wrap_name, 
+                                              ref_wrap_solid, ref_wrap_holes, 
+                                              nullptr, G4ThreeVector(0., 0., 0.));
+    }
+
+    G4LogicalVolume* ref_wrap_logic = 
+      new G4LogicalVolume(ref_wrap_solid, materials::FR4(), ref_wrap_name);
+
+    // Set its color for visualization purposes
+    G4VisAttributes ref_wrap_col = nexus::WhiteAlpha();
+    //ref_case_col.SetForceSolid(true);
+    ref_wrap_logic->SetVisAttributes(ref_wrap_col);
+
+    //Now create the reflective optical surface
+    const G4String ref_surf_name = "REF_SURFACE";
+    G4OpticalSurface* refsurf_opsurf = 
+      new G4OpticalSurface(ref_surf_name, unified, ground, dielectric_metal, 1);
+
+    // From geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/TrackingAndPhysics/physicsProcess.html#optical-photon-processes
+    // The dielectric_metal->ground configuration of the unified model works as:
+    // "Only reflection or absorption; No refraction: Reflection probability set by
+    // reflectivity. If reflected, one of the four specular spike, backscatter,
+    // lambertian or specular lobe reflection with respect to a FacetNormal takes
+    // place according to the assigned probabilities."
+    // So, make sure you have set the reflectivity and the probabilities for each
+    // type of reflection. On the other hand, for this configuration, it does not matter
+    // if you have set the transmission, since that option is already banned from the
+    // configuration model.
+
+    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+    new G4LogicalSkinSurface(ref_surf_name, ref_wrap_logic, refsurf_opsurf);
+
+    new G4PVPlacement(  nullptr, G4ThreeVector(0., -1.*reflective_foil_thickn/2., 0.),
+                        ref_wrap_name, ref_wrap_logic, 
+                        mother_physical,
+                        false, 0, true);
+    return;
+  }
 
   G4bool XArapuca::geometry_is_ill_formed()
   {
