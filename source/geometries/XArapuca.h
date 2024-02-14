@@ -37,6 +37,9 @@ namespace nexus {
     void ConstructDichroicAssemblies(G4VPhysicalVolume*) const;     ///< Called by Construct(). Adds the dichroic filters plane, i.e. dichroic filters embedded in a frame
                                                                     ///< If double_sided_, the DFAs are placed on both sides of the X-ARAPUCA. If not, one reflective cover is added 
                                                                     ///< on the dead side.
+    void ConstructPlateReflectiveWrap(G4VPhysicalVolume*) const;    ///< Called by Construct(). If config_code_ is 1, double_sided_ is False, with_boards_ is False and 
+                                                                    ///< wrap_plate_in_ref_foil_ is True, then this function wraps the WLS plate with a reflective foil 
+                                                                    ///< which covers all faces but the one facing the DFA.
     
     
     G4ThreeVector GenerateVertex(const G4String&) const;
@@ -116,6 +119,16 @@ namespace nexus {
     G4bool sipms_at_x_minus_;                                       ///< Whether to place sipms at the XA side which is contained in x<0.0
     G4bool sipms_at_z_plus_;                                        ///< Whether to place sipms at the XA side which is contained in z>0.0
     G4bool sipms_at_z_minus_;                                       ///< Whether to place sipms at the XA side which is contained in z<0.0
+    G4bool wrap_plate_in_ref_foil_;                                 ///< This parameter only makes a difference if double_sided_ is False and with_boards_ is False. In such case, whether 
+                                                                    ///< to wrap the WLS plate in a reflective foil a la APEX. In any other case, the reflective wrap is not constructed.
+                                                                    ///< This reflective wrap is mean to cover:
+                                                                    ///<    - the small faces which are not instrumented with SiPMs,
+                                                                    ///<    - the gaps in between the SiPMs in the small faces which are instrumented 
+                                                                    ///<    - and one of the big faces of the WLS plate.
+                                                                    ///< Hence, it does not makes sense for a double sided XArapuca. On the other hand, the reason for requiring 
+                                                                    ///< with_boards_==False, is a computational one. The SiPMBoard volume, which is placed if with_boards_ is True, collides 
+                                                                    ///< into the reflective wrap volume, giving a non-desired behaviour for some photons. A workaround is to place individual 
+                                                                    ///< SiPMs, which will fit in the wrap holes, and whose volume won't collide into the wrap one.
     G4bool with_boards_;                                            ///< Whether the photosensors are mounted on a board
     G4bool add_blocks_between_sipms_;                               ///< Whether to add reflective blocks filling the gaps in between the board-mounted SiPMs. This option is only available 
                                                                     ///< if with_boards_ is true. These blocks are nearly coplanar with the SiPM surface: Their surface is 0.1 millimeters
