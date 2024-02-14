@@ -4,6 +4,7 @@
 #include "MaterialsList.h"
 #include "FactoryBase.h"  
 #include "LArSphere.h"
+#include "RandomUtils.h"
 
 #include <G4VSolid.hh>
 #include <G4MultiUnion.hh>
