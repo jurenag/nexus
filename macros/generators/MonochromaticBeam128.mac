@@ -1,6 +1,7 @@
 #/Generator/MonochromaticBeam/region whatever
 /Generator/MonochromaticBeam/wavelength_mean    128. nm
-/Generator/MonochromaticBeam/wavelength_std     4   nm
+/Generator/MonochromaticBeam/wavelength_std     1.69 nm
+# 1.69 std matches ~4 nm FWHM since for normal distribution FWHM~2.355*std
 /Generator/MonochromaticBeam/ed_x               0.
 /Generator/MonochromaticBeam/ed_y               -1.
 /Generator/MonochromaticBeam/ed_z               0.

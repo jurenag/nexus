@@ -8,7 +8,10 @@
 /Geometry/DichroicTest/dichroic_thickness   1.   mm
 /Geometry/DichroicTest/detector_thickness   5.   mm
 /Geometry/DichroicTest/detector_depth       2.   cm
+/Geometry/DichroicTest/with_ptp_deposition  true
+/Geometry/DichroicTest/ptp_thickn           0.001 mm
 
+#/control/execute macros/generators/LArScintillationGeneratorZ.mac
 /control/execute macros/generators/SingleParticleDichroicTest.mac
 
 /nexus/persistency/output_file output/TrashCan

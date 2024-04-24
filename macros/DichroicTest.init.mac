@@ -3,6 +3,7 @@
 /nexus/RegisterGeometry DichroicTest
 
 /nexus/RegisterGenerator SingleParticleGenerator
+#/nexus/RegisterGenerator LArScintillationGenerator
 
 /nexus/RegisterPersistencyManager PersistencyManager
 

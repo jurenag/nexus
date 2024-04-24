@@ -48,4 +48,4 @@
 
 /control/execute macros/generators/LED375L.mac
 
-/nexus/persistency/outputFile  /home/jurenag/installations/nexus-source/output/GenVertexStudy/200/vertex_pos24.0
+/nexus/persistency/output_file  output/GenVertexStudy/200/vertex_pos24.0

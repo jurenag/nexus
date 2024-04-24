@@ -10,4 +10,4 @@
 /nexus/RegisterEventAction DefaultEventAction
 /nexus/RegisterTrackingAction OpticalTrackingAction
 
-/nexus/RegisterMacro macros/megacell.config.mac
+/nexus/RegisterMacro macros/square_xarapuca.config.mac

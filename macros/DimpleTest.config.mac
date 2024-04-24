@@ -24,4 +24,4 @@
 
 /control/execute macros/generators/PTPPhotonGenerator.mac
 
-/nexus/persistency/outputFile /home/julio/Documents/nexus/nexus/output/optimization/dimples/TwoCylindricalDimples15
+/nexus/persistency/output_file output/optimization/dimples/TwoCylindricalDimples15

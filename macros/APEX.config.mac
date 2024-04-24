@@ -22,9 +22,9 @@
 /Geometry/APEX/reflective_foil_thickn               0.065   mm
 #/Geometry/APEX/reflective_foil_thickn              1.0     mm
 /Geometry/APEX/SiPM_code                            4
-/Geometry/APEX/num_phsensors                        30
-/Geometry/APEX/board_position_code                  1
-/Geometry/APEX/gap                                  0.0     mm
+/Geometry/APEX/num_phsensors                        26
+/Geometry/APEX/board_position_code                  3
+/Geometry/APEX/gap                                  0.0     cm
 /Geometry/APEX/ref_phsensors_supports               true
 /Geometry/APEX/with_dimples                         false
 /Geometry/APEX/dimple_type                          flat
@@ -32,15 +32,15 @@
 /Geometry/APEX/flat_dimple_depth                    1.2     mm
 /Geometry/APEX/curvy_dimple_radius                  4.0     mm
 /Geometry/APEX/generation_region                    random
-/Geometry/APEX/gen_x                                0.      cm
-/Geometry/APEX/gen_z                                0.      cm
+/Geometry/APEX/gen_x                                0.0     mm
+/Geometry/APEX/gen_z                                -242.   mm
 /Geometry/APEX/gen_diameter                         1.      cm
-#/Geometry/APEX/path_to_inwards_dichroic_data /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
-#/Geometry/APEX/path_to_outwards_dichroic_data /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
-/Geometry/APEX/path_to_inwards_dichroic_data        /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_G2p
-/Geometry/APEX/path_to_outwards_dichroic_data       /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_G2p
+#/Geometry/APEX/path_to_inwards_dichroic_data        data/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
+#/Geometry/APEX/path_to_outwards_dichroic_data       data/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
+/Geometry/APEX/path_to_inwards_dichroic_data        data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_G2p
+/Geometry/APEX/path_to_outwards_dichroic_data       data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_G2p
 
 /control/execute macros/generators/LArScintillationGeneratorY.mac
 #/control/execute macros/generators/MonochromaticBeam128.mac
 
-/nexus/persistency/output_file /home/jurenag/installations/nexus-source/output/TrashCan
+/nexus/persistency/output_file output/APEX_studies/APEX_modified_26_SiPMs_double_10M

@@ -7,10 +7,10 @@
 ## ----------------------------------------------------------------------------
 
 /Generator/SingleParticle/particle opticalphoton
-/Generator/SingleParticle/min_energy 2.25 eV
-/Generator/SingleParticle/max_energy 3.81 eV
-/Generator/SingleParticle/min_costheta 0.
-/Generator/SingleParticle/max_costheta 1.
+/Generator/SingleParticle/min_energy 3.540 eV
+/Generator/SingleParticle/max_energy 3.545 eV
+/Generator/SingleParticle/min_costheta -0.5
+/Generator/SingleParticle/max_costheta 0.
 /Generator/SingleParticle/min_phi   0.
 /Generator/SingleParticle/max_phi   6.283185307
 /Generator/SingleParticle/region whatever
