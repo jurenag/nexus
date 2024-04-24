@@ -42,12 +42,12 @@
 /Geometry/XArapuca/gen_x                                0.     cm
 /Geometry/XArapuca/gen_z                                0.     cm
 /Geometry/XArapuca/gen_diameter                         2.    cm
-#/Geometry/XArapuca/path_to_inwards_dichroic_data        /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
-#/Geometry/XArapuca/path_to_outwards_dichroic_data       /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
-/Geometry/XArapuca/path_to_inwards_dichroic_data        /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
-/Geometry/XArapuca/path_to_outwards_dichroic_data       /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
-#/Geometry/XArapuca/path_to_inwards_dichroic_data /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
-#/Geometry/XArapuca/path_to_outwards_dichroic_data /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
+#/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
+#/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
+/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
+/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
+#/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
+#/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
 #                                                       CHECK THAT YOU ARE SETTING THE MPT FOR THE SUBSTRATE MPT IN THE .CC FILE! THIS CANNOT BE SET VIA MACRO YET!
 
 #---- config_code_==1 parameters ----#
@@ -60,14 +60,19 @@
 /Geometry/XArapuca/sipms_at_z_plus                      true
 /Geometry/XArapuca/sipms_at_z_minus                     true
 /Geometry/XArapuca/with_boards                          true
+/Geometry/XArapuca/add_blocks_between_sipms             false
 /Geometry/XArapuca/with_dimples                         true
 /Geometry/XArapuca/dimple_type                          flat
 /Geometry/XArapuca/flat_dimple_width                    8.      mm
 /Geometry/XArapuca/flat_dimple_depth                    1.2     mm
 /Geometry/XArapuca/curvy_dimple_radius                  4.0 mm
+/Geometry/XArapuca/cut_plate                            false
+/Geometry/XArapuca/cut_angle                            0.69813170079   # 40 º, in radians
+/Geometry/XArapuca/cut_thickness                        1.      mm
+/Geometry/XArapuca/place_foil_at_the_cut                false       
 
 #---- config_code_==2 parameters ----#
-/Geometry/XArapuca/fibers_number                        14
+/Geometry/XArapuca/fibers_number                        20
 /Geometry/XArapuca/fiber_planes                         1
 /Geometry/XArapuca/fiber_radius                         3.      mm
 /Geometry/XArapuca/fiber_length                         236.    mm
@@ -75,7 +80,7 @@
 
 /control/execute macros/generators/LArScintillationGeneratorY.mac
 
-/nexus/persistency/output_file /home/jurenag/installations/nexus-source/output/TrashCan
+/nexus/persistency/output_file output/TrashCan
     
 #With a 1.2 mm deep flat dimple, and a 1.5 mm thick sipm, this is the better we can do to approach
 #approach the 2 mm board-plate distance without setting an actual optical contact between the sipm and the plate.
