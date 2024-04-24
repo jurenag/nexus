@@ -48,4 +48,4 @@
 
 /control/execute macros/generators/NPL45C.mac
 
-/nexus/persistency/outputFile  /home/jurenag/installations/nexus-source/output/AttenuationLengthStudy/50/10^6/TrashCan
+/nexus/persistency/output_file  output/AttenuationLengthStudy/50/10^6/TrashCan

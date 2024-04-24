@@ -11,4 +11,4 @@
 
 /control/execute macros/generators/SingleParticleDichroicTest.mac
 
-/nexus/persistency/outputFile TrashCan
+/nexus/persistency/output_file output/TrashCan

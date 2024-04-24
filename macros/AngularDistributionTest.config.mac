@@ -31,4 +31,4 @@
 /control/execute macros/generators/LArScintillationGeneratorZ.mac
 #/control/execute macros/generators/SingleParticleDichroicTest.mac
 
-/nexus/persistency/outputFile output/AngularDistributionStudy/FramedPTPAlone/TrashCan
+/nexus/persistency/output_file output/AngularDistributionStudy/FramedPTPAlone/TrashCan
