@@ -27,7 +27,7 @@ namespace nexus {
                 G4double flat_dimple_width = 6.1*mm, 
                 G4double flat_dimple_depth = 2.*mm, 
                 G4double curvy_dimple_radius = 3.1*mm,
-                G4bool cut_plate = true,
+                G4bool cut_plate = false,
                 G4double cut_angle = 45.*deg,
                 G4double cut_thickness = 1.*mm,
                 G4double tunneling_probability = 0.0);
