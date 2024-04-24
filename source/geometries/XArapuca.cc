@@ -1824,6 +1824,7 @@ namespace nexus{
         G4double fibers_per_plane = fibers_no_/fiber_planes_no_;
 
         SiPMBoard board;
+        board.SetSiPMCode(SiPM_code_);
 
         internal_geom_thickn_span = std::max(fiber_planes_no_*2*fiber_radius_, board.GetOverallHeight());
         internal_geom_length_span = fiber_length_+(2.*board.GetOverallThickness());
