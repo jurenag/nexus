@@ -1795,7 +1795,7 @@ namespace opticalprops {
     return mpt;
   }
 
-  G4MaterialPropertiesTable* EJ286()
+  G4MaterialPropertiesTable* EJ286(G4double attenuation_length)
   {
     // https://eljentechnology.com/products/wavelength-shifting-plastics/ej-280-ej-282-ej-284-ej-286
     // and data sheets from the provider.
