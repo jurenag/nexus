@@ -10,6 +10,8 @@ class G4UserLimits;
 
 namespace nexus {
 
+  class SiPMMPPC; // Declaring it outside of the namespace environment gives a compile-time error
+
   /// X-Arapuca 
 
   class XArapuca: public GeometryBase
@@ -44,6 +46,13 @@ namespace nexus {
     
     G4ThreeVector GenerateVertex(const G4String&) const;
     G4bool geometry_is_ill_formed();                                    ///< Check whether the WLS plate fits within the XArapuca cavity and the given number of photosensors fit along the XArapuca long side
+    SiPMMPPC * ChooseSiPM(G4int) const;                                 ///< Returns a pointer to a new object of a class which inherits from the SiPMMPPC abstract class.
+                                                                        ///< Such class depends on the integer value given to ChooseSiPM according to the following enumeration
+                                                                        ///< 1: HamamatsuS133606050VE
+                                                                        ///< 2: HamamatsuS133605075HQR
+                                                                        ///< 3: FbkNuvHdCryoTT
+                                                                        ///< 4: BroadcomAFBRS4N44P044M
+                                                                        ///< any other integer: PerfectSiPMMPPC
 
   private:
 

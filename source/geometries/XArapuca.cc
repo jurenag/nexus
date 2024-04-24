@@ -767,23 +767,7 @@ namespace nexus{
     sipm_col.SetForceSolid(true);
 
     if(PS_config_code_==1){
-        SiPMMPPC* sipm_ptr = nullptr;
-        if(SiPM_code_==1){
-          sipm_ptr = new HamamatsuS133606050VE();
-        }
-        else if(SiPM_code_==2){
-          sipm_ptr = new HamamatsuS133605075HQR();
-        }
-        else if(SiPM_code_==3){
-          sipm_ptr = new FbkNuvHdCryoTT();
-        }
-        else if(SiPM_code_==4){
-          sipm_ptr = new BroadcomAFBRS4N44P044M();
-        }
-        else{
-          sipm_ptr = new PerfectSiPMMPPC();
-        }
-
+        SiPMMPPC* sipm_ptr = ChooseSiPM(SiPM_code_);
         sipm_ptr->SetReflectiveSupports(ref_phsensors_supports_);
         sipm_ptr->Construct();
         sipm_thickn = sipm_ptr->GetThickness();
@@ -1617,23 +1601,7 @@ namespace nexus{
     G4SubtractionSolid* ref_wrap_solid =    new G4SubtractionSolid( ref_wrap_name, 
                                                                     aux_outer_box, aux_inner_box, 
                                                                     nullptr, G4ThreeVector(0., (reflective_foil_thickn/2.)+tolerance, 0.));
-    SiPMMPPC* sipm_ptr = nullptr;
-    if(SiPM_code_==1){
-      sipm_ptr = new HamamatsuS133606050VE();
-    }
-    else if(SiPM_code_==2){
-      sipm_ptr = new HamamatsuS133605075HQR();
-    }
-    else if(SiPM_code_==3){
-      sipm_ptr = new FbkNuvHdCryoTT();
-    }
-    else if(SiPM_code_==4){
-      sipm_ptr = new BroadcomAFBRS4N44P044M();
-    }
-    else{
-      sipm_ptr = new PerfectSiPMMPPC();
-    }
-
+    SiPMMPPC* sipm_ptr = ChooseSiPM(SiPM_code_);
     G4double sipm_transverse_dim = sipm_ptr->GetTransverseDim();
     G4double sipm_thickness = sipm_ptr->GetThickness();
 
@@ -1778,22 +1746,7 @@ namespace nexus{
             "For consistency with the code, plate_length_ must be greater than plate_width_.");
         }
 
-        SiPMMPPC* sipm_ptr = nullptr;
-        if(SiPM_code_==1){
-          sipm_ptr = new HamamatsuS133606050VE();
-        }
-        else if(SiPM_code_==2){
-          sipm_ptr = new HamamatsuS133605075HQR();
-        }
-        else if(SiPM_code_==3){
-          sipm_ptr = new FbkNuvHdCryoTT();
-        }
-        else if(SiPM_code_==4){
-          sipm_ptr = new BroadcomAFBRS4N44P044M();
-        }
-        else{
-          sipm_ptr = new PerfectSiPMMPPC();
-        }
+        SiPMMPPC* sipm_ptr = ChooseSiPM(SiPM_code_);
 
         if(with_dimples_==true && dimple_type_=="flat"){
           if(flat_dimple_width_<=sipm_ptr->GetTransverseDim()){
@@ -1951,4 +1904,24 @@ namespace nexus{
     return G4ThreeVector(x_pos, y_pos, z_pos);
   }
 
+
+  SiPMMPPC * XArapuca::ChooseSiPM(G4int input) const{
+    SiPMMPPC* sipm_ptr = nullptr;
+    if(input==1){
+      sipm_ptr = new HamamatsuS133606050VE();
+    }
+    else if(input==2){
+      sipm_ptr = new HamamatsuS133605075HQR();
+    }
+    else if(input==3){
+      sipm_ptr = new FbkNuvHdCryoTT();
+    }
+    else if(input==4){
+      sipm_ptr = new BroadcomAFBRS4N44P044M();
+    }
+    else{
+      sipm_ptr = new PerfectSiPMMPPC();
+    }
+    return sipm_ptr;
+  }
 } //End namespace nexus
