@@ -1,0 +1,61 @@
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+#---- Parameters used for every configuration ----#
+/Geometry/XArapuca/config_code                          1
+/Geometry/XArapuca/internal_length                      14.9 mm
+/Geometry/XArapuca/internal_width                       14.9 mm
+/Geometry/XArapuca/internal_thickn                      8.001 mm
+/Geometry/XArapuca/DFA_thickn                           6. mm
+/Geometry/XArapuca/DF_thickn                            1.      mm
+/Geometry/XArapuca/DF_pos_wrt_DFA_pos                   0. 
+/Geometry/XArapuca/outter_frame_width_along_wlsplength  0.1     mm
+/Geometry/XArapuca/outter_frame_width_along_wlspwidth   0.1     mm
+/Geometry/XArapuca/inner_frames_width_along_wlsplength  4. mm
+/Geometry/XArapuca/inner_frames_width_along_wlspwidth   4. mm
+/Geometry/XArapuca/df_no_along_wlsplength               1 
+/Geometry/XArapuca/df_no_along_wlspwidth                1 
+/Geometry/XArapuca/DFA_config_code                      2
+/Geometry/XArapuca/DFA_frame_is_reflective              false
+/Geometry/XArapuca/DFA_frame_is_specular                false
+/Geometry/XArapuca/remove_DFA                           false
+/Geometry/XArapuca/case_thickn                          1.      mm
+/Geometry/XArapuca/PS_config_code                       2
+/Geometry/XArapuca/num_phsensors                        40
+/Geometry/XArapuca/gap                                  0.05   mm
+/Geometry/XArapuca/ref_phsensors_supports               true
+/Geometry/XArapuca/double_sided                         true
+/Geometry/XArapuca/collectors_are_reflective            true
+/Geometry/XArapuca/generation_vertex_over_df            false    
+/Geometry/XArapuca/path_to_dichroic_data                data/filters_data/opto/ific_meas/g4_dichroic_data_lar
+
+#---- config_code_==1 parameters ----#
+/Geometry/XArapuca/plate_length                         10      mm
+/Geometry/XArapuca/plate_width                          10      mm
+/Geometry/XArapuca/plate_thickn                         3.5     mm
+/Geometry/XArapuca/only_sipms_along_long_sides          false
+/Geometry/XArapuca/with_boards                          false
+/Geometry/XArapuca/with_dimples                         false
+/Geometry/XArapuca/dimple_type                          flat
+/Geometry/XArapuca/flat_dimple_width                    8.      mm
+/Geometry/XArapuca/flat_dimple_depth                    1.2     mm
+/Geometry/XArapuca/curvy_dimple_radius 1.9 mm
+
+#---- config_code_==2 parameters ----#
+/Geometry/XArapuca/fibers_number                        14
+/Geometry/XArapuca/fiber_planes                         1
+/Geometry/XArapuca/fiber_radius                         3.      mm
+/Geometry/XArapuca/fiber_length                         236.    mm
+/Geometry/XArapuca/along_long_side                      true
+
+/control/execute macros/generators/PTPPhotonGenerator.mac
+
+/nexus/persistency/output_file output/optimization/size/wlsptd190
+
+
+#Typical gap for immersion of sipms within flat dimples: -1.15*mm
+#Old supercells unique DF transverse dimensions  (487. mm x 93. mm)
+#Frame width to match 97mmx97mm DFs: 2.85 mm

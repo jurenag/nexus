@@ -1,0 +1,66 @@
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+#---- Parameters used for every configuration ----#
+/Geometry/XArapucaDS/config_code                          1
+/Geometry/XArapucaDS/surrounding_media                    lar
+/Geometry/XArapucaDS/internal_length                      624     mm 
+/Geometry/XArapucaDS/internal_width                       624     mm
+/Geometry/XArapucaDS/internal_thickn                      8.001   mm
+/Geometry/XArapucaDS/CSA_thickn                           6.      mm
+/Geometry/XArapucaDS/CS_thickn                            1.01    mm
+/Geometry/XArapucaDS/CS_pos_wrt_CSA_pos                   0. 
+/Geometry/XArapucaDS/substrates_are_coated                true
+/Geometry/XArapucaDS/coating_thickn                       3.226   um
+/Geometry/XArapucaDS/outter_frame_width_along_wlsplength  10.     mm
+/Geometry/XArapucaDS/outter_frame_width_along_wlspwidth   10.     mm
+/Geometry/XArapucaDS/inner_frames_width_along_wlsplength  4.      mm
+/Geometry/XArapucaDS/inner_frames_width_along_wlspwidth   4.      mm
+/Geometry/XArapucaDS/cs_no_along_wlsplength               4 
+/Geometry/XArapucaDS/cs_no_along_wlspwidth                4
+/Geometry/XArapucaDS/CSA_frame_is_reflective              false
+/Geometry/XArapucaDS/CSA_frame_is_specular                false
+/Geometry/XArapucaDS/remove_CSs                           true
+/Geometry/XArapucaDS/remove_CSA_frame                     true
+/Geometry/XArapucaDS/SS_cromophore_concentration          24.
+/Geometry/XArapucaDS/TS_cromophore_concentration          24.
+/Geometry/XArapucaDS/case_thickn                          1.      mm
+/Geometry/XArapucaDS/SiPM_code                            2
+/Geometry/XArapucaDS/num_phsensors                        40
+/Geometry/XArapucaDS/gap                                  0.05 mm
+/Geometry/XArapucaDS/ref_phsensors_supports               true
+/Geometry/XArapucaDS/double_sided                         true
+/Geometry/XArapucaDS/collectors_are_reflective            true
+/Geometry/XArapucaDS/generation_region                    custom
+/Geometry/XArapucaDS/gen_x                                0.     cm
+/Geometry/XArapucaDS/gen_z                                0.     cm
+/Geometry/XArapucaDS/gen_diameter                         1.    cm
+#                                                       CHECK THAT YOU ARE SETTING THE MPT FOR THE SUBSTRATE MPT IN THE .CC FILE! THIS CANNOT BE SET VIA MACRO YET!
+
+#---- config_code_==1 parameters ----#
+/Geometry/XArapucaDS/plate_length                         595.    mm
+/Geometry/XArapucaDS/plate_width                          595.    mm
+/Geometry/XArapucaDS/plate_thickn                         4.0     mm
+/Geometry/XArapucaDS/ring_thickness                       10.     mm
+/Geometry/XArapucaDS/plate_ring_gap                       1.      mm  
+/Geometry/XArapucaDS/only_sipms_along_long_sides          false
+/Geometry/XArapucaDS/with_boards                          true
+/Geometry/XArapucaDS/PS_config_code                       1
+/Geometry/XArapucaDS/with_dimples                         true
+/Geometry/XArapucaDS/dimple_type                          cylindrical
+/Geometry/XArapucaDS/flat_dimple_width                    8.      mm
+/Geometry/XArapucaDS/flat_dimple_depth                    1.2     mm
+/Geometry/XArapucaDS/curvy_dimple_radius                  4.0 mm
+
+/control/execute macros/generators/MonochromaticBeam350.mac
+
+/nexus/persistency/output_file output/lar_xarapucads_cyl
+
+#With a 1.2 mm deep flat dimple, and a 1.5 mm thick sipm, this is the better we can do to approach
+#approach the 2 mm board-plate distance without setting an actual optical contact between the sipm and the plate.
+#Typical gap for immersion of sipms within cylindrical dimples with r=4.0mm is -1.4*mm
+#Old supercells unique DF transverse dimensions  (487. mm x 93. mm)
+#Frame width to match 97mmx97mm DFs: 2.85 mm

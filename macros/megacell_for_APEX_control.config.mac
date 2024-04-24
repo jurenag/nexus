@@ -1,0 +1,85 @@
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+#---- Parameters used for every configuration ----#
+/Geometry/XArapuca/config_code                          1
+/Geometry/XArapuca/surrounding_media                    lar
+/Geometry/XArapuca/internal_length                      500     mm 
+/Geometry/XArapuca/internal_width                       455     mm
+/Geometry/XArapuca/internal_thickn                      8.3     mm  # Broadcom sipms are 8.26 mm tall
+/Geometry/XArapuca/DFA_thickn                           6.      mm
+/Geometry/XArapuca/DF_thickn                            1.01    mm
+/Geometry/XArapuca/DF_substrate_thickn                  1.      mm
+/Geometry/XArapuca/DF_pos_wrt_DFA_pos                   0. 
+/Geometry/XArapuca/DF_are_coated                        true
+/Geometry/XArapuca/coating_thickn                       3.226   um
+/Geometry/XArapuca/coating_rindex                       1.65
+/Geometry/XArapuca/outter_frame_width_along_wlsplength  4.      mm
+/Geometry/XArapuca/outter_frame_width_along_wlspwidth   4.      mm
+/Geometry/XArapuca/inner_frames_width_along_wlsplength  4.      mm
+/Geometry/XArapuca/inner_frames_width_along_wlspwidth   4.      mm
+/Geometry/XArapuca/df_no_along_wlsplength               1
+/Geometry/XArapuca/df_no_along_wlspwidth                1 
+/Geometry/XArapuca/DFA_config_code                      1
+/Geometry/XArapuca/DFA_frame_is_reflective              true
+/Geometry/XArapuca/DFA_frame_is_specular                true
+/Geometry/XArapuca/remove_DFs                           false
+/Geometry/XArapuca/remove_DFA_frame                     false
+/Geometry/XArapuca/secondary_wls_attlength              1.5     m
+/Geometry/XArapuca/cromophore_concentration             16.
+/Geometry/XArapuca/case_thickn                          1.      mm
+/Geometry/XArapuca/SiPM_code                            4
+/Geometry/XArapuca/PS_config_code                       1
+/Geometry/XArapuca/num_phsensors                        30
+/Geometry/XArapuca/gap                                  0.0     mm
+/Geometry/XArapuca/ref_phsensors_supports               true
+/Geometry/XArapuca/double_sided                         false
+/Geometry/XArapuca/collectors_are_reflective            true
+/Geometry/XArapuca/generation_region                    dichroic
+/Geometry/XArapuca/gen_x                                0.     cm
+/Geometry/XArapuca/gen_z                                0.     cm
+/Geometry/XArapuca/gen_diameter                         2.    cm
+#/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
+#/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
+/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
+/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
+#/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
+#/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
+#                                                       CHECK THAT YOU ARE SETTING THE MPT FOR THE SUBSTRATE MPT IN THE .CC FILE! THIS CANNOT BE SET VIA MACRO YET!
+
+#---- config_code_==1 parameters ----#
+/Geometry/XArapuca/plate_length                         495.    mm  
+/Geometry/XArapuca/plate_width                          450.    mm
+/Geometry/XArapuca/plate_thickn                         6.0     mm
+/Geometry/XArapuca/tunneling_probability                0.0
+/Geometry/XArapuca/sipms_at_x_plus                      false
+/Geometry/XArapuca/sipms_at_x_minus                     true    # Setting the SiPMs at x_minus instead of z_minus bc XArapuca enforces plate_length to be bigger than plate_width
+/Geometry/XArapuca/sipms_at_z_plus                      false
+/Geometry/XArapuca/sipms_at_z_minus                     false
+/Geometry/XArapuca/wrap_plate_in_ref_foil               true
+/Geometry/XArapuca/with_boards                          false
+/Geometry/XArapuca/with_dimples                         false
+/Geometry/XArapuca/dimple_type                          flat
+/Geometry/XArapuca/flat_dimple_width                    8.      mm
+/Geometry/XArapuca/flat_dimple_depth                    1.2     mm
+/Geometry/XArapuca/curvy_dimple_radius                  4.0 mm
+
+#---- config_code_==2 parameters ----#
+/Geometry/XArapuca/fibers_number                        14
+/Geometry/XArapuca/fiber_planes                         1
+/Geometry/XArapuca/fiber_radius                         3.      mm
+/Geometry/XArapuca/fiber_length                         236.    mm
+/Geometry/XArapuca/along_long_side                      true
+
+/control/execute macros/generators/LArScintillationGeneratorY.mac
+
+/nexus/persistency/output_file output/APEX_studies/megacell_1DF_for_APEX_control_10M
+    
+#With a 1.2 mm deep flat dimple, and a 1.5 mm thick sipm, this is the better we can do to approach
+#approach the 2 mm board-plate distance without setting an actual optical contact between the sipm and the plate.
+#Typical gap for immersion of sipms within cylindrical dimples with r=4.0mm is -1.4*mm
+#Old supercells unique DF transverse dimensions  (487. mm x 93. mm)
+#Frame width to match 97mmx97mm DFs: 2.85 mm

@@ -1,0 +1,15 @@
+/control/execute macros/physics/OpticalPhysics.mac
+
+/nexus/RegisterGeometry XArapucaRods
+
+/nexus/RegisterGenerator LArScintillationGenerator
+#/nexus/RegisterGenerator SingleParticleGenerator
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+#/nexus/RegisterSteppingAction SaveAllSteppingAction
+
+/nexus/RegisterMacro macros/RodsModule.config.mac

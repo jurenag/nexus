@@ -1,0 +1,13 @@
+/control/execute macros/physics/OpticalPhysics.mac
+
+/nexus/RegisterGeometry ReflectorsTest
+
+/nexus/RegisterGenerator SingleParticleGenerator
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+
+/nexus/RegisterMacro macros/ReflectorsTest.config.mac
