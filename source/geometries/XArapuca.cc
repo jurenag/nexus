@@ -288,7 +288,7 @@ namespace nexus{
 
     G4GenericMessenger::Command& g_cmd =
       msg_->DeclareProperty("gap", gap_,
-			    "Gap between the WLS plate and the photosensors.");
+			    "Gap between the secondary-WLS material and the photosensors.");
     g_cmd.SetUnitCategory("Length");
     //g_cmd.SetParameterName("gap", false);
     //g_cmd.SetRange("gap>0.");    // These are commented so that gap_ can help modelate the immersion of the SiPMs into the flat dimple
@@ -299,7 +299,7 @@ namespace nexus{
 
     G4GenericMessenger::Command& ds_cmd =
       msg_->DeclareProperty("double_sided", double_sided_,
-			    "Whether the dichroic filter is set on both sides of the WLS plate.");
+			    "Whether the dichroic filter is set on both sides of the secondary-WLS material.");
 
     G4GenericMessenger::Command& cr_cmd =
       msg_->DeclareProperty("collectors_are_reflective", collectors_are_reflective_,
@@ -357,7 +357,7 @@ namespace nexus{
 
     G4GenericMessenger::Command& tp_cmd =
       msg_->DeclareProperty("tunneling_probability", tunneling_probability_,
-			    "Probability that a photon tunnels through the surface of the WLSPlate (inwards or outwards).");
+			    "Probability that a photon tunnels through the surface of the secondary-WLS material (inwards or outwards).");
     tp_cmd.SetParameterName("tunneling_probability", false);
     tp_cmd.SetRange("tunneling_probability>=0.");
     tp_cmd.SetRange("tunneling_probability<=1.");
@@ -445,7 +445,7 @@ namespace nexus{
 
     G4GenericMessenger::Command& pfatc_cmd =
       msg_->DeclareProperty("place_foil_at_the_cut", place_foil_at_the_cut_,
-			    "Whether to place (two) pieces of foil covering the inner faces of the cut..");
+			    "Whether to place (two) pieces of foil covering the inner faces of the cut.");
 
     G4GenericMessenger::Command& fn_cmd =
       msg_->DeclareProperty("fibers_number", fibers_no_,
@@ -1131,7 +1131,7 @@ namespace nexus{
     G4SubtractionSolid* ref_case_solid =    new G4SubtractionSolid(ref_case_name, aux_outter_box, aux_inner_box, 
                                             nullptr, G4ThreeVector(0., 0., 0.));
 
-    // The reflective case is 'open' on both sides. If the X-ARAPUCA DS is not 
+    // The reflective case is 'open' on both sides. If the X-ARAPUCA is not 
     // double sided, then Construct() will take care of placing a reflective cover.
 
     G4LogicalVolume* ref_case_logic = 

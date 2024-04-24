@@ -43,7 +43,7 @@ namespace nexus {
     
     
     G4ThreeVector GenerateVertex(const G4String&) const;
-    G4bool geometry_is_ill_formed();                                    ///<Check whether the WLS plate fits within the XArapuca cavity and the given number of photosensors fit along the XArapuca long side
+    G4bool geometry_is_ill_formed();                                    ///< Check whether the WLS plate fits within the XArapuca cavity and the given number of photosensors fit along the XArapuca long side
 
   private:
 
@@ -89,9 +89,9 @@ namespace nexus {
                                                                     ///< Any other integer  -> PerfectSiPMMPPC (100% efficiency)
     G4int num_phsensors_;                                           ///< If config_code_==1, this is the number of SiPMs per long side
                                                                     ///< If config_code_==2, this is the number of photosensors per side which is perpendicular to the fibers
-    G4double gap_;                                                  ///< Gap between photosensors and WLS material. A negative gap can help modelate the immersion of the SiPMs into the flat dimples. Be careful not to collide the SiPMs into the plate.
+    G4double gap_;                                                  ///< Gap between photosensors and WLS material. A negative gap can help modelate the immersion of the SiPMs into the flat dimples. Be careful not to collide the SiPMs into the secondary-WLS material.
     G4bool ref_phsensors_supports_;                                 ///< Whether photosensors supports are reflective (the FR4 box that supports the SiPM, regardless PS_config_code_)
-    G4bool double_sided_;                                           ///< Whether there are dichroic filters on both sides of the WLS plate
+    G4bool double_sided_;                                           ///< Whether there are dichroic filters on both sides of the secondary-WLS material
     G4bool collectors_are_reflective_;                              ///< Whether the collectors that replace the dichroic filters are reflective or not                                      
     G4String generation_region_;                                    ///< Where to place the generation vertex (GV).
                                                                     ///< 'random'   - The GV is randomly sampled over the DFA (including the frame)
@@ -111,7 +111,7 @@ namespace nexus {
     G4double DF_length_, DF_width_;                                 ///< Dichroic filter transverse dimensions. All of the filters of the DFA have the same dimensions.
 
     ///---- config_code_==1 parameters ----///
-    G4double plate_length_, plate_width_, plate_thickn_;            ///< WLS plate thickness
+    G4double plate_length_, plate_width_, plate_thickn_;            ///< WLS plate dimensions (X, Z and Y, respectively)
     G4double tunneling_probability_;                                ///< Probability that a photon tunnels through the surface of the WLSPlate (inwards or outwards), meaning that it is 
                                                                     ///< straightfoward-ly transmitted (no deflection due to Frensel refraction). The goal of this parameter is to let 
                                                                     ///< us model surface imperfections of the WLS plate.
@@ -134,12 +134,12 @@ namespace nexus {
                                                                     ///< if with_boards_ is true. These blocks are nearly coplanar with the SiPM surface: Their surface is 0.1 millimeters
                                                                     ///< behind the SiPMs surface - i.e. the SiPMs protrude 0.1 mm from these blocks. There are two reasons for this offset:
                                                                     ///<    1)  These blocks are part of a SiPMBoard object, whose logical volume is wrapped with a G4LogicalSkinSurface.
-                                                                    ///<        On the other hand, if tunneling_probability_ is different from 0.0, then the WLSPlate logical volume will 
-                                                                    ///<        also be wrapped with a G4LogicalSkinSurface. If that's the case, two G4LogicalSkinSurface's match in space,
-                                                                    ///<        giving an undefined behaviour which is prone to bugs. P.e. last time this surfaces-match was observed,
-                                                                    ///<        photons arriving to that surface from within the WLSPlate were absorbed.
+                                                                    ///<        On the other hand, if tunneling_probability_ is different from 0.0, then the secondary-WLS material logical 
+                                                                    ///<        volume will also be wrapped with a G4LogicalSkinSurface. If that's the case, and gap_ is 0.0, then two 
+                                                                    ///<        G4LogicalSkinSurface's match in space, giving an undefined behaviour which is prone to bugs. P.e. last time 
+                                                                    ///<        this surfaces-match was observed, photons arriving to that surface from within a WLSPlate were absorbed.
                                                                     ///<    2)  Setting the blocks to be perfectly coplanar with the SiPM surface is not realistic either way, so we are
-                                                                    ///<        safe introducing this 0.1 mm gap in between the WLSPlate and the SiPMs surface.
+                                                                    ///<        safe introducing this 0.1 mm gap in between the secondary-WLS material and the SiPMs surface.
     G4int PS_config_code_;                                          ///< Value in (1,2) which labels which photo sensors configuration will be simulated
                                                                     ///< 1 -    num_phsensors_ are evenly distributed along each chosen* side of the WLS plate.
                                                                     ///< 2 -    one big photosensor (whose transversal dimensions match those of the WLS plate side face) which matches the efficiency curve of HamamatsuS133606050VE is placed in front of each chosen* WLS 
