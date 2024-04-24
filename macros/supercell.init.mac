@@ -2,7 +2,7 @@
 
 /nexus/RegisterGeometry XArapuca
 
-/nexus/RegisterGenerator PTPPhotonGenerator
+/nexus/RegisterGenerator LArScintillationGenerator
 
 /nexus/RegisterPersistencyManager PersistencyManager
 
