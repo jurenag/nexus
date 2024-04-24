@@ -550,9 +550,9 @@ namespace nexus{
 
     G4Box* world_solid =
         new G4Box(world_name,
-                (internal_length_ +case_thickn_)/2. +world_extra_thickn_,
-                (internal_thickn_ +case_thickn_)/2. +world_extra_thickn_,
-                (internal_width_ +case_thickn_)/2. +world_extra_thickn_);
+                (internal_length_)/2. +case_thickn_+world_extra_thickn_,
+                (internal_thickn_)/2. +DFA_thickn_ +world_extra_thickn_,
+                (internal_width_ )/2. +case_thickn_+world_extra_thickn_);
                 
     G4Material* vacuum =
     G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
@@ -584,9 +584,9 @@ namespace nexus{
 
     G4Box* sm_box_solid =
       new G4Box(sm_box_name,
-                (internal_length_ +case_thickn_ +world_extra_thickn_)/2.,
-                (internal_thickn_ +case_thickn_ +world_extra_thickn_)/2.,
-                (internal_width_ +case_thickn_ +world_extra_thickn_)/2.);
+                (internal_length_)/2. +case_thickn_+(world_extra_thickn_/2.),
+                (internal_thickn_)/2. +DFA_thickn_ +(world_extra_thickn_/2.),
+                (internal_width_ )/2. +case_thickn_+(world_extra_thickn_/2.));
 
     G4Material* sm_material = G4NistManager::Instance()->FindOrBuildMaterial(sm_name);
     sm_material->SetMaterialPropertiesTable(mpt_ptr);
