@@ -74,7 +74,13 @@ namespace nexus {
 
   G4ThreeVector LArSphere::GenerateVertex(const G4String& region) const
   {
-    return sphere_vertex_gen_->GenerateVertex(region);
+    if (region == "VOLUME") return sphere_vertex_gen_->GenerateVertex(VOLUME);
+    if (region == "INSIDE") return sphere_vertex_gen_->GenerateVertex(INSIDE);
+    if (region == "INNER_SURF") return sphere_vertex_gen_->GenerateVertex(INNER_SURF);
+    if (region == "OUTER_SURF") return sphere_vertex_gen_->GenerateVertex(OUTER_SURF);
+    else {
+      return sphere_vertex_gen_->GenerateVertex(CENTER);
+    } 
   }
 
 

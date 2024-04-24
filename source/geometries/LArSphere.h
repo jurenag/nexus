@@ -2,6 +2,7 @@
 #define LAR_SPHERE_H
 
 #include "GeometryBase.h"
+#include "RandomUtils.h"
 
 class G4Material;
 class G4GenericMessenger;
