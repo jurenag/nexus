@@ -4,12 +4,40 @@
 
 /process/em/verbose 0
 
-/Geometry/WLSPlate/LAr true
+# Megacell-like
+#/Geometry/WLSPlate/depth                    619.    mm
+#/Geometry/WLSPlate/height                   5.5     mm
+#/Geometry/WLSPlate/width                    619.    mm
 
-#/Geometry/WLSPlate/depth    200. cm
-#/Geometry/WLSPlate/height    200. cm
-#/Geometry/WLSPlate/width    200. cm
+# Supercell-like
+#/Geometry/WLSPlate/depth                    480.    mm
+#/Geometry/WLSPlate/width                    93.     mm
+#/Geometry/WLSPlate/height                   4.0     mm
+
+# Rod
+/Geometry/WLSPlate/depth                    480.    mm
+/Geometry/WLSPlate/width                    6.0     mm
+/Geometry/WLSPlate/height                   6.0     mm
+
+/Geometry/WLSPlate/dimples_at_x_plus        false
+/Geometry/WLSPlate/dimples_at_x_minus       false
+/Geometry/WLSPlate/dimples_at_z_plus        false
+/Geometry/WLSPlate/dimples_at_z_minus       false
+/Geometry/WLSPlate/dimple_type              flat
+/Geometry/WLSPlate/how_many_dimples         20
+/Geometry/WLSPlate/flat_dimple_width        6.5     mm
+/Geometry/WLSPlate/flat_dimple_depth        2       mm
+/Geometry/WLSPlate/curvy_dimple_radius      3.2     mm
+/Geometry/WLSPlate/cut_plate                true
+/Geometry/WLSPlate/cut_angle                0.69813170079   # 40 º, in radians
+/Geometry/WLSPlate/cut_thickness            1       mm
+/Geometry/WLSPlate/tunneling_probability    0.01
+/Geometry/WLSPlate/generation_y_pos         0.0     mm
+/Geometry/WLSPlate/generation_mode          center
+/Geometry/WLSPlate/wrap_with_collector      true
+/Geometry/WLSPlate/with_LAr_env             true
 
 /control/execute macros/generators/SingleParticleWLSPlate.mac
 
-/nexus/persistency/output_file nexus.next
+#/nexus/persistency/output_file output/wlsplate_geometry_opt/fixed_depth/s25s500.0s485.0s
+/nexus/persistency/output_file output/TrashCan
