@@ -57,6 +57,7 @@ namespace nexus{
   DF_thickn_                            (1.010  *mm                   ),
   DF_substrate_thickn_                  (1.000  *mm                   ),
   DF_substrate_mpt_                     (opticalprops::FusedSilica()  ),
+  //DF_substrate_mpt_                     (opticalprops::SCHOTT_B270()  ),
   DF_pos_wrt_DFA_pos_                   (0.                           ),
   DF_are_coated_                        (true                         ),
   coating_thickn_                       (3.226  *um                   ),  // Based on arxiv.org/abs/1912.09191 and TDR vol.IX, section 5.8.3.1,
@@ -1375,9 +1376,10 @@ namespace nexus{
         G4LogicalVolume* frame_logic = new G4LogicalVolume(frame_solid, materials::FR4(), frame_name);
 
         // Set its color for visualization purposes
-        G4VisAttributes frame_col = nexus::DarkGreenAlpha();
-        frame_col.SetForceSolid(true);
+        G4VisAttributes frame_col = nexus::DarkGreen();
+        //frame_col.SetForceSolid(true);
         frame_logic->SetVisAttributes(frame_col);
+        //frame_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
 
         if(DFA_frame_is_reflective_){
             const G4String refcoat_name = "REF_COATING";
@@ -1516,7 +1518,7 @@ namespace nexus{
                                 new G4LogicalVolume(coatings_multiunion_solid, coatings_mat, "DF_COATINGS");   
 
             G4VisAttributes coatings_col = nexus::TitaniumGreyAlpha();
-            coatings_col.SetForceSolid(true);
+            //coatings_col.SetForceSolid(true);   // Comment this line not to see a coloured coating
             coatings_multiunion_logic->SetVisAttributes(coatings_col);
 
             // Place the coatings

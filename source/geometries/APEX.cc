@@ -815,7 +815,7 @@ namespace nexus{
     G4LogicalVolume* MLS_half_logic = new G4LogicalVolume(MLS_half_solid, mat, "MLS_HALF");
             
     G4VisAttributes MLS_col = nexus::BloodRedAlpha();
-    MLS_col.SetForceSolid(true);
+    //MLS_col.SetForceSolid(true);
     MLS_half_logic->SetVisAttributes(MLS_col);
 
     // Place the MLS
