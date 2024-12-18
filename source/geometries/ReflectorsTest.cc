@@ -31,7 +31,7 @@ namespace nexus{
   reflector_dx_(10.*cm),
   reflector_dy_(3.5*mm),
   reflector_dz_(10.*cm),
-  mpt_(opticalprops::Vikuiti())
+  mpt_(opticalprops::Vikuiti(0, 0.5))
   {
   }
 
