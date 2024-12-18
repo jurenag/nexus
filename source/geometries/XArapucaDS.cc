@@ -558,7 +558,7 @@ namespace nexus{
     G4double tolerance = 1.*cm;
     G4Box* aux_inner_box =  new G4Box("AUX_INNER_BOX", 
                                       plate_length_/2. +plate_ring_gap_, 
-                                      (plate_thickn_/2., +tolerance)/2., 
+                                      (plate_thickn_/2. +tolerance)/2., 
                                       plate_width_/2. +plate_ring_gap_);
 
     G4SubtractionSolid* ring_solid =    new G4SubtractionSolid( ring_name, aux_outter_box, aux_inner_box, 
