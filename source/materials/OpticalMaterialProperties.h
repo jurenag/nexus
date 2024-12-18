@@ -119,8 +119,6 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* specularspikeVIKUITI();
 
-  G4MaterialPropertiesTable* specularlobeVIKUITI();
-
   G4MaterialPropertiesTable* diffusiveVIKUITI();
 
 
