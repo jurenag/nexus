@@ -247,7 +247,7 @@ namespace nexus{
 
   G4ThreeVector WLSPlateTest::GenerateVertex(const G4String&) const
   {
-    G4double arapuca_upper_surf_pos = (-1.*world_dy_/2.);+gap_+wlsp_dy_; 
+    G4double arapuca_upper_surf_pos = (-1.*world_dy_/2.)+gap_+wlsp_dy_; 
     if (lower_collector_) arapuca_upper_surf_pos += collector_thickn_;
     arapuca_upper_surf_pos += gap_;
     if (lower_cover_) arapuca_upper_surf_pos += cover_thickn_;
