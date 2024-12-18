@@ -2811,8 +2811,40 @@ namespace opticalprops {
   }
 
   /// VIKUITI ///
-  G4MaterialPropertiesTable* Vikuiti()
+  /**
+   * @brief Implements a material properties table for Vikuiti reflector.
+   *
+   * @param reflectivity_type 0 for an specular-spike reflector, 1 for an
+   * specular-lobe reflector and 2 for a diffusive reflector. It is set to
+   * 0 by default, which corresponds to a specular-spike reflector.
+   * @param reflectivity_factor_scale It must be a value in the [0., 1.]
+   * range. The reflectivity curve is scaled by this factor. It is set to
+   * 1 by default.
+   * @return A pointer to a G4MaterialPropertiesTable object which
+   * implements the optical properties of the Vikuiti reflector.
+   */
+  G4MaterialPropertiesTable* Vikuiti(G4int reflectivity_type, G4double reflectivity_factor_scale)
   {
+
+    // Implement well-formedness checks for the input parameters
+    if(reflectivity_type < 0 || reflectivity_type > 2){
+      G4Exception(
+        "[opticalprops]",
+        "Vikuiti()",
+        FatalException,
+        "Invalid reflectivity type. It must be 0, 1 or 2."
+      );
+    }
+
+    if (reflectivity_factor_scale < 0. || reflectivity_factor_scale > 1.){
+      G4Exception(
+        "[opticalprops]",
+        "Vikuiti()",
+        FatalException,
+        "Invalid reflectivity factor scale. It must be in the [0., 1.] range."
+      );
+    } 
+
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
     //Info from David Warner 11/2019 talk
     //It is said that the reflective foils are coated with TPB,
@@ -2862,6 +2894,11 @@ namespace opticalprops {
                               0.9819, 0.9796, 0.9741, 0.9724, 0.9706, 0.9608, 0.9325, 0.9072, 
                               0.875, 0.839, 0.8166, 0.751, 0.7702, 0.6919, 0.7094, 0.6183, 
                               0.512, 0.4376, 0.2596, 0.3233, 0.1908, 0.145, 0.1463, 0.1393};
+
+    // Apply the scaling factor to the reflectivity values
+    for(G4int i = 0; i < entries; ++i){
+      reflectivity[i] *= reflectivity_factor_scale;
+    }
                             
     G4double test_energy[] = {opticalprops::optPhotMinE_,
                             opticalprops::optPhotMinE_ +(1*eV), 
@@ -2879,9 +2916,24 @@ namespace opticalprops {
     // property name BACKSCATTERCONSTANT) is for the case of several reflections within a deep groove with the ultimate 
     // result of exact back-scattering. The four probabilities add up to one, with the diffuse lobe constant being calculated 
     // by the code from other other three values that the user entered.
+
+    G4double* specularlobe;
+    G4double* specularspike;
+
+    G4double four_zeros[] = {0., 0., 0., 0.};
+    G4double four_ones[] = {1., 1., 1., 1.};
+
+    if(reflectivity_type == 0){
+      specularlobe = four_zeros;
+      specularspike = four_ones;
+    } else if(reflectivity_type == 1){
+      specularlobe = four_ones;
+      specularspike = four_zeros;
+    } else {
+      specularlobe = four_zeros;
+      specularspike = four_zeros;
+    }
     
-    G4double specularlobe[]     = {0., 0., 0., 0.};
-    G4double specularspike[]    = {1., 1., 1., 1.};
     G4double backscatter[]      = {0., 0., 0., 0.};
     G4double efficiency[]       = {0., 0., 0., 0.};
 
