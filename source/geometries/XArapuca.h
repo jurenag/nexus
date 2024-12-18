@@ -165,7 +165,7 @@ namespace nexus {
     G4double cut_angle_;                                            ///< This parameter only makes a difference if cut_plate_ is true. Angle of the cut, with respect to the Z axis (the axis along which the WLS plate is dz_ long)
     G4double cut_thickness_;                                        ///< This parameter only makes a difference if cut_plate_ is true. Thickness of the cut/crack that is carved from the plate.
     G4bool place_foil_at_the_cut_;                                  ///< This parameter only makes a difference if cut_plate_ is true. Whether to place (two) pieces of foil covering the inner faces of the cut.
-                                                                    ///< If that's the case, then the material properties table of such foils is opticalprops::specularspikeVIKUITI() and their thickness match cut_thickness_/5.
+                                                                    ///< If that's the case, then the material properties table of such foils is opticalprops::Vikuiti() and their thickness match cut_thickness_/5.
                                                                     ///< These foils are in optical contact contact with the WLS plate volume (meaning that there's no gab in between a foil and the WLS plate). Hence, if 
                                                                     ///< tunneling_probability_ is different from 0.0, the foils G4LogicalSkinSurface's match (in space) that of the WLS plate. However, in this case (contrary
                                                                     ///< to the one explained in the add_blocks_between_sipms_ attribute documentation) the photons which arrive at the cut behave as expected (are reflected with

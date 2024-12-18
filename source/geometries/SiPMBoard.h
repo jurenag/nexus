@@ -43,7 +43,7 @@ namespace nexus {
     void Construct();
     void ConstructBoard(G4LogicalVolume*);  ///< Constructs the board where the SiPMs are placed. By default, this 
                                             ///< board is wrapped by a G4LogicalSkinSurface with 
-                                            ///< opticalprops::specularspikeVIKUITI() G4MaterialPropertiesTable.
+                                            ///< opticalprops::Vikuiti() G4MaterialPropertiesTable.
     void ConstructSiPMs(G4LogicalVolume*);
 
   private:

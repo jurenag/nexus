@@ -523,7 +523,7 @@ namespace nexus{
     G4OpticalSurface* board_coating = 
       new G4OpticalSurface(bc_name, unified, ground, dielectric_metal, 1);
     
-    board_coating->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+    board_coating->SetMaterialPropertiesTable(opticalprops::Vikuiti());
     new G4LogicalSkinSurface(bc_name, board_logic, board_coating); 
 
     G4RotationMatrix* board_rot = new G4RotationMatrix();
@@ -700,7 +700,7 @@ namespace nexus{
     // if you have set the transmission, since that option is already banned from the
     // configuration model.
 
-    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
     new G4LogicalSkinSurface(ref_surf_name, ref_case_logic, refsurf_opsurf);   
     
     new G4PVPlacement(  nullptr, G4ThreeVector(0., -1.*reflective_foil_thickn_/2., 0.),

@@ -930,7 +930,7 @@ namespace nexus{
     // if you have set the transmission, since that option is already banned from the
     // configuration model.
 
-    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
     new G4LogicalSkinSurface("REF_CASE_SURFACE", ref_case_logic, refsurf_opsurf);   
     
     new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.),
@@ -1039,8 +1039,8 @@ namespace nexus{
             const G4String refcoat_name = "REF_COATING";
             G4OpticalSurface* refcoat_opsurf = 
             new G4OpticalSurface(refcoat_name, unified, ground, dielectric_metal, 1);
-            if(CSA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
-            else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::diffusiveVIKUITI());
+            if(CSA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());  // Fix this
+            else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
             new G4LogicalSkinSurface(refcoat_name, frame_logic, refcoat_opsurf);
         }
         
@@ -1056,7 +1056,7 @@ namespace nexus{
             const G4String refsurf_name = "REF_SURFACE";
             G4OpticalSurface* refsurf_opsurf = 
             new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
-            refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+            refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
 
             const G4String cover_name = "REFLECTIVE_COVER";
             G4LogicalVolume* cover_logic = new G4LogicalVolume(cover_solid, materials::FR4(), cover_name);

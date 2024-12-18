@@ -118,7 +118,7 @@ namespace nexus {
                               dielectric_metal, 
                               1);
 
-        support_coating->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+        support_coating->SetMaterialPropertiesTable(opticalprops::Vikuiti());
         new G4LogicalSkinSurface( "SUPPORT_COATING", 
                                   support_logic, 
                                   support_coating); 

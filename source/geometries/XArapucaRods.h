@@ -130,7 +130,7 @@ namespace nexus {
     G4double cut_angle_;                                            ///< This parameter only makes a difference if cut_rods_ is True. Angle of the cut, with respect to the Z axis (the axis along which the rods are rod_width_ long)
     G4double cut_thickness_;                                        ///< This parameter only makes a difference if cut_rods_ is True. Thickness of the cut/crack that is carved from the rod.
     G4bool place_separator_at_the_cut_;                             ///< This parameter only makes a difference if cut_rods_ is true. Whether to insert a reflective separator in the rod cut. If that's the case,
-                                                                    ///< then the material properties table of such foils is opticalprops::specularspikeVIKUITI() and its thickness match cut_thickness_/2.
+                                                                    ///< then the material properties table of such foils is opticalprops::Vikuiti() and its thickness match cut_thickness_/2.
 
     ///---- General internal attributes ----///                     ///< These attributes are internal. They must not be set by the user.
     G4double internal_length_, internal_width_, internal_thickn_;   ///< Internal dimensions of the reflector cavity

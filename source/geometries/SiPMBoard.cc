@@ -260,7 +260,7 @@ namespace nexus {
     G4OpticalSurface* board_coating = 
       new G4OpticalSurface(bc_name, unified, ground, dielectric_metal, 1);
     
-    board_coating->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+    board_coating->SetMaterialPropertiesTable(opticalprops::Vikuiti());
     new G4LogicalSkinSurface(bc_name, board_logic, board_coating); 
 
     G4double pos;

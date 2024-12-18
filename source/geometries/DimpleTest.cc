@@ -332,7 +332,7 @@ namespace nexus{
         G4OpticalSurface* refsurf_opsurf = 
         new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
     
-        refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+        refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
         new G4LogicalSkinSurface("BOARD_REF_SURFACE", board_logic, refsurf_opsurf);   
 
         new G4PVPlacement(  nullptr, G4ThreeVector(plate_dx_/2. +gap_ +sipm_thickn +board_thickn_/2., 0., 0.),
@@ -410,7 +410,7 @@ namespace nexus{
         const G4String r_surf_name = "REFLECTIVE_SURFACE";
         G4OpticalSurface* r_surf_opsurf = 
         new G4OpticalSurface(r_surf_name, unified, ground, dielectric_metal, 1);
-        r_surf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+        r_surf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
         new G4LogicalSkinSurface(r_surf_name, ext_chunk_logic, r_surf_opsurf);  
     }
     else{
@@ -483,7 +483,7 @@ namespace nexus{
     G4OpticalSurface* refsurf_opsurf = 
     new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
     
-    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::specularspikeVIKUITI());
+    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
     new G4LogicalSkinSurface("ENCLOSURE_REF_SURFACE", enclosure_logic, refsurf_opsurf);   
 
     G4double x_pos = gap_/2.;

@@ -2811,7 +2811,7 @@ namespace opticalprops {
   }
 
   /// VIKUITI ///
-  G4MaterialPropertiesTable* specularspikeVIKUITI()
+  G4MaterialPropertiesTable* Vikuiti()
   {
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
     //Info from David Warner 11/2019 talk
