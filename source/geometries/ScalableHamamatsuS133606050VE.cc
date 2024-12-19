@@ -22,7 +22,8 @@ namespace nexus {
     height_(height),
     width_(width),
     visibility_(true), 
-    reflective_support_(false)
+    reflective_support_(false),
+    reflectivity_scale_factor_(1.)
   {
   }
 
@@ -82,7 +83,7 @@ namespace nexus {
         G4OpticalSurface* support_coating = 
         new G4OpticalSurface(sc_name, unified, ground, dielectric_metal, 1);
 
-        support_coating->SetMaterialPropertiesTable(opticalprops::Vikuiti());
+        support_coating->SetMaterialPropertiesTable(opticalprops::Vikuiti(0, reflectivity_scale_factor_));
         new G4LogicalSkinSurface(sc_name, support_logic, support_coating); 
     }
 

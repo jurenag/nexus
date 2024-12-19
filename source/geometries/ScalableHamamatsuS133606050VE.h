@@ -29,10 +29,11 @@ namespace nexus {
     void Construct();
 
     //Set methods
-    void SetHeight(G4double input)                          { height_               = input; }
-    void SetWidth(G4double input)                           { width_                = input; }
-    inline void SetVisibility(G4bool input)                 { visibility_           = input; } 
-    inline void SetReflectiveSupports(G4bool input)         { reflective_support_   = input; }
+    void SetHeight(G4double input)                          { height_                     = input; }
+    void SetWidth(G4double input)                           { width_                      = input; }
+    inline void SetVisibility(G4bool input)                 { visibility_                 = input; } 
+    inline void SetReflectiveSupports(G4bool input)         { reflective_support_         = input; }
+    inline void SetReflectivityScaleFactor(G4double input)  { reflectivity_scale_factor_  = input; }
 
   private:
 
@@ -40,6 +41,9 @@ namespace nexus {
     G4double width_;                            ///<Width of the MPPC
     G4bool visibility_;                         ///<Whether the MPPC is visible or not
     G4bool reflective_support_;                 ///<Whether the FR4 support is vikuiti-coated
+    G4bool reflectivity_scale_factor_;          ///<Only used if reflective_support_ is true. In that case, this
+                                                ///<is a double which must belong to the [0.0, 1.0] range which
+                                                ///<is used as a factor to scale the vikuiti reflectivity curve.
   };
 
 } // namespace nexus
