@@ -60,6 +60,9 @@ namespace nexus {
 
     G4bool visibility_;                   ///<Whether the MPPC is visible or not
     G4bool reflective_support_;           ///<Whether the FR4 support is vikuiti-coated
+    G4double reflectivity_scale_factor_;  ///<Only used if reflective_support_ is true. In that case, this
+                                          ///<is a double which must belong to the [0.0, 1.0] range which
+                                          ///<is used to scale factor for the vikuiti reflectivity curve.
 
 
   };
