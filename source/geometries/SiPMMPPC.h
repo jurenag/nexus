@@ -25,6 +25,7 @@ namespace nexus {
     //Set methods
     inline void SetVisibility(G4bool input)                 { visibility_ = input; } 
     inline void SetReflectiveSupports(G4bool input)         { reflective_support_ = input; }
+    inline void SetReflectivityScaleFactor(G4double input)  { reflectivity_scale_factor_ = input; }
   
     //Get methods
 
