@@ -15,15 +15,16 @@ namespace nexus {
     // Destructor
     ~SiPMBoard();
 
-    inline void SetBaseID(G4int input)              { base_id_                  = input; }
-    inline void SetNumPhsensors(G4int input)        { num_phsensors_            = input; }
-    inline void SetSiPMCode(G4int input)            { SiPM_code_                = input; }
-    inline void SetBoardLength(G4double input)      { board_length_             = input; }
-    inline void SetBoardHeight(G4double input)      { board_height_             = input; }
-    inline void SetBoardThickness(G4double input)   { board_thickn_             = input; }
-    inline void SetReflectiveSupports(G4bool input) { ref_phsensors_supports_   = input; }
-    inline void SetAddBlocks(G4bool input)          { add_blocks_between_sipms_ = input; }
-    inline void SetSiPMProtrusion(G4double input)   { sipm_protrusion_          = input; }
+    inline void SetBaseID(G4int input)                      { base_id_                  = input; }
+    inline void SetNumPhsensors(G4int input)                { num_phsensors_            = input; }
+    inline void SetSiPMCode(G4int input)                    { SiPM_code_                = input; }
+    inline void SetBoardLength(G4double input)              { board_length_             = input; }
+    inline void SetBoardHeight(G4double input)              { board_height_             = input; }
+    inline void SetBoardThickness(G4double input)           { board_thickn_             = input; }
+    inline void SetReflectiveSupports(G4bool input)         { ref_phsensors_supports_   = input; }
+    inline void SetReflectivityScaleFactor(G4double input)  { reflectivity_scale_factor_ = input; }
+    inline void SetAddBlocks(G4bool input)                  { add_blocks_between_sipms_ = input; }
+    inline void SetSiPMProtrusion(G4double input)           { sipm_protrusion_          = input; }
 
     G4int GetNumPhsensors()         const;  ///< Returns the number of photosensors attached to the board 
     G4int GetSiPMCode()             const;  ///< Returns the SiPM code
@@ -61,6 +62,8 @@ namespace nexus {
     G4double board_length_;             ///< Board length
     G4double board_height_;             ///< Board height (width)
     G4bool   ref_phsensors_supports_;   ///< Whether the FR4 supports of the SiPMs are vikuiti-coated    
+    G4double reflectivity_scale_factor_;///< Scale factor for the vikuiti reflectivity curve which is used for both,
+                                        ///< the SiPMs supports and the board. It must belong to the [0., 1.] range.
     G4bool   add_blocks_between_sipms_; ///< Whether to add blocks filling the space in between each two
                                         ///< two sipms. Blocks are also added at both ends of the board.
                                         ///< Analogously to no-blocks case, when the blocks are placed

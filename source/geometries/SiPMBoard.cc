@@ -29,6 +29,7 @@ namespace nexus {
     board_height_(8.*mm),   ///< Y
     board_thickn_(1.*mm),   ///< Z
     ref_phsensors_supports_(true),
+    reflectivity_scale_factor_(1.),
     add_blocks_between_sipms_(false),
     sipm_protrusion_(0.0*mm),
     base_id_(0),
@@ -260,7 +261,7 @@ namespace nexus {
     G4OpticalSurface* board_coating = 
       new G4OpticalSurface(bc_name, unified, ground, dielectric_metal, 1);
     
-    board_coating->SetMaterialPropertiesTable(opticalprops::Vikuiti());
+    board_coating->SetMaterialPropertiesTable(opticalprops::Vikuiti(0, reflectivity_scale_factor_));
     new G4LogicalSkinSurface(bc_name, board_logic, board_coating); 
 
     G4double pos;
@@ -312,7 +313,8 @@ namespace nexus {
       sipm = dynamic_cast<PerfectSiPMMPPC*>(sipm);
       sipm = new PerfectSiPMMPPC();
     }
-    sipm->SetReflectiveSupports(ref_phsensors_supports_);  
+    sipm->SetReflectiveSupports(ref_phsensors_supports_);
+    sipm->SetReflectivityScaleFactor(reflectivity_scale_factor_);
     sipm->Construct();
     G4double sipm_thickn = sipm->GetThickness();
     G4LogicalVolume* sipm_logic_vol = sipm->GetLogicalVolume();
