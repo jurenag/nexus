@@ -778,6 +778,7 @@ namespace nexus{
     if(PS_config_code_==1){
         SiPMMPPC* sipm_ptr = ChooseSiPM(SiPM_code_);
         sipm_ptr->SetReflectiveSupports(ref_phsensors_supports_);
+        sipm_ptr->SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         sipm_ptr->Construct();
         sipm_thickn = sipm_ptr->GetThickness();
         G4LogicalVolume* sipm_logic_vol = sipm_ptr->GetLogicalVolume();
@@ -859,6 +860,7 @@ namespace nexus{
 
         ScalableHamamatsuS133606050VE sipm_along_length(plate_length_, plate_thickn_);
         sipm_along_length.SetReflectiveSupports(ref_phsensors_supports_);
+        sipm_along_length.SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         sipm_along_length.Construct();
         sipm_thickn = sipm_along_length.GetThickness();
         G4LogicalVolume* sipm_along_length_logic_vol = sipm_along_length.GetLogicalVolume();
@@ -892,6 +894,7 @@ namespace nexus{
 
         ScalableHamamatsuS133606050VE sipm_along_width(plate_width_, plate_thickn_);
         sipm_along_width.SetReflectiveSupports(ref_phsensors_supports_);
+        sipm_along_width.SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         sipm_along_width.Construct();
         G4double sipm_thickn = sipm_along_width.GetThickness();
         G4LogicalVolume* sipm_along_width_logic_vol = sipm_along_width.GetLogicalVolume();
@@ -951,6 +954,7 @@ namespace nexus{
         board1.SetSiPMCode(SiPM_code_);
         board1.SetNumPhsensors(num_phsensors_);
         board1.SetReflectiveSupports(ref_phsensors_supports_);
+        board1.SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         board1.SetAddBlocks(add_blocks_between_sipms_);
         board1.SetSiPMProtrusion(sipm_protrusion);
         board1.Construct();
@@ -974,6 +978,7 @@ namespace nexus{
         board2.SetSiPMCode(SiPM_code_);
         board2.SetNumPhsensors(num_phsensors_);
         board2.SetReflectiveSupports(ref_phsensors_supports_);
+        board2.SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         board2.SetAddBlocks(add_blocks_between_sipms_);
         board2.SetSiPMProtrusion(sipm_protrusion);
         board2.Construct();
@@ -994,6 +999,7 @@ namespace nexus{
         board3.SetSiPMCode(SiPM_code_);
         board3.SetNumPhsensors(num_phsensors_);
         board3.SetReflectiveSupports(ref_phsensors_supports_);
+        board3.SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         board3.SetAddBlocks(add_blocks_between_sipms_);
         board3.SetSiPMProtrusion(sipm_protrusion);
         board3.Construct();
@@ -1014,6 +1020,7 @@ namespace nexus{
         board4.SetSiPMCode(SiPM_code_);
         board4.SetNumPhsensors(num_phsensors_);
         board4.SetReflectiveSupports(ref_phsensors_supports_);
+        board4.SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         board4.SetAddBlocks(add_blocks_between_sipms_);
         board4.SetSiPMProtrusion(sipm_protrusion);
         board4.Construct();
@@ -1034,6 +1041,7 @@ namespace nexus{
         board1.SetSiPMCode(SiPM_code_);
         board1.SetNumPhsensors(num_phsensors_);
         board1.SetReflectiveSupports(ref_phsensors_supports_);
+        board1.SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         board1.SetAddBlocks(add_blocks_between_sipms_);
         board1.SetSiPMProtrusion(sipm_protrusion);
 
@@ -1042,6 +1050,7 @@ namespace nexus{
         board2.SetSiPMCode(SiPM_code_);
         board2.SetNumPhsensors(num_phsensors_);
         board2.SetReflectiveSupports(ref_phsensors_supports_);
+        board2.SetReflectivityScaleFactor(vikuiti_reflectivity_scale_factor_);
         board2.SetAddBlocks(add_blocks_between_sipms_);
         board2.SetSiPMProtrusion(sipm_protrusion);
 
