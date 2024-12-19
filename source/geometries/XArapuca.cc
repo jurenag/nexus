@@ -74,6 +74,7 @@ namespace nexus{
   df_no_along_wlsplength_               (2                            ),
   df_no_along_wlspwidth_                (3                            ),
   DFA_frame_is_reflective_              (false                        ),
+  vikuiti_reflectivity_scale_factor_    (1.                           ),
   DFA_frame_is_specular_                (true                         ),
   remove_DFs_                           (false                        ),  
   remove_DFA_frame_                     (false                        ),
@@ -242,6 +243,13 @@ namespace nexus{
     G4GenericMessenger::Command& dfafir_cmd =
       msg_->DeclareProperty("DFA_frame_is_reflective", DFA_frame_is_reflective_,
 			    "Whether the FR4 DFA frame is vikuiti-coated or not.");
+
+    G4GenericMessenger::Command& vrsf_cmd =
+      msg_->DeclareProperty("vikuiti_reflectivity_scale_factor", vikuiti_reflectivity_scale_factor_,
+			    "Scale factor for the vikuiti reflectivity curve. It must belong to the [0., 1.] range. Note that this affects every volume which implements the vikuiti optical properties in the XArapuca geometry.");
+    vrsf_cmd.SetParameterName("vikuiti_reflectivity_scale_factor", false);
+    vrsf_cmd.SetRange("vikuiti_reflectivity_scale_factor>=0.");
+    vrsf_cmd.SetRange("vikuiti_reflectivity_scale_factor<=1.");
 
     G4GenericMessenger::Command& dfafis_cmd =
       msg_->DeclareProperty("DFA_frame_is_specular", DFA_frame_is_specular_,
@@ -685,7 +693,7 @@ namespace nexus{
       G4OpticalSurface* opsurf = 
         new G4OpticalSurface("CUT_FOIL_REF_SURFACE", unified, ground, dielectric_metal, 1);
     
-      opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
+      opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(0, vikuiti_reflectivity_scale_factor_));
       new G4LogicalSkinSurface("CUT_FOIL_REF_SURFACE", cut_foil_logic, opsurf);
 
       new G4PVPlacement(nullptr,  G4ThreeVector(  (1e-6*plate_length_) -1.*cut_thickness_/2. +(cut_thickness_/5.)/2.,   // The 1e-6*plate_length_ shift is in agreement 
@@ -1143,7 +1151,7 @@ namespace nexus{
     // if you have set the transmission, since that option is already banned from the
     // configuration model.
 
-    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
+    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(0, vikuiti_reflectivity_scale_factor_));
     new G4LogicalSkinSurface("REF_CASE_SURFACE", ref_case_logic, refsurf_opsurf);   
     
     new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.),
@@ -1385,8 +1393,8 @@ namespace nexus{
             const G4String refcoat_name = "REF_COATING";
             G4OpticalSurface* refcoat_opsurf = 
             new G4OpticalSurface(refcoat_name, unified, ground, dielectric_metal, 1);
-            if(DFA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(0));
-            else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(2));
+            if(DFA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(0, vikuiti_reflectivity_scale_factor_));
+            else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(2, vikuiti_reflectivity_scale_factor_));
             new G4LogicalSkinSurface(refcoat_name, frame_logic, refcoat_opsurf);
         }
         
@@ -1402,7 +1410,7 @@ namespace nexus{
             const G4String refsurf_name = "REF_SURFACE";
             G4OpticalSurface* refsurf_opsurf = 
             new G4OpticalSurface(refsurf_name, unified, ground, dielectric_metal, 1);
-            refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
+            refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(0, vikuiti_reflectivity_scale_factor_));
 
             const G4String cover_name = "REFLECTIVE_COVER";
             G4LogicalVolume* cover_logic = new G4LogicalVolume(cover_solid, materials::FR4(), cover_name);
@@ -1703,7 +1711,7 @@ namespace nexus{
     // if you have set the transmission, since that option is already banned from the
     // configuration model.
 
-    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
+    refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(0, vikuiti_reflectivity_scale_factor_));
     new G4LogicalSkinSurface(ref_surf_name, ref_wrap_logic, refsurf_opsurf);
 
     new G4PVPlacement(  nullptr, G4ThreeVector(0., -1.*reflective_foil_thickn/2., 0.),
