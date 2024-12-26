@@ -1436,7 +1436,7 @@ namespace nexus{
     // DICHROIC FILTERS //
     if(!remove_DFs_){
         G4Material* DF_substrate_mat    = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
-        DF_substrate_mat->SetMaterialPropertiesTable(DF_substrate_mpt_);
+        DF_substrate_mat->SetMaterialPropertiesTable(ChooseDFSubstrateMPT(DF_substrate_mpt_));
         G4LogicalVolume* df_substrates_multiunion_logic = 
                             new G4LogicalVolume(df_substrates_multiunion_solid, DF_substrate_mat, "DICHROIC_FILTER_SUBSTRATES");
         G4LogicalVolume* df_MLSs_multiunion_logic = 
