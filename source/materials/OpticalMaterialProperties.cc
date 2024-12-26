@@ -2454,6 +2454,88 @@ namespace opticalprops {
     return mpt;
   }
 
+  G4MaterialPropertiesTable* SCHOTT_BOROFLOAT_33()
+  {
+      // The refractive index for this material was digitized from
+      // i.e. https://www.schott.com/es-es/products/borofloat-p1000314/technical-details?tab=24f18f4c9fd845f4bf8f6968328233b4
+
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    // REFRACTIVE INDEX
+    std::vector<G4double> ri_energy = {
+      optPhotMinE_,
+      h_Planck * c_light / (1493.103 * nm), h_Planck * c_light / (1432.759 * nm), h_Planck * c_light / (1348.276 * nm),
+      h_Planck * c_light / (1270.69 * nm), h_Planck * c_light / (1193.103 * nm), h_Planck * c_light / (1115.517 * nm),
+      h_Planck * c_light / (1058.621 * nm), h_Planck * c_light / (998.276 * nm), h_Planck * c_light / (927.586 * nm),
+      h_Planck * c_light / (862.069 * nm), h_Planck * c_light / (810.345 * nm), h_Planck * c_light / (758.621 * nm),
+      h_Planck * c_light / (718.966 * nm), h_Planck * c_light / (670.69 * nm), h_Planck * c_light / (618.966 * nm),
+      h_Planck * c_light / (572.414 * nm), h_Planck * c_light / (524.138 * nm), h_Planck * c_light / (484.483 * nm),
+      h_Planck * c_light / (446.552 * nm), h_Planck * c_light / (413.793 * nm), h_Planck * c_light / (384.483 * nm),
+      h_Planck * c_light / (356.897 * nm), h_Planck * c_light / (332.759 * nm), h_Planck * c_light / (310.345 * nm),
+      h_Planck * c_light / (289.655 * nm), h_Planck * c_light / (272.414 * nm), h_Planck * c_light / (256.897 * nm),
+      h_Planck * c_light / (244.828 * nm), h_Planck * c_light / (234.483 * nm),
+      optPhotMaxE_
+    };
+
+    std::vector<G4double> rIndex = {
+      1.4564,
+      1.4564, 1.4571, 1.4581, 1.4592, 1.4602, 1.4613, 1.462,
+      1.4627, 1.4637, 1.4648, 1.4655, 1.4665, 1.4672, 1.4686, 
+      1.47, 1.4714, 1.4735, 1.4756, 1.478, 1.4808, 1.484,
+      1.4878, 1.4917, 1.4962, 1.5015, 1.5071, 1.513, 1.5186, 1.5235,
+      1.5235
+    };
+    
+    mpt->AddProperty("RINDEX", ri_energy, rIndex);
+
+
+  // ABSORPTION LENGTH
+  // This absorption length I computed from the transmitance for a 11 mm -thick slab of BOROFLOAT 33
+  // glass which can be found in
+  // https://www.schott.com/es-es/products/borofloat-p1000314/technical-details?tab=24f18f4c9fd845f4bf8f6968328233b4 .
+  // To do so, first I correct the transmitance curves by taking out the Fresnel reflectance at the
+  // air-glass interface. To that end, I need to use the refractive index of the glass. The used
+  // refractive index is the same as the one that is coded for this simulation, some lines above.
+  // Then, I compute the absorption length assuming an exponential decay of the light intensity
+  // inside the glass.
+  std::vector<G4double> abs_energy =  {
+    optPhotMinE_,
+    h_Planck * c_light / (600.0 * nm), h_Planck * c_light / (580.0 * nm), h_Planck * c_light / (560.0 * nm),
+    h_Planck * c_light / (540.0 * nm), h_Planck * c_light / (520.0 * nm), h_Planck * c_light / (500.0 * nm),
+    h_Planck * c_light / (480.0 * nm), h_Planck * c_light / (460.0 * nm), h_Planck * c_light / (440.0 * nm),
+    h_Planck * c_light / (420.0 * nm), h_Planck * c_light / (399.149 * nm), h_Planck * c_light / (394.12 * nm),
+    h_Planck * c_light / (388.704 * nm), h_Planck * c_light / (382.128 * nm), h_Planck * c_light / (376.905 * nm),
+    h_Planck * c_light / (370.329 * nm), h_Planck * c_light / (361.044 * nm), h_Planck * c_light / (351.954 * nm),
+    h_Planck * c_light / (342.089 * nm), h_Planck * c_light / (333.965 * nm), h_Planck * c_light / (326.615 * nm),
+    h_Planck * c_light / (321.393 * nm), h_Planck * c_light / (316.364 * nm), h_Planck * c_light / (312.882 * nm),
+    h_Planck * c_light / (309.787 * nm), h_Planck * c_light / (307.466 * nm), h_Planck * c_light / (304.758 * nm),
+    h_Planck * c_light / (302.05 * nm), h_Planck * c_light / (299.149 * nm), h_Planck * c_light / (296.054 * nm),
+    h_Planck * c_light / (292.186 * nm), h_Planck * c_light / (287.157 * nm), h_Planck * c_light / (280.0 * nm),
+    h_Planck * c_light / (271.102 * nm), h_Planck * c_light / (260.851 * nm), h_Planck * c_light / (250.213 * nm),
+    optPhotMaxE_
+  };
+
+  std::vector<G4double> absLength =   {
+    noAbsLength_, // @ optPhotMinE_
+    781.7406 * mm, 790.4173 * mm, 801.075 * mm,
+    813.9335 * mm, 828.7433 * mm, 845.3424 * mm,
+    863.8386 * mm, 885.0548 * mm, 911.4261 * mm,
+    945.2311 * mm, 1012.4043 * mm, 1025.7137 * mm,
+    1041.1646 * mm, 631.1755 * mm, 560.5516 * mm,
+    749.8568 * mm, 577.0648 * mm, 389.5059 * mm,
+    211.299 * mm, 116.6895 * mm, 67.5948 * mm,
+    44.8503 * mm, 30.415 * mm, 23.3581 * mm,
+    18.2677 * mm, 15.2933 * mm, 12.3463 * mm,
+    10.1426 * mm, 8.0846 * mm, 6.3579 * mm,
+    4.6868 * mm, 3.2815 * mm, 2.0498 * mm,
+    0.5998 * mm, 0.5999 * mm, 0.5999 * mm,
+    0. // @ optPhotMaxE_
+  };
+
+    mpt->AddProperty("ABSLENGTH", abs_energy, absLength);
+    return mpt;
+  }
+
   /// Y-11 ///
   G4MaterialPropertiesTable* Y11()
   {

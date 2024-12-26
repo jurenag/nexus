@@ -101,6 +101,8 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* SCHOTT_B270();
 
+  G4MaterialPropertiesTable* SCHOTT_BOROFLOAT_33();
+
   G4MaterialPropertiesTable* Y11();
 
   G4MaterialPropertiesTable* B2();
