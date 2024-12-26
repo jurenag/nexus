@@ -175,6 +175,10 @@ namespace nexus{
     dfst_cmd.SetParameterName("DF_substrate_thickn", false);
     dfst_cmd.SetRange("DF_substrate_thickn>0.");
 
+    G4GenericMessenger::Command& dsm_cmd =
+      msg_->DeclareProperty("DF_substrate_mpt", DF_substrate_mpt_,
+			    "Gives the material properties table of the dichroic filters substrate.");
+
     G4GenericMessenger::Command& dpwdp_cmd =
       msg_->DeclareProperty("DF_pos_wrt_DFA_pos", DF_pos_wrt_DFA_pos_,
 			    "Position (height) of the dichroic filters with respect to the DFA position (height). This parameter can take values from 0 to 1.");
