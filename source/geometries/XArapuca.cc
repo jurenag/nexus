@@ -1944,4 +1944,23 @@ namespace nexus{
     }
     return sipm_ptr;
   }
+
+
+  G4MaterialPropertiesTable * XArapuca::ChooseDFSubstrateMPT(G4String input) const{
+    G4MaterialPropertiesTable* mpt = nullptr;
+    if(input=="SCHOTT_B270"){
+      mpt = opticalprops::SCHOTT_B270();
+    }
+    else if(input=="SCHOTT_BOROFLOAT_33"){
+      mpt = opticalprops::SCHOTT_BOROFLOAT_33();
+    }
+    else if(input=="FUSED_SILICA"){
+      mpt = opticalprops::FusedSilica();
+    }
+    else{
+      G4Exception("[XArapuca]", "ChooseDFSubstrateMPT()", FatalException,
+      "The given input is not valid. Its value must be either 'SCHOTT_B270', 'SCHOTT_BOROFLOAT_33' or 'FUSED_SILICA'.");
+    } 
+    return mpt;
+  }
 } //End namespace nexus

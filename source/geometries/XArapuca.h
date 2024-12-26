@@ -53,6 +53,12 @@ namespace nexus {
                                                                         ///< 3: FbkNuvHdCryoTT
                                                                         ///< 4: BroadcomAFBRS4N44P044M
                                                                         ///< any other integer: PerfectSiPMMPPC
+    G4MaterialPropertiesTable * ChooseDFSubstrateMPT(G4String) const;   ///< Returns a pointer to a new G4MaterialPropertiesTable object, which implements the optical
+                                                                        ///< properties of the dichroic filters substrate. The mapping encoded by this function is the
+                                                                        ///< following:
+                                                                        ///< "SCHOTT_B270" - opticalprops::SCHOTT_B270()
+                                                                        ///< "SCHOTT_BOROFLOAT_33" - opticalprops::SCHOTT_BOROFLOAT_33()
+                                                                        ///< "FUSED_SILICA" - opticalprops::FusedSilica()
 
   private:
 
