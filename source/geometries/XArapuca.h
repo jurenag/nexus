@@ -78,7 +78,10 @@ namespace nexus {
     G4double DFA_thickn_;                                           ///< Frame thickness 
     G4double DF_thickn_;                                            ///< Overall thickness of the dichroic filters (MLS+substrate). Must be smaller than the frame thickness.
     G4double DF_substrate_thickn_;                                  ///< Thickness of the dichroic filters substrate. Must be smaller than DF_thickn_.
-    G4MaterialPropertiesTable* DF_substrate_mpt_;                   ///< Material Properties Table of the dichroic filters substrate.
+    G4String DF_substrate_mpt_;                                     ///< Gives the material properties table of the dichroic filters substrate. It can take the following values:
+                                                                    ///< "SCHOTT_B270" - opticalprops::SCHOTT_B270()
+                                                                    ///< "SCHOTT_BOROFLOAT_33" - opticalprops::SCHOTT_BOROFLOAT_33()
+                                                                    ///< "FUSED_SILICA" - opticalprops::FusedSilica()
     G4double DF_pos_wrt_DFA_pos_;                                   ///< Position (height) of the dichroic filters with respect to the DFA position (height). This parameter can take values from 0 to 1. See * below
     G4bool DF_are_coated_;                                          ///< Whether the filters are coated with PTP or not
     G4double coating_thickn_;                                       ///< Thickness of the coating layer that is deposited over the dichroic filters
