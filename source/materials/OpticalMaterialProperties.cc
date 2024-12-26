@@ -2417,40 +2417,39 @@ namespace opticalprops {
     mpt->AddProperty("RINDEX", ri_energy, rIndex);
 
 
-    // ABSORPTION LENGTH
+  // ABSORPTION LENGTH
+  // This absorption length I computed from the transmitance for a 6 mm -thick slab of B270 glass
+  // which can be found in https://www.schott.com/es-es/products/b-270-p1000313/technical-details .
+  // To do so, first I correct the transmitance curves by taking out the Fresnel reflectance at the
+  // air-glass interface. To that end, I need to use the refractive index of the glass. The used
+  // refractive index is the same as the one that is coded for this simulation, some lines above.
+  // Then, I compute the absorption length assuming an exponential decay of the light intensity
+  // inside the glass.
+  std::vector<G4double> abs_energy =  {
+    optPhotMinE_,
+    h_Planck * c_light / (600.0 * nm), h_Planck * c_light / (580.0 * nm), h_Planck * c_light / (560.0 * nm),
+    h_Planck * c_light / (540.0 * nm), h_Planck * c_light / (520.0 * nm), h_Planck * c_light / (500.0 * nm),
+    h_Planck * c_light / (480.0 * nm), h_Planck * c_light / (460.0 * nm), h_Planck * c_light / (449.671 * nm),
+    h_Planck * c_light / (439.927 * nm), h_Planck * c_light / (430.183 * nm), h_Planck * c_light / (419.488 * nm),
+    h_Planck * c_light / (409.269 * nm), h_Planck * c_light / (398.099 * nm), h_Planck * c_light / (385.74 * nm),
+    h_Planck * c_light / (373.857 * nm), h_Planck * c_light / (362.925 * nm), h_Planck * c_light / (352.23 * nm),
+    h_Planck * c_light / (343.675 * nm), h_Planck * c_light / (337.258 * nm), h_Planck * c_light / (331.316 * nm),
+    h_Planck * c_light / (327.276 * nm), h_Planck * c_light / (322.998 * nm), h_Planck * c_light / (319.671 * nm),
+    h_Planck * c_light / (315.631 * nm), h_Planck * c_light / (312.066 * nm), h_Planck * c_light / (307.55 * nm),
+    h_Planck * c_light / (302.084 * nm), h_Planck * c_light / (294.479 * nm), h_Planck * c_light / (286.874 * nm),
+    optPhotMaxE_
+  };
 
-  std::vector<G4double> abs_energy =  {optPhotMinE_, 2.7588*eV, 2.7733*eV, 4.7943*eV, 4.8604*eV, optPhotMaxE_};
-  std::vector<G4double> absLength =   {1.*m, 1.*m, 1.*m, 1.*m, 1.*m, 1.*m};
+  std::vector<G4double> absLength =   {
+    noAbsLength_, // @ optPhotMinE_
+    1687.892 * mm, 1687.892 * mm, 1687.892 * mm, 1687.892 * mm, 1687.892 * mm, 1687.892 * mm, 1687.892 * mm,
+    1687.892 * mm, 924.5254 * mm, 946.6731 * mm, 986.5235 * mm, 1977.8649 * mm, 1089.9976 * mm, 1157.461 * mm,
+    376.2179 * mm, 283.0529 * mm, 171.2965 * mm, 82.7535 * mm, 43.9374 * mm, 26.1883 * mm, 16.9239 * mm,
+    11.937 * mm, 8.5206 * mm, 6.3649 * mm, 4.629 * mm, 3.4013 * mm, 2.3775 * mm, 1.4638 * mm,
+    1.0185 * mm, 1.0185 * mm,
+    0. // @ optPhotMaxE_
+  };
 
-  // The following absorption length is the result of a defective computation which I have to fix. Until fixing that computation
-  // I am going to assume a long absorption length for this material  
-  //  std::vector<G4double> abs_energy =  {optPhotMinE_, 2.7588*eV, 2.7733*eV, 2.7879*eV, 2.8027*eV, 2.8227*eV, 2.8407*eV, 2.8532*eV, 
-  //                                      2.8687*eV, 2.8818*eV, 2.8949*eV, 2.9149*eV, 2.9257*eV, 2.9366*eV, 2.9488*eV, 2.9641*eV, 
-  //                                      2.9822*eV, 2.9949*eV, 3.0068*eV, 3.0175*eV, 3.0282*eV, 3.0423*eV, 3.0614*eV, 3.0763*eV, 
-  //                                      3.0928*eV, 3.111*eV, 3.1282*eV, 3.1398*eV, 3.1514*eV, 3.1631*eV, 3.1748*eV, 3.1974*eV, 
-  //                                      3.2199*eV, 3.2449*eV, 3.2671*eV, 3.2787*eV, 3.3024*eV, 3.3232*eV, 3.3451*eV, 3.3709*eV, 
-  //                                      3.3895*eV, 3.4163*eV, 3.442*eV, 3.4641*eV, 3.4818*eV, 3.5056*eV, 3.5165*eV, 3.5393*eV, 
-  //                                      3.5568*eV, 3.5747*eV, 3.5944*eV, 3.6118*eV, 3.6314*eV, 3.6495*eV, 3.6612*eV, 3.6782*eV, 
-  //                                      3.6997*eV, 3.7171*eV, 3.7345*eV, 3.7485*eV, 3.7637*eV, 3.7804*eV, 3.8014*eV, 3.8142*eV, 
-  //                                      3.8328*eV, 3.8472*eV, 3.8574*eV, 3.866*eV, 3.8852*eV, 3.8888*eV, 3.9015*eV, 3.9104*eV, 
-  //                                      3.9169*eV, 3.9267*eV, 3.9389*eV, 3.9497*eV, 3.9634*eV, 3.9742*eV, 3.9851*eV, 3.9945*eV, 
-  //                                      4.0007*eV, 4.0085*eV, 4.018*eV, 4.029*eV, 4.0402*eV, 4.0563*eV, 4.0679*eV, 4.0756*eV, 
-  //                                      4.0886*eV, 4.0993*eV, 4.1133*eV, 4.1299*eV, 4.1433*eV, 4.1534*eV, 4.1635*eV, 4.1805*eV, 
-  //                                      4.2011*eV, 4.222*eV, 4.2421*eV, 4.2655*eV, 4.3001*eV, 4.338*eV, 4.38*eV, 4.4166*eV, 
-  //                                      4.4665*eV, 4.511*eV, 4.5629*eV, 4.6161*eV, 4.6774*eV, 4.7404*eV, 4.7943*eV, 4.8604*eV, optPhotMaxE_};
-  //  std::vector<G4double> absLength =   {23.3403*mm, 23.3403*mm, 22.8518*mm, 22.8518*mm, 22.8518*mm, 23.3403*mm, 23.0327*mm, 22.8518*mm, 22.8518*mm, 
-  //                                      22.8518*mm, 23.3403*mm, 22.8518*mm, 22.3851*mm, 23.3403*mm, 23.6499*mm, 23.6499*mm, 23.3403*mm, 23.3403*mm, 
-  //                                      23.6499*mm, 23.6499*mm, 23.6499*mm, 22.8518*mm, 23.3403*mm, 23.3403*mm, 23.3403*mm, 23.3403*mm, 23.0327*mm, 
-  //                                      23.0327*mm, 23.0327*mm, 23.3374*mm, 23.6499*mm, 23.3403*mm, 22.6792*mm, 22.8518*mm, 21.889*mm, 22.2598*mm, 
-  //                                      21.9337*mm, 21.9337*mm, 21.5324*mm, 21.0836*mm, 20.9742*mm, 20.6806*mm, 20.4822*mm, 19.8994*mm, 19.4537*mm, 
-  //                                      18.6188*mm, 18.6188*mm, 17.8475*mm, 17.136*mm, 16.4761*mm, 16.0121*mm, 15.1974*mm, 14.1325*mm, 13.3397*mm, 
-  //                                      12.8225*mm, 12.0863*mm, 11.1549*mm, 10.4281*mm, 9.8144*mm, 9.205*mm, 8.3988*mm, 7.7092*mm, 7.1125*mm, 
-  //                                      6.7153*mm, 6.1858*mm, 5.8705*mm, 5.4229*mm, 5.1275*mm, 4.6954*mm, 4.571*mm, 4.257*mm, 4.0262*mm, 
-  //                                      3.8241*mm, 3.6253*mm, 3.354*mm, 3.1466*mm, 2.864*mm, 2.6756*mm, 2.5024*mm, 2.3898*mm, 2.2897*mm, 
-  //                                      2.188*mm, 2.0444*mm, 1.9268*mm, 1.8156*mm, 1.6477*mm, 1.5535*mm, 1.4743*mm, 1.3886*mm, 1.3037*mm, 
-  //                                      1.1916*mm, 1.1031*mm, 1.0222*mm, 0.9416*mm, 0.8991*mm, 0.8175*mm, 0.734*mm, 0.6535*mm, 0.5682*mm, 
-  //                                      0.5059*mm, 0.4079*mm, 0.3696*mm, 0.3401*mm, 0.3401*mm, 0.3401*mm, 0.3401*mm, 0.3401*mm, 0.3401*mm, 
-  //                                      0.3401*mm, 0.3401*mm, 0.3401*mm, 0.3401*mm, 0.3401*mm};
     mpt->AddProperty("ABSLENGTH", abs_energy, absLength);
     return mpt;
   }
