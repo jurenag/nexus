@@ -84,7 +84,8 @@ namespace nexus {
     G4int df_no_along_wlsplength_;                                  ///< Number of dichroic filters along the length of the X-ARAPUCA
     G4int df_no_along_wlspwidth_;                                   ///< Number of dichroic filters along the width of the X-ARAPUCA
     G4bool DFA_frame_is_reflective_;                                ///< Whether the FR4 DFA frame is vikuiti-coated or not
-    G4double vikuiti_reflectivity_scale_factor_;                    ///< Scale factor for the vikuiti reflectivity curve. It must belong to the [0., 1.] range. Note that this affects every volume which implements the vikuiti optical properties in the XArapuca geometry.
+    G4double vikuiti_reflectivity_scale_factor_;                    ///< Scale factor for the vikuiti reflectivity curve. It must belong to the [0., 1.] range. Note that this affects every volume which implements the vikuiti optical
+                                                                    ///< properties in the XArapuca geometry. P.e. it also affects the vikuiti that coats the SiPM boards.
     G4bool DFA_frame_is_specular_;                                  ///< Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.
     G4bool remove_DFs_;                                             ///< Whether to remove the dichroic filters or not
     G4bool remove_DFA_frame_;                                       ///< Whether to remove the dichroic filters assembly frame
