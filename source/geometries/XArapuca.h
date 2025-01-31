@@ -95,7 +95,7 @@ namespace nexus {
     G4bool DFA_frame_is_reflective_;                                ///< Whether the FR4 DFA frame is vikuiti-coated or not
     G4double vikuiti_reflectivity_scale_factor_;                    ///< Scale factor for the vikuiti reflectivity curve. It must belong to the [0., 1.] range. Note that this affects every volume which implements the vikuiti optical
                                                                     ///< properties in the XArapuca geometry. P.e. it also affects the vikuiti that coats the SiPM boards.
-    G4bool DFA_frame_is_specular_;                                  ///< Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.
+    G4bool DFA_frame_is_specular_;                                  ///< Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. It only makes a difference if DFA_frame_is_reflective_==True.
     G4bool remove_DFs_;                                             ///< Whether to remove the dichroic filters or not
     G4bool remove_DFA_frame_;                                       ///< Whether to remove the dichroic filters assembly frame
     G4double secondary_wls_attlength_;                              ///< Attenuation length of the secondary WLShifter, in case EJ286 is used. For config_code_==1 (resp. 2), this is the attenuation length for the WLS plate (WLS fibers).
