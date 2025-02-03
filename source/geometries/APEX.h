@@ -69,6 +69,7 @@ namespace nexus {
     G4double WLSp_rindex_;                                          ///< Refractive index of the wavelength shifting plate
     G4double secondary_wls_attlength_;                              ///< Attenuation length of the secondary WLShifter (the WLS plate), in case EJ286 is used.
     G4double cromophore_concentration_;                             ///< Cromophore concentration (in miligrams of cromophore per kilogram of PMMA) of the secondary WLShifter (the WLS plate), in case G2P_FB118 is used.
+    G4bool cryogenic_temperature_;                                  ///< Whether the secondary WLShifter is at cryogenic temperature or not. It only makes a difference if G2P_FB118 is used.
     G4double reflective_foil_thickn_;                               ///< Reflective foil thickness
     G4int SiPM_code_;                                               ///< Integer signalling which SiPM to construct
                                                                     ///< 1                  -> Hamamatsu S13360-6050VE

@@ -61,7 +61,7 @@ namespace nexus{
   WLSp_rindex_                          (1.502                        ),
   secondary_wls_attlength_              (1.     *m                    ),
   cromophore_concentration_             (40.                          ),
-
+  cryogenic_temperature_                (false                        ),
   reflective_foil_thickn_               (0.065  *mm                   ),   /// Got foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   SiPM_code_                            (1                            ),
   num_phsensors_                        (30                           ),   /// This is seemingly the APEX baseline
@@ -161,6 +161,10 @@ namespace nexus{
 			    "Cromophore concentration (in miligrams of cromophore per kilogram of PMMA) of the secondary WLShifter (the WLS plate), in case G2P_FB118 is used.");
     crco_cmd.SetParameterName("cromophore_concentration", false);
     crco_cmd.SetRange("cromophore_concentration>0.");
+
+    G4GenericMessenger::Command& crte_cmd =
+      msg_->DeclareProperty("cryogenic_temperature", cryogenic_temperature_,
+			    "Whether the secondary WLShifter is at cryogenic temperature or not. It only makes a difference if G2P_FB118 is used.");
 
     G4GenericMessenger::Command& rft_cmd =
       msg_->DeclareProperty("reflective_foil_thickn", reflective_foil_thickn_,
@@ -378,7 +382,12 @@ namespace nexus{
     WLSPlate* plate = new WLSPlate  ( plate_length_, 
                                       plate_thickn_, 
                                       plate_width_, 
-                                      opticalprops::G2P_FB118(cromophore_concentration_, WLSp_rindex_, true),
+                                      opticalprops::G2P_FB118(
+                                        cromophore_concentration_,
+                                        WLSp_rindex_,
+                                        cryogenic_temperature_,
+                                        true
+                                      ),
                                       //opticalprops::EJ286(secondary_wls_attlength_),
                                       false,
                                       false,                // dimples_at_x_plus_
