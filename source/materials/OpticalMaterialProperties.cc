@@ -2078,7 +2078,7 @@ namespace opticalprops {
 
     if(verbosity){
       G4cout << "Attenuation length energy entries = " << abs_energy.size() << G4endl;
-      G4cout << "Attenuation length entries = " << absLength[cromophore_concentration_].size() << G4endl;
+      G4cout << "Attenuation length entries = " << absLength.size() << G4endl;
       G4cout << "WLS absorption length energy entries = " << WLS_abs_energy.size() << G4endl;
       G4cout << "WLS absorption length entries = " << WLS_absLength[cromophore_concentration_].size() << G4endl;
     } 
@@ -2350,7 +2350,7 @@ namespace opticalprops {
 
     if(verbosity){
       G4cout << "Attenuation length energy entries = " << abs_energy.size() << G4endl;
-      G4cout << "Attenuation length entries = " << absLength[cromophore_concentration_].size() << G4endl;
+      G4cout << "Attenuation length entries = " << absLength.size() << G4endl;
       G4cout << "WLS absorption length energy entries = " << WLS_abs_energy.size() << G4endl;
       G4cout << "WLS absorption length entries = " << WLS_absLength[cromophore_concentration_].size() << G4endl;
     } 
