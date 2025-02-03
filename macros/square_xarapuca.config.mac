@@ -24,7 +24,11 @@
 /Geometry/XArapuca/DFA_frame_is_reflective              false
 /Geometry/XArapuca/vikuiti_reflectivity_scale_factor    1.0
 /Geometry/XArapuca/DFA_frame_is_specular                false
-/Geometry/XArapuca/remove_DFA                           false
+/Geometry/XArapuca/remove_DFs                           false
+/Geometry/XArapuca/remove_DFA_frame                     false
+/Geometry/XArapuca/secondary_wls_attlength              1.5     m
+/Geometry/XArapuca/cromophore_concentration             80.
+/Geometry/XArapuca/cryogenic_temperature                true
 /Geometry/XArapuca/case_thickn                          1.      mm
 /Geometry/XArapuca/PS_config_code                       2
 /Geometry/XArapuca/num_phsensors                        40

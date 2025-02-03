@@ -13,6 +13,7 @@
 /Geometry/XArapuca/DFA_thickn                           2.      mm
 /Geometry/XArapuca/DF_thickn                            1.010   mm
 /Geometry/XArapuca/DF_substrate_thickn                  1.000   mm
+/Geometry/XArapuca/DF_substrate_mpt                     SCHOTT_BOROFLOAT_33
 /Geometry/XArapuca/DF_pos_wrt_DFA_pos                   0.
 /Geometry/XArapuca/DF_are_coated                        true
 /Geometry/XArapuca/coating_thickn                       3.226   um
