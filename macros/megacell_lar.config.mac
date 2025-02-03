@@ -34,6 +34,7 @@
 /Geometry/XArapuca/remove_DFA_frame                     false
 /Geometry/XArapuca/secondary_wls_attlength              1.5     m
 /Geometry/XArapuca/cromophore_concentration             80.0
+/Geometry/XArapuca/cryogenic_temperature                true
 # The following value is set to make the DFs be 143.75 mm
 # x 143.75 mm given that the internal_length is set to 613
 /Geometry/XArapuca/case_thickn                          20.9    mm

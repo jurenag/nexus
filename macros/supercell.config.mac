@@ -31,6 +31,7 @@
 /Geometry/XArapuca/remove_DFA_frame                     false
 /Geometry/XArapuca/secondary_wls_attlength              1.      m
 /Geometry/XArapuca/cromophore_concentration             80.
+/Geometry/XArapuca/cryogenic_temperature                false
 /Geometry/XArapuca/case_thickn                          4.      mm
 /Geometry/XArapuca/SiPM_code                            2
 /Geometry/XArapuca/PS_config_code                       1

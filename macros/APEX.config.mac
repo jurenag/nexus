@@ -19,6 +19,7 @@
 /Geometry/APEX/WLSp_rindex                          1.502
 /Geometry/APEX/secondary_wls_attlength              1.5     m
 /Geometry/APEX/cromophore_concentration             16.
+/Geometry/APEX/cryogenic_temperature                true
 /Geometry/APEX/reflective_foil_thickn               0.065   mm
 #/Geometry/APEX/reflective_foil_thickn              1.0     mm
 /Geometry/APEX/SiPM_code                            4
