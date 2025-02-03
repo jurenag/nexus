@@ -1937,7 +1937,12 @@ namespace opticalprops {
     return mpt;
   }
 
-  G4MaterialPropertiesTable* G2P_FB118(G4double cromophore_concentration, G4double rindex, G4bool verbosity)
+  G4MaterialPropertiesTable* G2P_FB118(
+    G4double cromophore_concentration,
+    G4double rindex,
+    G4bool cryogenic_temperature,
+    G4bool verbosity
+  )
   {
     // iopscience.iop.org/article/10.1088/1748-0221/16/09/P09027
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
@@ -2099,53 +2104,118 @@ namespace opticalprops {
       G4cout << "WLS absorption length entries = " << WLS_absLength[cromophore_concentration_].size() << G4endl;
     } 
 
-    // WLS EMISSION SPECTRUM
-    std::vector<G4double> WLS_emi_energy = {
-      optPhotMinE_, h_Planck * c_light / (602.00 * nm), h_Planck * c_light / (601.00 * nm),
-                    h_Planck * c_light / (599.44 * nm), h_Planck * c_light / (579.10 * nm), 
-                    h_Planck * c_light / (547.19 * nm), h_Planck * c_light / (522.45 * nm), 
-                    h_Planck * c_light / (502.87 * nm), h_Planck * c_light / (490.87 * nm), 
-                    h_Planck * c_light / (481.27 * nm), h_Planck * c_light / (472.86 * nm), 
-                    h_Planck * c_light / (467.23 * nm), h_Planck * c_light / (464.41 * nm), 
-                    h_Planck * c_light / (462.00 * nm), h_Planck * c_light / (457.20 * nm), 
-                    h_Planck * c_light / (451.61 * nm), h_Planck * c_light / (446.42 * nm), 
-                    h_Planck * c_light / (443.61 * nm), h_Planck * c_light / (440.39 * nm), 
-                    h_Planck * c_light / (437.96 * nm), h_Planck * c_light / (436.34 * nm), 
-                    h_Planck * c_light / (435.13 * nm), h_Planck * c_light / (433.52 * nm), 
-                    h_Planck * c_light / (430.73 * nm), h_Planck * c_light / (429.14 * nm), 
-                    h_Planck * c_light / (427.57 * nm), h_Planck * c_light / (425.21 * nm), 
-                    h_Planck * c_light / (422.08 * nm), h_Planck * c_light / (418.54 * nm), 
-                    h_Planck * c_light / (414.61 * nm), h_Planck * c_light / (411.48 * nm), 
-                    h_Planck * c_light / (409.54 * nm), h_Planck * c_light / (406.81 * nm), 
-                    h_Planck * c_light / (404.45 * nm), h_Planck * c_light / (401.67 * nm), 
-                    h_Planck * c_light / (394.50 * nm), h_Planck * c_light / (380.54 * nm),
-                    h_Planck * c_light / (379.00 * nm), h_Planck * c_light / (378.00 * nm),
-      optPhotMaxE_
-    };
+    std::vector<G4double> WLS_emi_energy;
+    std::vector<G4double> WLS_emiSpectrum;
 
-    std::vector<G4double> WLS_emiSpectrum = {
-      0.0000,   
-                0.0000, 0.0000,
-                0.0044, 0.0081, 
-                0.0328, 0.0786, 
-                0.1782, 0.2586, 
-                0.3237, 0.4214, 
-                0.5210, 0.5766, 
-                0.6188, 0.6533, 
-                0.6666, 0.6915, 
-                0.7298, 0.8046, 
-                0.8755, 0.9407, 
-                0.9732, 0.9943, 
-                1.0000, 0.9789, 
-                0.9329, 0.8562, 
-                0.7373, 0.6242, 
-                0.5034, 0.3672, 
-                0.2484, 0.0988, 
-                0.0336, 0.0106, 
-                0.0029, 0.0009,
-                0.0000, 0.0000,
-      0.0000
-    };
+    // WLS EMISSION SPECTRUM
+    if(!cryogenic_temperature){
+      WLS_emi_energy = {
+        optPhotMinE_, h_Planck * c_light / (602.00 * nm), h_Planck * c_light / (601.00 * nm),
+                      h_Planck * c_light / (599.44 * nm), h_Planck * c_light / (579.10 * nm), 
+                      h_Planck * c_light / (547.19 * nm), h_Planck * c_light / (522.45 * nm), 
+                      h_Planck * c_light / (502.87 * nm), h_Planck * c_light / (490.87 * nm), 
+                      h_Planck * c_light / (481.27 * nm), h_Planck * c_light / (472.86 * nm), 
+                      h_Planck * c_light / (467.23 * nm), h_Planck * c_light / (464.41 * nm), 
+                      h_Planck * c_light / (462.00 * nm), h_Planck * c_light / (457.20 * nm), 
+                      h_Planck * c_light / (451.61 * nm), h_Planck * c_light / (446.42 * nm), 
+                      h_Planck * c_light / (443.61 * nm), h_Planck * c_light / (440.39 * nm), 
+                      h_Planck * c_light / (437.96 * nm), h_Planck * c_light / (436.34 * nm), 
+                      h_Planck * c_light / (435.13 * nm), h_Planck * c_light / (433.52 * nm), 
+                      h_Planck * c_light / (430.73 * nm), h_Planck * c_light / (429.14 * nm), 
+                      h_Planck * c_light / (427.57 * nm), h_Planck * c_light / (425.21 * nm), 
+                      h_Planck * c_light / (422.08 * nm), h_Planck * c_light / (418.54 * nm), 
+                      h_Planck * c_light / (414.61 * nm), h_Planck * c_light / (411.48 * nm), 
+                      h_Planck * c_light / (409.54 * nm), h_Planck * c_light / (406.81 * nm), 
+                      h_Planck * c_light / (404.45 * nm), h_Planck * c_light / (401.67 * nm), 
+                      h_Planck * c_light / (394.50 * nm), h_Planck * c_light / (380.54 * nm),
+                      h_Planck * c_light / (379.00 * nm), h_Planck * c_light / (378.00 * nm),
+        optPhotMaxE_
+      };
+
+      WLS_emiSpectrum = {
+        0.0000,   
+                  0.0000, 0.0000,
+                  0.0044, 0.0081, 
+                  0.0328, 0.0786, 
+                  0.1782, 0.2586, 
+                  0.3237, 0.4214, 
+                  0.5210, 0.5766, 
+                  0.6188, 0.6533, 
+                  0.6666, 0.6915, 
+                  0.7298, 0.8046, 
+                  0.8755, 0.9407, 
+                  0.9732, 0.9943, 
+                  1.0000, 0.9789, 
+                  0.9329, 0.8562, 
+                  0.7373, 0.6242, 
+                  0.5034, 0.3672, 
+                  0.2484, 0.0988, 
+                  0.0336, 0.0106, 
+                  0.0029, 0.0009,
+                  0.0000, 0.0000,
+        0.0000
+      };
+    } else {
+      WLS_emi_energy = {
+        optPhotMinE_, 
+        h_Planck * c_light / (599.5 * nm), h_Planck * c_light / (597.4 * nm), h_Planck * c_light / (595.5 * nm),
+        h_Planck * c_light / (593.4 * nm), h_Planck * c_light / (591.5 * nm), h_Planck * c_light / (589.5 * nm), 
+        h_Planck * c_light / (587.4 * nm), h_Planck * c_light / (585.5 * nm), h_Planck * c_light / (583.4 * nm), 
+        h_Planck * c_light / (581.5 * nm), h_Planck * c_light / (579.5 * nm), h_Planck * c_light / (577.4 * nm), 
+        h_Planck * c_light / (575.5 * nm), h_Planck * c_light / (573.4 * nm), h_Planck * c_light / (571.5 * nm), 
+        h_Planck * c_light / (569.5 * nm), h_Planck * c_light / (567.4 * nm), h_Planck * c_light / (565.5 * nm), 
+        h_Planck * c_light / (563.4 * nm), h_Planck * c_light / (561.5 * nm), h_Planck * c_light / (559.5 * nm), 
+        h_Planck * c_light / (557.5 * nm), h_Planck * c_light / (555.6 * nm), h_Planck * c_light / (553.5 * nm), 
+        h_Planck * c_light / (551.4 * nm), h_Planck * c_light / (549.5 * nm), h_Planck * c_light / (547.4 * nm), 
+        h_Planck * c_light / (545.5 * nm), h_Planck * c_light / (543.4 * nm), h_Planck * c_light / (541.5 * nm), 
+        h_Planck * c_light / (539.5 * nm), h_Planck * c_light / (537.5 * nm), h_Planck * c_light / (535.6 * nm), 
+        h_Planck * c_light / (533.5 * nm), h_Planck * c_light / (531.4 * nm), h_Planck * c_light / (529.5 * nm), 
+        h_Planck * c_light / (527.5 * nm), h_Planck * c_light / (525.6 * nm), h_Planck * c_light / (523.5 * nm), 
+        h_Planck * c_light / (521.4 * nm), h_Planck * c_light / (519.5 * nm), h_Planck * c_light / (517.5 * nm), 
+        h_Planck * c_light / (515.6 * nm), h_Planck * c_light / (513.5 * nm), h_Planck * c_light / (511.4 * nm), 
+        h_Planck * c_light / (509.5 * nm), h_Planck * c_light / (507.5 * nm), h_Planck * c_light / (505.6 * nm), 
+        h_Planck * c_light / (503.5 * nm), h_Planck * c_light / (501.4 * nm), h_Planck * c_light / (499.4 * nm), 
+        h_Planck * c_light / (497.5 * nm), h_Planck * c_light / (495.6 * nm), h_Planck * c_light / (493.4 * nm), 
+        h_Planck * c_light / (491.6 * nm), h_Planck * c_light / (489.5 * nm), h_Planck * c_light / (487.5 * nm), 
+        h_Planck * c_light / (485.6 * nm), h_Planck * c_light / (483.5 * nm), h_Planck * c_light / (481.4 * nm), 
+        h_Planck * c_light / (479.4 * nm), h_Planck * c_light / (477.5 * nm), h_Planck * c_light / (475.6 * nm), 
+        h_Planck * c_light / (473.4 * nm), h_Planck * c_light / (471.6 * nm), h_Planck * c_light / (469.4 * nm), 
+        h_Planck * c_light / (467.5 * nm), h_Planck * c_light / (465.6 * nm), h_Planck * c_light / (463.4 * nm), 
+        h_Planck * c_light / (461.6 * nm), h_Planck * c_light / (459.4 * nm), h_Planck * c_light / (457.5 * nm), 
+        h_Planck * c_light / (455.6 * nm), h_Planck * c_light / (453.4 * nm), h_Planck * c_light / (451.6 * nm), 
+        h_Planck * c_light / (449.4 * nm), h_Planck * c_light / (447.5 * nm), h_Planck * c_light / (445.6 * nm), 
+        h_Planck * c_light / (443.4 * nm), h_Planck * c_light / (441.6 * nm), h_Planck * c_light / (439.4 * nm), 
+        h_Planck * c_light / (437.5 * nm), h_Planck * c_light / (435.6 * nm), h_Planck * c_light / (433.4 * nm), 
+        h_Planck * c_light / (431.6 * nm), h_Planck * c_light / (429.4 * nm), h_Planck * c_light / (427.5 * nm), 
+        h_Planck * c_light / (425.6 * nm), h_Planck * c_light / (423.4 * nm), h_Planck * c_light / (421.6 * nm), 
+        h_Planck * c_light / (419.6 * nm), h_Planck * c_light / (417.6 * nm), h_Planck * c_light / (415.6 * nm), 
+        h_Planck * c_light / (413.6 * nm), h_Planck * c_light / (411.6 * nm), h_Planck * c_light / (409.4 * nm), 
+        h_Planck * c_light / (407.5 * nm), h_Planck * c_light / (405.6 * nm), h_Planck * c_light / (403.4 * nm), 
+        h_Planck * c_light / (401.6 * nm), h_Planck * c_light / (399.6 * nm), h_Planck * c_light / (397.6 * nm), 
+        h_Planck * c_light / (395.6 * nm), h_Planck * c_light / (393.6 * nm), h_Planck * c_light / (391.6 * nm), 
+        h_Planck * c_light / (389.6 * nm), h_Planck * c_light / (387.6 * nm), h_Planck * c_light / (385.6 * nm), 
+        h_Planck * c_light / (383.6 * nm), h_Planck * c_light / (381.6 * nm), h_Planck * c_light / (379.4 * nm), 
+        h_Planck * c_light / (377.5 * nm), h_Planck * c_light / (375.6 * nm), h_Planck * c_light / (373.4 * nm), 
+        h_Planck * c_light / (371.6 * nm),
+        optPhotMaxE_
+      };
+
+      WLS_emiSpectrum = {
+        0.0000,   
+        0.00403, 0.00403, 0.00538, 0.00403, 0.00538, 0.00538, 0.00672, 0.00739, 0.00672, 0.00739, 0.00874, 0.00806,
+        0.00806, 0.01008, 0.01008, 0.01142, 0.0121, 0.01411, 0.01344, 0.01411, 0.01546, 0.01613, 0.02016, 0.02016,
+        0.02151, 0.02487, 0.02688, 0.0289, 0.03159, 0.03495, 0.04032, 0.04301, 0.04368, 0.04839, 0.0504, 0.05511,
+        0.0578, 0.06317, 0.06586, 0.07056, 0.07056, 0.08132, 0.08199, 0.0914, 0.09745, 0.10954, 0.125, 0.13911,
+        0.15457, 0.16734, 0.18145, 0.1996, 0.21573, 0.22379, 0.22312, 0.24126, 0.24798, 0.25202, 0.2621, 0.2621,
+        0.27755, 0.2957, 0.31519, 0.34543, 0.38911, 0.43548, 0.47379, 0.52688, 0.55444, 0.5746, 0.5914, 0.58065,
+        0.57796, 0.55712, 0.55444, 0.54234, 0.54234, 0.55578, 0.59073, 0.65054, 0.71841, 0.83132, 0.92876, 0.99059,
+        0.99261, 0.93414, 0.84207, 0.73992, 0.6371, 0.56586, 0.5047, 0.48051, 0.48051, 0.5168, 0.57056, 0.63105,
+        0.61089, 0.54234, 0.40457, 0.25739, 0.15659, 0.08266, 0.04032, 0.02016, 0.01142, 0.00806, 0.00739, 0.00605,
+        0.00672, 0.00672, 0.00672, 0.00806, 0.00672, 0.00672, 0.00874,
+        0.0000
+      };
+    }
+
     mpt->AddProperty("WLSCOMPONENT",  WLS_emi_energy, WLS_emiSpectrum);
 
     // WLS Delay
