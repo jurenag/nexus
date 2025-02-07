@@ -74,6 +74,7 @@ namespace nexus{
   df_no_along_wlspwidth_                (3                            ),
   DFA_frame_is_vikuiti_coated_          (false                        ),
   vikuiti_reflectivity_scale_factor_    (1.                           ),
+  DFA_frame_reflectivity_               (0.0                          ),
   DFA_frame_is_specular_                (true                         ),
   remove_DFs_                           (false                        ),  
   remove_DFA_frame_                     (false                        ),
@@ -254,6 +255,13 @@ namespace nexus{
     vrsf_cmd.SetParameterName("vikuiti_reflectivity_scale_factor", false);
     vrsf_cmd.SetRange("vikuiti_reflectivity_scale_factor>=0.");
     vrsf_cmd.SetRange("vikuiti_reflectivity_scale_factor<=1.");
+
+    G4GenericMessenger::Command& dfafr_cmd =
+      msg_->DeclareProperty("DFA_frame_reflectivity", DFA_frame_reflectivity_,
+			    "Reflectivity (flat) of the FR4 DFA frame in the visible light spectrum, i.e. in the [400, 700] nm range. It only makes a difference if DFA_frame_is_vikuiti_coated_==False.");
+    dfafr_cmd.SetParameterName("DFA_frame_reflectivity", false);
+    dfafr_cmd.SetRange("DFA_frame_reflectivity>=0.");
+    dfafr_cmd.SetRange("DFA_frame_reflectivity<=1.");
 
     G4GenericMessenger::Command& dfafis_cmd =
       msg_->DeclareProperty("DFA_frame_is_specular", DFA_frame_is_specular_,
@@ -1413,10 +1421,18 @@ namespace nexus{
 
         if(DFA_frame_is_vikuiti_coated_){
             const G4String refcoat_name = "REF_COATING";
-            G4OpticalSurface* refcoat_opsurf = 
+            G4OpticalSurface* refcoat_opsurf =
             new G4OpticalSurface(refcoat_name, unified, ground, dielectric_metal, 1);
             if(DFA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(0, vikuiti_reflectivity_scale_factor_));
             else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti(2, vikuiti_reflectivity_scale_factor_));
+            new G4LogicalSkinSurface(refcoat_name, frame_logic, refcoat_opsurf);
+        }
+        else if(DFA_frame_reflectivity_!=0.0){
+            const G4String refcoat_name = "REF_COATING";
+            G4OpticalSurface* refcoat_opsurf =
+            new G4OpticalSurface(refcoat_name, unified, ground, dielectric_metal, 1);
+            if(DFA_frame_is_specular_)  refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::TunableVisiblePhotonReflector(0, DFA_frame_reflectivity_));
+            else                        refcoat_opsurf->SetMaterialPropertiesTable(opticalprops::TunableVisiblePhotonReflector(2, DFA_frame_reflectivity_));
             new G4LogicalSkinSurface(refcoat_name, frame_logic, refcoat_opsurf);
         }
         
