@@ -25,8 +25,9 @@
 /Geometry/XArapuca/df_no_along_wlsplength               1
 /Geometry/XArapuca/df_no_along_wlspwidth                1 
 /Geometry/XArapuca/DFA_config_code                      1
-/Geometry/XArapuca/DFA_frame_is_vikuiti_coated          true
 /Geometry/XArapuca/vikuiti_reflectivity_scale_factor    1.0
+/Geometry/XArapuca/DFA_frame_is_vikuiti_coated          true
+/Geometry/XArapuca/DFA_frame_reflectivity               0.0
 /Geometry/XArapuca/DFA_frame_is_specular                true
 /Geometry/XArapuca/remove_DFs                           false
 /Geometry/XArapuca/remove_DFA_frame                     false
