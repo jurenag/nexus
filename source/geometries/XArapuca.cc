@@ -72,8 +72,8 @@ namespace nexus{
   inner_frames_width_along_wlspwidth_   (2.     *mm                   ),
   df_no_along_wlsplength_               (2                            ),
   df_no_along_wlspwidth_                (3                            ),
-  DFA_frame_is_vikuiti_coated_          (false                        ),
   vikuiti_reflectivity_scale_factor_    (1.                           ),
+  DFA_frame_is_vikuiti_coated_          (false                        ),
   DFA_frame_reflectivity_               (0.0                          ),
   DFA_frame_is_specular_                (true                         ),
   remove_DFs_                           (false                        ),  
@@ -245,16 +245,16 @@ namespace nexus{
     dfnaww_cmd.SetParameterName("df_no_along_wlspwidth", false);
     dfnaww_cmd.SetRange("df_no_along_wlspwidth>=0"); 
 
-    G4GenericMessenger::Command& dfafir_cmd =
-      msg_->DeclareProperty("DFA_frame_is_vikuiti_coated", DFA_frame_is_vikuiti_coated_,
-			    "Whether the FR4 DFA frame is vikuiti-coated or not.");
-
     G4GenericMessenger::Command& vrsf_cmd =
       msg_->DeclareProperty("vikuiti_reflectivity_scale_factor", vikuiti_reflectivity_scale_factor_,
 			    "Scale factor for the vikuiti reflectivity curve. It must belong to the [0., 1.] range. Note that this affects every volume which implements the vikuiti optical properties in the XArapuca geometry.");
     vrsf_cmd.SetParameterName("vikuiti_reflectivity_scale_factor", false);
     vrsf_cmd.SetRange("vikuiti_reflectivity_scale_factor>=0.");
     vrsf_cmd.SetRange("vikuiti_reflectivity_scale_factor<=1.");
+
+    G4GenericMessenger::Command& dfafir_cmd =
+      msg_->DeclareProperty("DFA_frame_is_vikuiti_coated", DFA_frame_is_vikuiti_coated_,
+			    "Whether the FR4 DFA frame is vikuiti-coated or not.");
 
     G4GenericMessenger::Command& dfafr_cmd =
       msg_->DeclareProperty("DFA_frame_reflectivity", DFA_frame_reflectivity_,
