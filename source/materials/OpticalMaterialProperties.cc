@@ -106,6 +106,9 @@ namespace opticalprops {
     G4double C[3] = {1.30e-2 * um2, 4.13e-3 * um2, 9.88e+1 * um2};
     SellmeierEquation seq(B, C);
 
+    // This refractive index is esentially the same as the one for
+    // JGS2 Fused Silica. See
+    // www.knightoptical.com/wp-content/uploads/2020/02/UV-Material-Quartz-JGS2-OPMU-JGS2.pdf
 
     const G4int ri_entries = 200;
     G4double eWidth = (optPhotFusedSilicaMaxE_ - optPhotMinE_) / ri_entries;
