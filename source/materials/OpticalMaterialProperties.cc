@@ -1151,6 +1151,115 @@ namespace opticalprops {
     return mpt;
   }
 
+  /// Reflector with a tunable reflectivity for optical photons ///
+  /**
+   * @brief Implements a material which is reflective only in the
+   * visible range, i.e. in the [400, 700] nm range. Its reflectivity, which
+   * is a flat spectrum in the visible range, is given by the input parameter
+   * reflectivity_.
+   *
+   * @param reflectivity_type 0 for an specular-spike reflector, 1 for an
+   * specular-lobe reflector and 2 for a diffusive reflector. It is set to
+   * 0 by default, which corresponds to a specular-spike reflector.
+   * @param reflectivity_ It must be a value in the [0., 1.]. It gives
+   * the reflectivity of this material in the visible range, i.e. in the
+   * [400, 700] nm range. It is set to 1.0 by default.
+   * @return A pointer to a G4MaterialPropertiesTable object which
+   * implements the optical properties of the specified reflector.
+   */
+  G4MaterialPropertiesTable* TunableVisiblePhotonReflector(G4int reflectivity_type, G4double reflectivity_)
+  {
+
+    // Implement well-formedness checks for the input parameters
+    if(reflectivity_type < 0 || reflectivity_type > 2){
+      G4Exception(
+        "[opticalprops]",
+        "TunableVisiblePhotonReflector()",
+        FatalException,
+        "Invalid reflectivity type. It must be 0, 1 or 2."
+      );
+    }
+
+    if (reflectivity_ < 0. || reflectivity_ > 1.){
+      G4Exception(
+        "[opticalprops]",
+        "TunableVisiblePhotonReflector()",
+        FatalException,
+        "Invalid reflectivity. It must be in the [0., 1.] range."
+      );
+    } 
+
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    std::vector<G4double> energy = {
+      optPhotMinE_, // 0.,
+      h_Planck*c_light/(703.0*nm), h_Planck*c_light/(702.0*nm), h_Planck*c_light/(701.0*nm), // 0., 0., 0.,
+      h_Planck*c_light/(700.0*nm), h_Planck*c_light/(699.0*nm), h_Planck*c_light/(698.0*nm), // reflectivity_, reflectivity_, reflectivity_,
+      h_Planck*c_light/(600.0*nm), h_Planck*c_light/(550.0*nm), h_Planck*c_light/(500.0*nm), // reflectivity_, reflectivity_, reflectivity_,
+      h_Planck*c_light/(402.0*nm), h_Planck*c_light/(401.0*nm), h_Planck*c_light/(400.0*nm), // reflectivity_, reflectivity_, reflectivity_,
+      h_Planck*c_light/(399.0*nm), h_Planck*c_light/(398.0*nm), h_Planck*c_light/(397.0*nm), // 0., 0., 0.,
+      optPhotMaxE_}; // 0.
+
+    // The following array contains the first two (and last two) entries of energy[])
+    // This one is for the sake of comfortably adding constant properties through the 
+    // whole energy range given by energy[]
+    G4int energy_span_entries = 4;
+    G4double energy_span[]  = {
+      optPhotMinE_, h_Planck*c_light/(703.0*nm), h_Planck*c_light/(397.0*nm), optPhotMaxE_
+    };
+
+    std::vector<G4double> reflectivity = {
+      0.,
+      0., 0., 0.,
+      reflectivity_, reflectivity_, reflectivity_,
+      reflectivity_, reflectivity_, reflectivity_,
+      reflectivity_, reflectivity_, reflectivity_,
+      0., 0., 0.,
+      0.};
+
+    mpt->AddProperty("REFLECTIVITY", energy.data(), reflectivity.data(), energy.size());
+
+    // From geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/TrackingAndPhysics/physicsProcess.html#optical-photon-processes
+    // The specular lobe constant (material property name SPECULARLOBECONSTANT) represents the reflection probability 
+    // about the normal of a micro facet. The specular spike constant (material property name SPECULARSPIKECONSTANT), 
+    // in turn, illustrates the probability of reflection about the average surface normal. The diffuse lobe constant 
+    // is for the probability of internal Lambertian reflection, and finally the back-scatter spike constant (material 
+    // property name BACKSCATTERCONSTANT) is for the case of several reflections within a deep groove with the ultimate 
+    // result of exact back-scattering. The four probabilities add up to one, with the diffuse lobe constant being calculated 
+    // by the code from other other three values that the user entered.
+
+    G4double* specularlobe;
+    G4double* specularspike;
+
+    G4double four_zeros[] = {0., 0., 0., 0.};
+    G4double four_ones[] = {1., 1., 1., 1.};
+
+    if(reflectivity_type == 0){
+      specularlobe = four_zeros;
+      specularspike = four_ones;
+    } else if(reflectivity_type == 1){
+      specularlobe = four_ones;
+      specularspike = four_zeros;
+    } else {
+      specularlobe = four_zeros;
+      specularspike = four_zeros;
+    }
+    
+    G4double backscatter[] = {0., 0., 0., 0.};
+    G4double efficiency[] = {0., 0., 0., 0.};
+
+    // By default, transmission equals to 0, so no need to explictly set it.
+    // "The material properties REFLECTIVITY and TRANSMISSION are used. 
+    // By default, REFLECTIVITY equals 1 and TRANSMISSION equals 0."
+
+    mpt->AddProperty("SPECULARLOBECONSTANT", energy_span, specularlobe, energy_span_entries);
+    mpt->AddProperty("SPECULARSPIKECONSTANT", energy_span, specularspike, energy_span_entries);
+    mpt->AddProperty("BACKSCATTERCONSTANT", energy_span, backscatter, energy_span_entries);
+    mpt->AddProperty("EFFICIENCY", energy_span, efficiency, energy_span_entries);
+
+    return mpt;
+  }
+
   G4MaterialPropertiesTable* PerfectPolishedSurfaceTransmitter()
   {
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();

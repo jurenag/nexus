@@ -69,6 +69,11 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* PerfectPhotonReflector();
 
+  G4MaterialPropertiesTable* TunableVisiblePhotonReflector(
+    G4int reflectivity_type=0
+    G4double reflectivity_=1.0
+  );
+
   G4MaterialPropertiesTable* PerfectPolishedSurfaceTransmitter();
 
   G4MaterialPropertiesTable* FakeGrid(G4double pressure=1.*bar,
