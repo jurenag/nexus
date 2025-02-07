@@ -72,7 +72,7 @@ namespace nexus{
   inner_frames_width_along_wlspwidth_   (2.     *mm                   ),
   df_no_along_wlsplength_               (2                            ),
   df_no_along_wlspwidth_                (3                            ),
-  DFA_frame_is_reflective_              (false                        ),
+  DFA_frame_is_vikuiti_coated_          (false                        ),
   vikuiti_reflectivity_scale_factor_    (1.                           ),
   DFA_frame_is_specular_                (true                         ),
   remove_DFs_                           (false                        ),  
@@ -245,7 +245,7 @@ namespace nexus{
     dfnaww_cmd.SetRange("df_no_along_wlspwidth>=0"); 
 
     G4GenericMessenger::Command& dfafir_cmd =
-      msg_->DeclareProperty("DFA_frame_is_reflective", DFA_frame_is_reflective_,
+      msg_->DeclareProperty("DFA_frame_is_vikuiti_coated", DFA_frame_is_vikuiti_coated_,
 			    "Whether the FR4 DFA frame is vikuiti-coated or not.");
 
     G4GenericMessenger::Command& vrsf_cmd =
@@ -257,7 +257,7 @@ namespace nexus{
 
     G4GenericMessenger::Command& dfafis_cmd =
       msg_->DeclareProperty("DFA_frame_is_specular", DFA_frame_is_specular_,
-			    "Whether the vikuiti coating of the DFA frame is specular-spikely reflective or diffusively reflective. Only makes a difference if DFA_frame_is_reflective_==True.");
+			    "Whether the DFA frame is specular-spikely reflective or diffusively reflective. It only makes a difference if DFA_frame_is_vikuiti_coated_==True or if DFA_reflectivity_!=0.0.");
 
     G4GenericMessenger::Command& rdfs_cmd =
       msg_->DeclareProperty("remove_DFs", remove_DFs_,
@@ -1411,7 +1411,7 @@ namespace nexus{
         frame_logic->SetVisAttributes(frame_col);
         //frame_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-        if(DFA_frame_is_reflective_){
+        if(DFA_frame_is_vikuiti_coated_){
             const G4String refcoat_name = "REF_COATING";
             G4OpticalSurface* refcoat_opsurf = 
             new G4OpticalSurface(refcoat_name, unified, ground, dielectric_metal, 1);
