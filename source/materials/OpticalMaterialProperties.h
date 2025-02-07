@@ -70,7 +70,7 @@ namespace opticalprops {
   G4MaterialPropertiesTable* PerfectPhotonReflector();
 
   G4MaterialPropertiesTable* TunableVisiblePhotonReflector(
-    G4int reflectivity_type=0
+    G4int reflectivity_type=0,
     G4double reflectivity_=1.0
   );
 
