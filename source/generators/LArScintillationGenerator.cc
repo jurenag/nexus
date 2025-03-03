@@ -31,7 +31,7 @@ emission_spectrum_{},
 sampler_(0)
 {
   
-  LoadNCheckPTPData();
+  LoadNCheckLArData();
   sampler_ = new std::piecewise_constant_distribution(
       bin_edges_.begin(), bin_edges_.end(), emission_spectrum_.begin()
         );
@@ -94,7 +94,7 @@ G4double LArScintillationGenerator::RandomEnergy(){
     }
 }
 
-void LArScintillationGenerator::LoadNCheckPTPData(){
+void LArScintillationGenerator::LoadNCheckLArData(){
 
     bin_edges_ = {  h_Planck*c_light/(308.842*nm), h_Planck*c_light/(305.646*nm), h_Planck*c_light/(301.7045*nm), h_Planck*c_light/(297.6565*nm), h_Planck*c_light/(293.8215*nm), 
                     h_Planck*c_light/(289.9865*nm), h_Planck*c_light/(286.6845*nm), h_Planck*c_light/(282.6365*nm), h_Planck*c_light/(277.523*nm), h_Planck*c_light/(272.5165*nm), 
@@ -118,8 +118,8 @@ void LArScintillationGenerator::LoadNCheckPTPData(){
                             0.002, 0.003, 0.005, 0.009, 0.014, 0.024, 0.036, 0.054, 0.082, 0.113, 0.176, 0.275, 0.36, 0.475, 0.624, 0.82, 1.0, 0.82, 0.624, 0.441, 0.336, 0.236}; 
 
     if(DataIsIllFormed()){
-        G4Exception("[PTPPhotonGenerator]", "LoadNCheckPTPData()", FatalException,
-        "The provided data is ill-formed. Check PTPPhotonGenerator::DataIsIllFormed for more info.");
+        G4Exception("[LArScintillationGenerator]", "LoadNCheckLArData()", FatalException,
+        "The provided data is ill-formed. Check LArScintillationGenerator::DataIsIllFormed for more info.");
     }
 
     return;

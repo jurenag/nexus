@@ -44,7 +44,7 @@ namespace nexus {
     std::vector<G4double> emission_spectrum_;   ///< PTP emission spectrum
     std::piecewise_constant_distribution<G4double>* sampler_; ///< LAr scintillation emission spectrum histogram sampler
 
-    void LoadNCheckPTPData();   ///< Loads LAr emission spectrum data into bin_edges_ and emission_spectrum_
+    void LoadNCheckLArData();   ///< Loads LAr emission spectrum data into bin_edges_ and emission_spectrum_
     G4bool DataIsIllFormed();     ///< Checks whether the loaded data is ill-formed
     G4double RandomEnergy();    ///< Generate a random kinetic energy according to LAr emission spectrum.
   };
