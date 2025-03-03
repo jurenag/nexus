@@ -96,26 +96,33 @@ G4double LArScintillationGenerator::RandomEnergy(){
 
 void LArScintillationGenerator::LoadNCheckLArData(){
 
-    bin_edges_ = {  h_Planck*c_light/(308.842*nm), h_Planck*c_light/(305.646*nm), h_Planck*c_light/(301.7045*nm), h_Planck*c_light/(297.6565*nm), h_Planck*c_light/(293.8215*nm), 
-                    h_Planck*c_light/(289.9865*nm), h_Planck*c_light/(286.6845*nm), h_Planck*c_light/(282.6365*nm), h_Planck*c_light/(277.523*nm), h_Planck*c_light/(272.5165*nm), 
-                    h_Planck*c_light/(267.4035*nm), h_Planck*c_light/(262.7165*nm), h_Planck*c_light/(257.603*nm), h_Planck*c_light/(251.744*nm), h_Planck*c_light/(246.844*nm), 
-                    h_Planck*c_light/(242.796*nm), h_Planck*c_light/(238.0025*nm), h_Planck*c_light/(232.996*nm), h_Planck*c_light/(229.161*nm), h_Planck*c_light/(225.9655*nm), 
-                    h_Planck*c_light/(222.024*nm), h_Planck*c_light/(217.8695*nm), h_Planck*c_light/(213.822*nm), h_Planck*c_light/(209.8805*nm), h_Planck*c_light/(207.43*nm), 
-                    h_Planck*c_light/(204.3405*nm), h_Planck*c_light/(200.3995*nm), h_Planck*c_light/(197.0975*nm), h_Planck*c_light/(193.795*nm), h_Planck*c_light/(190.2795*nm), 
-                    h_Planck*c_light/(186.551*nm), h_Planck*c_light/(182.823*nm), h_Planck*c_light/(179.521*nm), h_Planck*c_light/(175.686*nm), h_Planck*c_light/(171.9575*nm), 
-                    h_Planck*c_light/(169.081*nm), h_Planck*c_light/(166.5245*nm), h_Planck*c_light/(163.8615*nm), h_Planck*c_light/(161.6245*nm), h_Planck*c_light/(159.707*nm), 
-                    h_Planck*c_light/(157.051*nm), h_Planck*c_light/(154.068*nm), h_Planck*c_light/(151.9305*nm), h_Planck*c_light/(150.972*nm), h_Planck*c_light/(150.3325*nm), 
-                    h_Planck*c_light/(149.8*nm), h_Planck*c_light/(149.2675*nm), h_Planck*c_light/(148.6285*nm), h_Planck*c_light/(148.096*nm), h_Planck*c_light/(147.67*nm), 
-                    h_Planck*c_light/(147.244*nm), h_Planck*c_light/(146.711*nm), h_Planck*c_light/(145.965*nm), h_Planck*c_light/(145.0065*nm), h_Planck*c_light/(143.622*nm), 
-                    h_Planck*c_light/(142.45*nm), h_Planck*c_light/(141.8405*nm), h_Planck*c_light/(141.2015*nm), h_Planck*c_light/(140.354*nm), h_Planck*c_light/(139.3955*nm), 
-                    h_Planck*c_light/(138.4635*nm), h_Planck*c_light/(137.611*nm), h_Planck*c_light/(136.6785*nm), h_Planck*c_light/(135.8265*nm), h_Planck*c_light/(135.1*nm), 
-                    h_Planck*c_light/(134.202*nm), h_Planck*c_light/(133.3495*nm), h_Planck*c_light/(132.4365*nm), h_Planck*c_light/(131.5155*nm), h_Planck*c_light/(130.8765*nm), 
-                    h_Planck*c_light/(130.0935*nm), h_Planck*c_light/(128.9215*nm), h_Planck*c_light/(127.3235*nm), h_Planck*c_light/(125.5125*nm), h_Planck*c_light/(124.234*nm), 
-                    h_Planck*c_light/(123.4885*nm), h_Planck*c_light/(122.8495*nm), h_Planck*c_light/(121.7345*nm), h_Planck*c_light/(120.1435*nm)};
-
-    emission_spectrum_ = {  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001, 0.002, 0.001, 0.001, 0.001, 0.0, 0.0, 0.0, 0.001, 0.001, 0.002, 
-                            0.002, 0.003, 0.005, 0.009, 0.014, 0.024, 0.036, 0.054, 0.082, 0.113, 0.176, 0.275, 0.36, 0.475, 0.624, 0.82, 1.0, 0.82, 0.624, 0.441, 0.336, 0.236}; 
+    // Data from blue curve (LAr excited by proton beam) of figure 4 of DOI: 10.1140/epjc/s10052-013-2618-0
+    bin_edges_ = {
+      h_Planck * c_light / (312.041 * nm), h_Planck * c_light / (306.538 * nm), h_Planck * c_light / (301.479 * nm), h_Planck * c_light / (296.598 * nm),
+      h_Planck * c_light / (291.272 * nm), h_Planck * c_light / (286.657 * nm), h_Planck * c_light / (282.041 * nm), h_Planck * c_light / (275.828 * nm),
+      h_Planck * c_light / (269.26 * nm), h_Planck * c_light / (262.87 * nm), h_Planck * c_light / (256.302 * nm), h_Planck * c_light / (249.467 * nm),
+      h_Planck * c_light / (242.722 * nm), h_Planck * c_light / (236.509 * nm), h_Planck * c_light / (230.917 * nm), h_Planck * c_light / (225.858 * nm),
+      h_Planck * c_light / (221.154 * nm), h_Planck * c_light / (216.272 * nm), h_Planck * c_light / (211.923 * nm), h_Planck * c_light / (208.018 * nm),
+      h_Planck * c_light / (203.58 * nm), h_Planck * c_light / (198.254 * nm), h_Planck * c_light / (192.574 * nm), h_Planck * c_light / (187.781 * nm),
+      h_Planck * c_light / (183.698 * nm), h_Planck * c_light / (180.68 * nm), h_Planck * c_light / (178.462 * nm), h_Planck * c_light / (175.71 * nm),
+      h_Planck * c_light / (172.959 * nm), h_Planck * c_light / (170.917 * nm), h_Planck * c_light / (168.609 * nm), h_Planck * c_light / (165.858 * nm),
+      h_Planck * c_light / (163.284 * nm), h_Planck * c_light / (161.509 * nm), h_Planck * c_light / (159.645 * nm), h_Planck * c_light / (157.249 * nm),
+      h_Planck * c_light / (155.473 * nm), h_Planck * c_light / (154.32 * nm), h_Planck * c_light / (153.166 * nm), h_Planck * c_light / (152.189 * nm),
+      h_Planck * c_light / (151.391 * nm), h_Planck * c_light / (150.68 * nm), h_Planck * c_light / (150.059 * nm), h_Planck * c_light / (149.083 * nm),
+      h_Planck * c_light / (148.107 * nm), h_Planck * c_light / (147.574 * nm), h_Planck * c_light / (146.953 * nm), h_Planck * c_light / (145.71 * nm),
+      h_Planck * c_light / (144.29 * nm), h_Planck * c_light / (142.959 * nm), h_Planck * c_light / (141.716 * nm), h_Planck * c_light / (140.118 * nm),
+      h_Planck * c_light / (138.343 * nm), h_Planck * c_light / (136.834 * nm), h_Planck * c_light / (135.059 * nm), h_Planck * c_light / (133.284 * nm),
+      h_Planck * c_light / (131.775 * nm), h_Planck * c_light / (129.911 * nm), h_Planck * c_light / (127.604 * nm), h_Planck * c_light / (125.385 * nm),
+      h_Planck * c_light / (123.432 * nm), h_Planck * c_light / (122.101 * nm), h_Planck * c_light / (120.503 * nm), h_Planck * c_light / (118.195 * nm)
+    };
+    
+    emission_spectrum_ = {
+      3.7e-06, 4e-06, 5.8e-06, 6.3e-06, 8.9e-06, 1.24e-05, 1.46e-05, 1.84e-05, 1.53e-05, 1.17e-05, 1.03e-05, 9.9e-06, 8.1e-06, 7.8e-06, 7.6e-06, 
+      7.9e-06, 1.02e-05, 1.28e-05, 1.67e-05, 1.64e-05, 1.54e-05, 1.39e-05, 1.55e-05, 1.75e-05, 2.29e-05, 2.54e-05, 2.15e-05, 1.9e-05, 1.94e-05, 1.31e-05,
+      1.07e-05, 1.21e-05, 1.55e-05, 2.71e-05, 3.01e-05, 2.35e-05, 3.85e-05, 6.87e-05, 0.0001358, 0.0002741, 0.0005886, 0.0014306, 0.003406, 0.0059493, 0.0042758,
+      0.0027714, 0.0014314, 0.0020338, 0.0031385, 0.0058327, 0.0106176, 0.0214331, 0.03822, 0.0710305, 0.1375806, 0.2504622, 0.4751756, 0.7802588, 1.0, 0.8837221,
+      0.5970604, 0.3950928, 0.231022
+    };
 
     if(DataIsIllFormed()){
         G4Exception("[LArScintillationGenerator]", "LoadNCheckLArData()", FatalException,
