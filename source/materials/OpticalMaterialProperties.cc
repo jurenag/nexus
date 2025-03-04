@@ -2079,31 +2079,36 @@ namespace opticalprops {
     G4bool cryogenic_temperature,
     G4bool verbosity
   )
-  {
-    // iopscience.iop.org/article/10.1088/1748-0221/16/09/P09027
+  {  
+    // 
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
 
     // REFRACTIVE INDEX
+    // In C. Brizzolari et al 2021 JINST 16 P09027 (iopscience.iop.org/article/10.1088/1748-0221/16/09/P09027)
+    // they give the 1.502 value for the refractive index of the G2P bar. I could not find any detail there
+    // on how they measured it, p.e. which wavelength was the light that they used in order to measure this
+    // r. index. This is why, I extracted the data below from https://doi.org/10.1016/j.colsurfa.2022.130018 ,
+    // where they measured the refraction index of PMMA in the 200-800 nm range, and is compatible with the
+    // value given by C. Brizzolari et al.
     std::vector<G4double> ri_energy = {
-      optPhotMinE_,
-      h_Planck * c_light / (609. * nm),    h_Planck * c_light / (589.26 * nm),
-      h_Planck * c_light / (550. * nm),    h_Planck * c_light / (530.   * nm),
-      h_Planck * c_light / (500. * nm),    h_Planck * c_light / (490.   * nm),
-      h_Planck * c_light / (481. * nm),    h_Planck * c_light / (460.   * nm),
-      h_Planck * c_light / (435. * nm),    h_Planck * c_light / (425.   * nm),
-      optPhotMaxE_
+      h_Planck * c_light / (798.336 * nm), h_Planck * c_light / (768.704 * nm), h_Planck * c_light / (743.524 * nm),
+      h_Planck * c_light / (717.238 * nm), h_Planck * c_light / (691.394 * nm), h_Planck * c_light / (666.394 * nm),
+      h_Planck * c_light / (646.708 * nm), h_Planck * c_light / (620.457 * nm), h_Planck * c_light / (590.319 * nm),
+      h_Planck * c_light / (561.955 * nm), h_Planck * c_light / (534.033 * nm), h_Planck * c_light / (509.456 * nm),
+      h_Planck * c_light / (481.792 * nm), h_Planck * c_light / (456.807 * nm), h_Planck * c_light / (430.025 * nm),
+      h_Planck * c_light / (402.844 * nm), h_Planck * c_light / (378.005 * nm), h_Planck * c_light / (349.904 * nm),
+      h_Planck * c_light / (323.128 * nm), h_Planck * c_light / (302.976 * nm), h_Planck * c_light / (281.672 * nm),
+      h_Planck * c_light / (264.309 * nm), h_Planck * c_light / (251.832 * nm), h_Planck * c_light / (241.162 * nm),
+      h_Planck * c_light / (230.49 * nm), h_Planck * c_light / (221.945 * nm), h_Planck * c_light / (212.33 * nm),
+      h_Planck * c_light / (205.915 * nm), h_Planck * c_light / (200.564 * nm), h_Planck * c_light / (197.347 * nm),
+      h_Planck * c_light / (193.06 * nm)
     };
 
-    G4cout << "rindex=" << rindex << G4endl;
-
     std::vector<G4double> rIndex = {
-      rindex,
-      rindex,  rindex,   // 609 , 589.26 nm
-      rindex,  rindex,   // 550 , 530 nm
-      rindex,  rindex,   // 500 , 490 nm
-      rindex,  rindex,   // 481 , 460 nm
-      rindex,  rindex,   // 435 , 425 nm
-      rindex
+      1.48553, 1.48566, 1.48547, 1.48616, 1.48632, 1.48729, 1.48803, 1.48882, 1.4906, 1.4919,
+      1.4934, 1.49487, 1.49658, 1.49951, 1.50198, 1.50595, 1.51027, 1.51597, 1.5241, 1.53162,
+      1.54188, 1.5509, 1.56154, 1.5735, 1.58632, 1.59915, 1.61453, 1.6265, 1.63846, 1.64786,
+      1.65983
     };
     mpt->AddProperty("RINDEX", ri_energy, rIndex);
 
@@ -2379,26 +2384,31 @@ namespace opticalprops {
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
 
     // REFRACTIVE INDEX
+    // In C. Brizzolari et al 2021 JINST 16 P09027 (iopscience.iop.org/article/10.1088/1748-0221/16/09/P09027)
+    // they give the 1.502 value for the refractive index of the G2P bar. I could not find any detail there
+    // on how they measured it, p.e. which wavelength was the light that they used in order to measure this
+    // r. index. This is why, I extracted the data below from https://doi.org/10.1016/j.colsurfa.2022.130018 ,
+    // where they measured the refraction index of PMMA in the 200-800 nm range, and is compatible with the
+    // value given by C. Brizzolari et al.
     std::vector<G4double> ri_energy = {
-      optPhotMinE_,
-      h_Planck * c_light / (609. * nm),    h_Planck * c_light / (589.26 * nm),
-      h_Planck * c_light / (550. * nm),    h_Planck * c_light / (530.   * nm),
-      h_Planck * c_light / (500. * nm),    h_Planck * c_light / (490.   * nm),
-      h_Planck * c_light / (481. * nm),    h_Planck * c_light / (460.   * nm),
-      h_Planck * c_light / (435. * nm),    h_Planck * c_light / (425.   * nm),
-      optPhotMaxE_
+      h_Planck * c_light / (798.336 * nm), h_Planck * c_light / (768.704 * nm), h_Planck * c_light / (743.524 * nm),
+      h_Planck * c_light / (717.238 * nm), h_Planck * c_light / (691.394 * nm), h_Planck * c_light / (666.394 * nm),
+      h_Planck * c_light / (646.708 * nm), h_Planck * c_light / (620.457 * nm), h_Planck * c_light / (590.319 * nm),
+      h_Planck * c_light / (561.955 * nm), h_Planck * c_light / (534.033 * nm), h_Planck * c_light / (509.456 * nm),
+      h_Planck * c_light / (481.792 * nm), h_Planck * c_light / (456.807 * nm), h_Planck * c_light / (430.025 * nm),
+      h_Planck * c_light / (402.844 * nm), h_Planck * c_light / (378.005 * nm), h_Planck * c_light / (349.904 * nm),
+      h_Planck * c_light / (323.128 * nm), h_Planck * c_light / (302.976 * nm), h_Planck * c_light / (281.672 * nm),
+      h_Planck * c_light / (264.309 * nm), h_Planck * c_light / (251.832 * nm), h_Planck * c_light / (241.162 * nm),
+      h_Planck * c_light / (230.49 * nm), h_Planck * c_light / (221.945 * nm), h_Planck * c_light / (212.33 * nm),
+      h_Planck * c_light / (205.915 * nm), h_Planck * c_light / (200.564 * nm), h_Planck * c_light / (197.347 * nm),
+      h_Planck * c_light / (193.06 * nm)
     };
 
-    G4cout << "rindex=" << rindex << G4endl;
-
     std::vector<G4double> rIndex = {
-      rindex,
-      rindex,  rindex,   // 609 , 589.26 nm
-      rindex,  rindex,   // 550 , 530 nm
-      rindex,  rindex,   // 500 , 490 nm
-      rindex,  rindex,   // 481 , 460 nm
-      rindex,  rindex,   // 435 , 425 nm
-      rindex
+      1.48553, 1.48566, 1.48547, 1.48616, 1.48632, 1.48729, 1.48803, 1.48882, 1.4906, 1.4919,
+      1.4934, 1.49487, 1.49658, 1.49951, 1.50198, 1.50595, 1.51027, 1.51597, 1.5241, 1.53162,
+      1.54188, 1.5509, 1.56154, 1.5735, 1.58632, 1.59915, 1.61453, 1.6265, 1.63846, 1.64786,
+      1.65983
     };
     mpt->AddProperty("RINDEX", ri_energy, rIndex);
 
