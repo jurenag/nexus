@@ -862,27 +862,39 @@ namespace opticalprops {
   {
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
 
-    G4double energies_rindex[] = {2.043*eV, 2.2109*eV, 2.3789*eV, 2.5468*eV, 2.7148*eV, 2.8828*eV, 3.0507*eV, 
-                          3.2187*eV, 3.3867*eV, 3.5546*eV, 3.7226*eV, 3.8905*eV, 4.0585*eV, 4.2265*eV, 
-                          4.3944*eV, 4.5624*eV, 4.7303*eV, 4.8983*eV, 5.0663*eV, 5.2342*eV, 5.4022*eV, 
-                          5.5702*eV, 5.7381*eV, 5.9061*eV, 6.074*eV, 6.242*eV, 6.41*eV, 6.5779*eV, 
-                          6.7459*eV, 6.9139*eV, 7.0818*eV, 7.2498*eV, 7.4177*eV, 7.5857*eV, 7.7537*eV, 
-                          7.9216*eV, 8.0896*eV, 8.2575*eV, 8.4255*eV, 8.5935*eV, 8.7614*eV, 8.9294*eV, 
-                          9.0974*eV, 9.2577*eV, 9.3951*eV, 9.5173*eV, 9.6471*eV, 9.7616*eV, 9.8532*eV, 
-                          9.9448*eV, 10.029*eV, 10.097*eV, 10.159*eV, 10.235*eV, 10.288*eV, 10.328*eV, 
-                          10.383*eV, 10.461*eV, 10.475*eV, 10.502*eV};
+    // This refractive index was taken from Figure 9 of article https://doi.org/10.1088/1748-0221/15/09/P09009
+    G4double energies_rindex[] = {
+      h_Planck * c_light / (690.991 * nm), h_Planck * c_light / (674.436 * nm), h_Planck * c_light / (657.885 * nm),
+      h_Planck * c_light / (643.4 * nm), h_Planck * c_light / (625.38 * nm), h_Planck * c_light / (609.98 * nm),
+      h_Planck * c_light / (594.582 * nm), h_Planck * c_light / (577.878 * nm), h_Planck * c_light / (561.326 * nm),
+      h_Planck * c_light / (545.464 * nm), h_Planck * c_light / (528.221 * nm), h_Planck * c_light / (508.221 * nm),
+      h_Planck * c_light / (492.357 * nm), h_Planck * c_light / (474.425 * nm), h_Planck * c_light / (462.701 * nm),
+      h_Planck * c_light / (450.287 * nm), h_Planck * c_light / (435.113 * nm), h_Planck * c_light / (421.061 * nm),
+      h_Planck * c_light / (405.524 * nm), h_Planck * c_light / (392.352 * nm), h_Planck * c_light / (377.868 * nm),
+      h_Planck * c_light / (364.763 * nm), h_Planck * c_light / (351.659 * nm), h_Planck * c_light / (341.435 * nm),
+      h_Planck * c_light / (326.035 * nm), h_Planck * c_light / (310.635 * nm), h_Planck * c_light / (295.235 * nm),
+      h_Planck * c_light / (279.834 * nm), h_Planck * c_light / (264.433 * nm), h_Planck * c_light / (249.03 * nm),
+      h_Planck * c_light / (233.627 * nm), h_Planck * c_light / (218.223 * nm), h_Planck * c_light / (202.816 * nm),
+      h_Planck * c_light / (187.405 * nm), h_Planck * c_light / (171.988 * nm), h_Planck * c_light / (157.312 * nm),
+      h_Planck * c_light / (146.008 * nm), h_Planck * c_light / (138.835 * nm), h_Planck * c_light / (133.914 * nm),
+      h_Planck * c_light / (129.741 * nm), h_Planck * c_light / (127.236 * nm), h_Planck * c_light / (125.129 * nm),
+      h_Planck * c_light / (123.719 * nm), h_Planck * c_light / (122.658 * nm), h_Planck * c_light / (121.257 * nm),
+      h_Planck * c_light / (119.496 * nm), h_Planck * c_light / (118.329 * nm), h_Planck * c_light / (117.409 * nm),
+      h_Planck * c_light / (116.231 * nm), h_Planck * c_light / (115.055 * nm), h_Planck * c_light / (114.296 * nm)
+    };
 
     // Before considering any change on this LAr rindex, please take into account that LArPTPArtifact
     // is meant to have the exact same rindex as LAr. So, please, introduce the same changes in both
     // mpts.
-    G4double rindex[] = {1.2288, 1.233, 1.2332, 1.2344, 1.235, 1.2362, 1.2373, 1.2379, 1.2393, 1.2405, 
-                        1.2414, 1.2432, 1.2441, 1.2452, 1.2471, 1.2495, 1.2511, 1.2527, 1.2548, 1.2571, 
-                        1.2592, 1.2614, 1.2641, 1.2667, 1.2694, 1.2725, 1.2758, 1.2794, 1.2835, 1.2877, 
-                        1.2928, 1.2979, 1.3031, 1.3085, 1.3146, 1.3218, 1.3291, 1.337, 1.3454, 1.3556, 
-                        1.3673, 1.3796, 1.3921, 1.4071, 1.4229, 1.4381, 1.4535, 1.4691, 1.485, 1.4999, 
-                        1.5149, 1.5332, 1.5506, 1.5672, 1.5859, 1.5997, 1.6171, 1.6301, 1.6464, 1.6623};
+    G4double rindex[] = {
+      1.22332, 1.22476, 1.22476, 1.22548, 1.2257, 1.22645, 1.22666, 1.22764, 1.22764, 1.22764, 1.22837, 1.22837,
+      1.22909, 1.22981, 1.22981, 1.22981, 1.23053, 1.23058, 1.23111, 1.23125, 1.23197, 1.23269, 1.23269, 1.23328,
+      1.23405, 1.23477, 1.23581, 1.23692, 1.23825, 1.24004, 1.24224, 1.24504, 1.24883, 1.25424, 1.26238, 1.27501,
+      1.29117, 1.30751, 1.32398, 1.34231, 1.35673, 1.37332, 1.38702, 1.40095, 1.4207, 1.44226, 1.45982, 1.47897,
+      1.50125, 1.52258, 1.544
+    };
 
-    mpt->AddProperty("RINDEX", energies_rindex, rindex, 60);
+    mpt->AddProperty("RINDEX", energies_rindex, rindex, 51);
 
     // Absorption length (ABSLENGTH)
     G4double energies_abslength[]  = {optPhotMinE_, optPhotMaxE_};
@@ -1011,27 +1023,39 @@ namespace opticalprops {
     // overall efficiency of PTP, both due to an actual-too-long-wlsabslength or due to a conversion efficiency.
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
 
-    G4double energies_rindex[] = {2.043*eV, 2.2109*eV, 2.3789*eV, 2.5468*eV, 2.7148*eV, 2.8828*eV, 3.0507*eV, 
-                          3.2187*eV, 3.3867*eV, 3.5546*eV, 3.7226*eV, 3.8905*eV, 4.0585*eV, 4.2265*eV, 
-                          4.3944*eV, 4.5624*eV, 4.7303*eV, 4.8983*eV, 5.0663*eV, 5.2342*eV, 5.4022*eV, 
-                          5.5702*eV, 5.7381*eV, 5.9061*eV, 6.074*eV, 6.242*eV, 6.41*eV, 6.5779*eV, 
-                          6.7459*eV, 6.9139*eV, 7.0818*eV, 7.2498*eV, 7.4177*eV, 7.5857*eV, 7.7537*eV, 
-                          7.9216*eV, 8.0896*eV, 8.2575*eV, 8.4255*eV, 8.5935*eV, 8.7614*eV, 8.9294*eV, 
-                          9.0974*eV, 9.2577*eV, 9.3951*eV, 9.5173*eV, 9.6471*eV, 9.7616*eV, 9.8532*eV, 
-                          9.9448*eV, 10.029*eV, 10.097*eV, 10.159*eV, 10.235*eV, 10.288*eV, 10.328*eV, 
-                          10.383*eV, 10.461*eV, 10.475*eV, 10.502*eV};
+    // This refractive index was taken from Figure 9 of article https://doi.org/10.1088/1748-0221/15/09/P09009
+    G4double energies_rindex[] = {
+      h_Planck * c_light / (690.991 * nm), h_Planck * c_light / (674.436 * nm), h_Planck * c_light / (657.885 * nm),
+      h_Planck * c_light / (643.4 * nm), h_Planck * c_light / (625.38 * nm), h_Planck * c_light / (609.98 * nm),
+      h_Planck * c_light / (594.582 * nm), h_Planck * c_light / (577.878 * nm), h_Planck * c_light / (561.326 * nm),
+      h_Planck * c_light / (545.464 * nm), h_Planck * c_light / (528.221 * nm), h_Planck * c_light / (508.221 * nm),
+      h_Planck * c_light / (492.357 * nm), h_Planck * c_light / (474.425 * nm), h_Planck * c_light / (462.701 * nm),
+      h_Planck * c_light / (450.287 * nm), h_Planck * c_light / (435.113 * nm), h_Planck * c_light / (421.061 * nm),
+      h_Planck * c_light / (405.524 * nm), h_Planck * c_light / (392.352 * nm), h_Planck * c_light / (377.868 * nm),
+      h_Planck * c_light / (364.763 * nm), h_Planck * c_light / (351.659 * nm), h_Planck * c_light / (341.435 * nm),
+      h_Planck * c_light / (326.035 * nm), h_Planck * c_light / (310.635 * nm), h_Planck * c_light / (295.235 * nm),
+      h_Planck * c_light / (279.834 * nm), h_Planck * c_light / (264.433 * nm), h_Planck * c_light / (249.03 * nm),
+      h_Planck * c_light / (233.627 * nm), h_Planck * c_light / (218.223 * nm), h_Planck * c_light / (202.816 * nm),
+      h_Planck * c_light / (187.405 * nm), h_Planck * c_light / (171.988 * nm), h_Planck * c_light / (157.312 * nm),
+      h_Planck * c_light / (146.008 * nm), h_Planck * c_light / (138.835 * nm), h_Planck * c_light / (133.914 * nm),
+      h_Planck * c_light / (129.741 * nm), h_Planck * c_light / (127.236 * nm), h_Planck * c_light / (125.129 * nm),
+      h_Planck * c_light / (123.719 * nm), h_Planck * c_light / (122.658 * nm), h_Planck * c_light / (121.257 * nm),
+      h_Planck * c_light / (119.496 * nm), h_Planck * c_light / (118.329 * nm), h_Planck * c_light / (117.409 * nm),
+      h_Planck * c_light / (116.231 * nm), h_Planck * c_light / (115.055 * nm), h_Planck * c_light / (114.296 * nm)
+    };
 
             
     // Before considering any change on this LArPTPArtifact rindex, please take into account that
     // this mpt is meant to have the exact same rindex as LAr's mpt.
-    G4double rindex[] = {1.2288, 1.233, 1.2332, 1.2344, 1.235, 1.2362, 1.2373, 1.2379, 1.2393, 1.2405, 
-                        1.2414, 1.2432, 1.2441, 1.2452, 1.2471, 1.2495, 1.2511, 1.2527, 1.2548, 1.2571, 
-                        1.2592, 1.2614, 1.2641, 1.2667, 1.2694, 1.2725, 1.2758, 1.2794, 1.2835, 1.2877, 
-                        1.2928, 1.2979, 1.3031, 1.3085, 1.3146, 1.3218, 1.3291, 1.337, 1.3454, 1.3556, 
-                        1.3673, 1.3796, 1.3921, 1.4071, 1.4229, 1.4381, 1.4535, 1.4691, 1.485, 1.4999, 
-                        1.5149, 1.5332, 1.5506, 1.5672, 1.5859, 1.5997, 1.6171, 1.6301, 1.6464, 1.6623};
+    G4double rindex[] = {
+      1.22332, 1.22476, 1.22476, 1.22548, 1.2257, 1.22645, 1.22666, 1.22764, 1.22764, 1.22764, 1.22837, 1.22837,
+      1.22909, 1.22981, 1.22981, 1.22981, 1.23053, 1.23058, 1.23111, 1.23125, 1.23197, 1.23269, 1.23269, 1.23328,
+      1.23405, 1.23477, 1.23581, 1.23692, 1.23825, 1.24004, 1.24224, 1.24504, 1.24883, 1.25424, 1.26238, 1.27501,
+      1.29117, 1.30751, 1.32398, 1.34231, 1.35673, 1.37332, 1.38702, 1.40095, 1.4207, 1.44226, 1.45982, 1.47897,
+      1.50125, 1.52258, 1.544
+    };
 
-    mpt->AddProperty("RINDEX", energies_rindex, rindex, 60);
+    mpt->AddProperty("RINDEX", energies_rindex, rindex, 51);
 
     // Absorption length (ABSLENGTH)
     G4double energies_abslength[]  = {optPhotMinE_, optPhotMaxE_};
