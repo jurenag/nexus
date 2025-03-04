@@ -1507,7 +1507,7 @@ namespace nexus{
                                   polished,                   // variable G4DICHROICDATA
                                   dielectric_dichroic);
 
-        // Construct the outgoung optical surface
+        // Construct the outgoing optical surface
         setenv("G4DICHROICDATA", path_to_outwards_dichroic_data_, 1);
         G4OpticalSurface* dfs_outwards_opsurf =   
             new G4OpticalSurface( "DICHROIC_OUTWARDS_OPSURF", 
