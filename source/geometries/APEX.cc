@@ -1139,6 +1139,7 @@ namespace nexus{
     return;
   }
 
+  // This function is no longer supported. It is kept here for future reference.
   void APEX::ConstructBoard(G4VPhysicalVolume* mother_physical) const ///< Deprecated
   {
     SiPMBoard board;
