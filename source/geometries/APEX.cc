@@ -73,6 +73,7 @@ namespace nexus{
   SiPM_code_                            (1                            ),
   num_phsensors_                        (30                           ),   /// This is seemingly the APEX baseline
   board_position_code_                  (1                            ),
+  align_lower_edges_of_plate_and_SiPMs_ (false                        ),
   gap_                                  (0.5    *mm                   ),
   ref_phsensors_supports_               (true                         ), 
   with_dimples_                         (false                         ),
@@ -215,6 +216,10 @@ namespace nexus{
 			    "Integer signalling where to place the SiPM board.");
     bpc_cmd.SetParameterName("board_position_code", false);
     bpc_cmd.SetRange("board_position_code>=1");
+
+    G4GenericMessenger::Command& aleopas_cmd =
+      msg_->DeclareProperty("align_lower_edges_of_plate_and_SiPMs", align_lower_edges_of_plate_and_SiPMs_,
+			    "It only makes a difference if board_position_code_ is set to 2 or 3. If set to true, the lower edges of the WLS plate and the SiPMs are aligned.");
 
     G4GenericMessenger::Command& g_cmd =
       msg_->DeclareProperty("gap", gap_,
@@ -512,9 +517,16 @@ namespace nexus{
     }
     else  // board_position_code_ is 2 or 3
     {
+      G4double sipms_y_pos = 0.;
+      if(align_lower_edges_of_plate_and_SiPMs_) 
+      {
+        // Assuming that the WLS plate is placed at the origin of coordinates
+        sipms_y_pos = (-1.*plate_thickn_/2.)+(sipm->GetTransverseDim()/2.);
+      }
+
       sipm_rot->rotateX(-90.*deg);
       base_pos.set( (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
-                    0.,
+                    sipms_y_pos,
                     -1.*(plate_width_/2.)-1.*(sipm_thickn/2.)-gap_);
 
       G4int phsensor_id = 0;
@@ -532,7 +544,7 @@ namespace nexus{
 
         sipm_rot_2->rotateX(+90.*deg);
         base_pos_2.set( (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
-                        0.,
+                        sipms_y_pos,
                         (plate_width_/2.)+(sipm_thickn/2.)+gap_);
 
         phsensor_id = 0;
@@ -590,9 +602,16 @@ namespace nexus{
     }
     else  // board_position_code_ is 2 or 3
     {
+      G4double board_y_pos = 0.;
+      if(align_lower_edges_of_plate_and_SiPMs_) 
+      {
+        // Assuming that the WLS plate is placed at the origin of coordinates
+        board_y_pos = (-1.*plate_thickn_/2.)+(sipm->GetTransverseDim()/2.);
+      }
+
       board_rot->rotateX(0.0*deg);
       board_pos.set(0.,
-                    0.,
+                    board_y_pos,
                     -1.*(plate_width_/2.)-gap_
                     -sipm_thickn-1.*(board_thickn/2.));
       //Place it
@@ -608,7 +627,7 @@ namespace nexus{
 
         board_rot_2->rotateX(0.0*deg);
         board_pos_2.set(0.,
-                        0.,
+                        board_y_pos,
                         (plate_width_/2.)+gap_
                         +sipm_thickn+(board_thickn/2.));
         //Place it
@@ -699,10 +718,24 @@ namespace nexus{
                                       -1.*plate_thickn_/2., // Minus half the thickness of AUX_OUTER_BOX 
                                                             // plus half the reflective-foil thickness
                                       0.);
-    if(board_position_code_!=1){
 
+    G4double sipms_y_pos = 0.;
+    if(align_lower_edges_of_plate_and_SiPMs_) 
+    {
+      // I was expecting an error in this case, due to matching surfaces in the boolean subtraction 
+      // of ref_foil_solid minus reflective_foil_holes. Particularly, since the dummy_sipm which
+      // creates the holes is slightly thicker than the reflective foil (there is an explanation why
+      // this is done in the comments of the dummy_sipm definition), I was expecting that for the
+      // the case where align_lower_edges_of_plate_and_SiPMs_ is true, the lower face of the 
+      // dummy_sipm geometry would partially match the upper face of the bottom of the reflective foil.
+      // However, I saw no warning while Geant4 builds the geomeotry, and no error while running for
+      // a million photons.
+      sipms_y_pos = (-1.*plate_thickn_/2.)+(sipm_transverse_dim/2.);
+    }
+
+    if(board_position_code_!=1){
       vec = G4ThreeVector(0.,
-                          0.,
+                          sipms_y_pos,
                           -1.*(plate_width_/2.)-1.*(reflective_foil_thickn_/2.));   // Minus half the width of the plate
                                                                                     // minus half the reflective-foil thickness
     }
@@ -713,7 +746,7 @@ namespace nexus{
     if(board_position_code_>=3){
                                               // If board_position_code_ is 3, then also carve the holes for a second strip of SiPMs
       G4ThreeVector vec_2 = G4ThreeVector(0.,
-                                          0.,
+                                          sipms_y_pos,
                                           (plate_width_/2.)+(reflective_foil_thickn_/2.));  // Minus half the width of the plate
                                                                                             // minus half the reflective-foil thickness
       ref_foil_solid = new G4SubtractionSolid(ref_foil_name, 

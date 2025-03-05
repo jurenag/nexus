@@ -25,6 +25,7 @@
 /Geometry/APEX/SiPM_code                            4
 /Geometry/APEX/num_phsensors                        26
 /Geometry/APEX/board_position_code                  3
+/Geometry/APEX/align_lower_edges_of_plate_and_SiPMs false
 /Geometry/APEX/gap                                  0.0     cm
 /Geometry/APEX/ref_phsensors_supports               true
 /Geometry/APEX/with_dimples                         false
