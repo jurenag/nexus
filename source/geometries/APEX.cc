@@ -44,6 +44,13 @@ namespace nexus{
   APEX::APEX():
   GeometryBase(), 
   surrounding_media_                    ("lar"                        ),
+  detach_DF_                            (false                        ),
+  wlsp_DF_gap_                          (1.13   *mm                   ),  // Assuming a 8.26 mm tall SiPM (that's the height of the BroadcomAFBRS4N44P044M
+                                                                          // SiPMs) and a 6 mm thick WLS plate, 1.13 mm is the required gap for the DF to 
+                                                                          // fully enclose the LAr gap that's left between the WLS plate, the DF and the SiPMs.
+  DF_substrate_thickn_                  (1.000  *mm                   ),
+  DF_substrate_mpt_                     (opticalprops::FusedSilica()  ),  // This one is still hardcoded. Be careful to choose the one you want to
+  //DF_substrate_mpt_                     (opticalprops::SCHOTT_B270()  ),// actually simulate, in accordance to the transmission curves you are setting.
   MLS_thickn_                           (0.010  *mm                   ),
   MLS_rindex_                           (1.68                         ),
   coating_thickn_                       (3.226  *um                   ),  // Based on arxiv.org/abs/1912.09191 and TDR vol.IX, section 5.8.3.1,
@@ -87,6 +94,24 @@ namespace nexus{
     G4GenericMessenger::Command& sm_cmd =
       msg_->DeclareProperty("surrounding_media", surrounding_media_,
 			    "Which media to place the APEX in");
+
+    G4GenericMessenger::Command& ddf_cmd =
+      msg_->DeclareProperty("detach_DF", detach_DF_,
+			    "Whether to detach the DF from the WLS plate.");    
+
+    G4GenericMessenger::Command& wlspdfg_cmd =
+      msg_->DeclareProperty("wlsp_DF_gap", wlsp_DF_gap_,
+			    "Thickness of the gap which is left between the DF and the WLS plate.");
+    wlspdfg_cmd.SetUnitCategory("Length");
+    wlspdfg_cmd.SetParameterName("wlsp_DF_gap", false);
+    wlspdfg_cmd.SetRange("wlsp_DF_gap>0.");
+
+    G4GenericMessenger::Command& dfst_cmd =
+      msg_->DeclareProperty("DF_substrate_thickn", DF_substrate_thickn_,
+			    "Thickness of the DF substrate.");
+    dfst_cmd.SetUnitCategory("Length");
+    dfst_cmd.SetParameterName("DF_substrate_thickn", false);
+    dfst_cmd.SetRange("DF_substrate_thickn>0.");
 
     G4GenericMessenger::Command& mlst_cmd =
       msg_->DeclareProperty("MLS_thickn", MLS_thickn_,
@@ -367,7 +392,18 @@ namespace nexus{
     ConstructWLSPlate(mother_physical);
     ConstructSiPMSAndBoard(mother_physical);
     ConstructReflectiveFoil(mother_physical);         
-    if(!remove_MLS_) ConstructDichroicFilter(mother_physical);
+    if(!remove_MLS_)
+    {
+      if(!detach_DF_)
+      {
+        ConstructAttachedDichroicFilter(mother_physical);
+      }
+      else
+      {
+        ConstructDetachedDichroicFilter(mother_physical);
+      }
+      
+    } 
 
 
     return;
@@ -719,7 +755,7 @@ namespace nexus{
     return;
   }
 
-  void APEX::ConstructDichroicFilter(G4VPhysicalVolume* mother_physical) const
+  void APEX::ConstructAttachedDichroicFilter(G4VPhysicalVolume* mother_physical) const
   {
       
     // -------------------------------- DICHROIC FILTER MODEL --------------------------------
@@ -814,13 +850,28 @@ namespace nexus{
     //
     // ---------------------------------------------------------------------------------------
 
-    // This function is called by APEX::Construct() only if !remove_MLS_
-
+    // This function is called by APEX::Construct() only if !remove_MLS_ and !detach_DF_
+    
     G4Box* MLS_half_solid = new G4Box("AUX", plate_length_/2., MLS_thickn_/4., plate_width_/2.);
     G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
     mat->SetMaterialPropertiesTable(opticalprops::TunableRIMat(WLSp_rindex_));  // Change this to MLS_rindex_ if you
                                                                                 // want to go for the first alternative
                                                                                 // of DF implementation explained above
+
+                                                                                // This opticalprops::TunableRIMat() has 
+                                                                                // no defined absorption length, just a
+                                                                                // defined refractive index. The direct
+                                                                                // comparison with respect to the 
+                                                                                // detach_DF_==false case is, then, only 
+                                                                                // possible if the DF_substrate_mpt_
+                                                                                // attributes points to an MPT whose 
+                                                                                // absorption length is also undefined
+                                                                                // or practically infinte. P.e. 
+                                                                                // opticalprops::FusedSilica() works
+                                                                                // for our case, since its absorption
+                                                                                // length below 6.5 eV (i.e. above 190
+                                                                                // nm) is set to opticalprops::noAbsLength_.
+
     G4LogicalVolume* MLS_half_logic = new G4LogicalVolume(MLS_half_solid, mat, "MLS_HALF");
             
     G4VisAttributes MLS_col = nexus::BloodRedAlpha();
@@ -841,13 +892,13 @@ namespace nexus{
 
     // Check that there's dichroic information for ingoing (wrt APEX) photons
     if(path_to_inwards_dichroic_data_==""){
-        G4Exception("[APEX]", "ConstructDichroicFilter()",
+        G4Exception("[APEX]", "ConstructAttachedDichroicFilter()",
                     FatalException, "The path to the inwards dichroic data file was not set.");
     }
 
     // Check that there's dichroic information for outgoing photons
     if(path_to_outwards_dichroic_data_==""){
-        G4Exception("[APEX]", "ConstructDichroicFilter()",
+        G4Exception("[APEX]", "ConstructAttachedDichroicFilter()",
                     FatalException, "The path to the outwards dichroic data file was not set.");
     }
 
@@ -927,7 +978,168 @@ namespace nexus{
     return;
   }
 
-  void APEX::ConstructBoard(G4VPhysicalVolume* mother_physical) const
+  void APEX::ConstructDetachedDichroicFilter(G4VPhysicalVolume* mother_physical) const
+  {
+  
+    // ------------------------------------ DICHROIC FILTER MODEL ------------------------------------
+    //
+    // The DF model implemented here is the same as the one implemented in 
+    // XArapuca::ConstructDichroicAssemblies . 
+    //
+    //                                         LAr (Cryostat)
+    //
+    //  --------------------------------------------------------------------------------------------
+    //                                            coating
+    //  --------------------------------------------------------------------------------------------
+    //                                                               
+    //                                       substrate (n=n_subs)
+    //                                                               
+    //  -----------------------------------G4LogicalBorderSurfaces----------------------------------
+    //                                                               
+    //                                   MLS (with substrate rindex) (n=n_subs)
+    //  ____________________________________________________________________________________________
+    //                                                
+    //                                 LAr (X-ARAPUCA internal cavity)
+    //
+    //  ____________________________________________________________________________________________
+    //
+    //                                            WLS plate
+    //
+    //  ____________________________________________________________________________________________
+    //
+    //
+    // This function is called by APEX::Construct() only if !remove_MLS_ and detach_DF_
+    
+
+    // DF substrate
+    G4Box* DF_substrate_solid = new G4Box(  "DICHROIC_FILTER_SUBSTRATE", 
+                                            plate_length_/2., 
+                                            DF_substrate_thickn_/2., 
+                                            plate_width_/2.);
+
+    G4Material* DF_substrate_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
+    DF_substrate_mat->SetMaterialPropertiesTable(DF_substrate_mpt_);
+
+    G4LogicalVolume* DF_substrate_logic = new G4LogicalVolume(  DF_substrate_solid, 
+                                                                DF_substrate_mat, 
+                                                                "DICHROIC_FILTER_SUBSTRATE");
+
+    G4VPhysicalVolume* DF_substrate_physical = dynamic_cast<G4VPhysicalVolume*>(
+        new G4PVPlacement(  nullptr, G4ThreeVector(0.,  plate_thickn_/2.
+                                                        +wlsp_DF_gap_
+                                                        +MLS_thickn_
+                                                        +DF_substrate_thickn_/2., 0.),
+                            "DICHROIC_FILTER_SUBSTRATE", DF_substrate_logic, mother_physical, false, 0, true));
+    // DF MLS
+    G4Box* MLS_solid = new G4Box( "MLS", 
+                                  plate_length_/2., 
+                                  MLS_thickn_/2., 
+                                  plate_width_/2.);
+
+    G4LogicalVolume* MLS_logic = new G4LogicalVolume( MLS_solid, 
+                                                      DF_substrate_mat,   // Yes, in the detached DF model, the
+                                                      "MLS");             // MLS MPT is that of the DF substrate
+    G4VisAttributes MLS_col = nexus::BloodRedAlpha();
+    //MLS_col.SetForceSolid(true);
+    MLS_logic->SetVisAttributes(MLS_col);
+
+    G4VPhysicalVolume* MLS_physical = dynamic_cast<G4VPhysicalVolume*>(
+        new G4PVPlacement(nullptr, G4ThreeVector(0.,  plate_thickn_/2.
+                                                      +wlsp_DF_gap_
+                                                      +MLS_thickn_/2., 0.), 
+                          "MLS", MLS_logic, mother_physical, false, 0, true));
+
+    // Check that there's dichroic information for ingoing (wrt APEX) photons
+    if(path_to_inwards_dichroic_data_==""){
+        G4Exception("[APEX]", "ConstructDetachedDichroicFilter()",
+                    FatalException, "The path to the inwards dichroic data file was not set.");
+    }
+
+    // Check that there's dichroic information for outgoing photons
+    if(path_to_outwards_dichroic_data_==""){
+        G4Exception("[APEX]", "ConstructDetachedDichroicFilter()",
+                    FatalException, "The path to the outwards dichroic data file was not set.");
+    }
+
+    // Construct the ingoing optical surface
+    setenv("G4DICHROICDATA", path_to_inwards_dichroic_data_, 1);
+    G4OpticalSurface* df_inwards_opsurf =                 // G4OpticalSurface constructor loads the
+        new G4OpticalSurface( "DICHROIC_INWARDS_OPSURF",  // dichroic information from the file which
+                              dichroic,                   // is currently pointed to by the environment
+                              polished,                   // variable G4DICHROICDATA
+                              dielectric_dichroic);
+
+    // Construct the outgoung optical surface
+    setenv("G4DICHROICDATA", path_to_outwards_dichroic_data_, 1);   // Note that, if you did not compile the modified version of G4 code, 
+                                                                    // then different G4 dichroic data cannot be loaded. Instead, the first 
+                                                                    // one (i.e. the one I am setting from path_to_inwards_dichroic_data_), 
+                                                                    // is the one that will apply for every dichroic boundary in the simulation.
+    G4OpticalSurface* df_outwards_opsurf =   
+        new G4OpticalSurface( "DICHROIC_OUTWARDS_OPSURF", 
+                              dichroic, 
+                              polished, 
+                              dielectric_dichroic);
+
+    // Endow the DF_substrate_physical->MLS_physical surface with the ingoing optical surface
+    new G4LogicalBorderSurface( "DF SUBSTRATE->DF MLS", 
+                                DF_substrate_physical, 
+                                MLS_physical, 
+                                df_inwards_opsurf);
+
+    // Endow the MLS_physical->DF_substrate_physical surface with the outgoing optical surface
+    new G4LogicalBorderSurface( "DF MLS->DF SUBSTRATE", 
+                                MLS_physical, 
+                                DF_substrate_physical, 
+                                df_outwards_opsurf);      
+    // pTP coating
+    if(!remove_coating_)
+    {
+        G4Box* coating_solid = new G4Box( "COATING", 
+                                          plate_length_/2., coating_thickn_/2., plate_width_/2.);
+
+        G4Material* coating_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TERPHENYL");
+        coating_mat->SetMaterialPropertiesTable(opticalprops::PTP(coating_rindex_));
+        G4LogicalVolume* coating_logic = 
+                            new G4LogicalVolume(coating_solid, coating_mat, "COATING");   
+
+        G4VisAttributes coating_col = nexus::TitaniumGreyAlpha();
+        coating_col.SetForceSolid(true);
+        coating_logic->SetVisAttributes(coating_col);
+
+        // Place the coating
+        G4VPhysicalVolume* coating_physical = dynamic_cast<G4VPhysicalVolume*>(
+            new G4PVPlacement(  nullptr, G4ThreeVector(0.,  plate_thickn_/2.
+                                                            +wlsp_DF_gap_
+                                                            +MLS_thickn_
+                                                            +DF_substrate_thickn_
+                                                            +coating_thickn_/2., 0.), 
+                                "COATING", coating_logic, mother_physical, false, 0, true));
+
+        // Make the LAR-coating interface rough, so that photons cannot be trapped within the coating
+        G4OpticalSurface* coating_rough_surf =
+                new G4OpticalSurface("COATING_ROUGH_SURFACE", glisur, ground, dielectric_dielectric, .01);
+                // 0.01 is the polish value for glisur model that was measured for TPB in doi.org/10.1140/epjc/s10052-018-5807-z
+                // This is the best reference we have, since both PTP and TPB are the result of an evaporation+deposition process
+        new G4LogicalBorderSurface( "SURROUNDINGS->COATING", 
+                                    mother_physical, 
+                                    coating_physical, 
+                                    coating_rough_surf);
+        new G4LogicalBorderSurface( "COATING->SURROUNDINGS", 
+                                    coating_physical, 
+                                    mother_physical, 
+                                    coating_rough_surf);
+        // We will also add roughness for the coating->DF substrate, but only with such ordering. The alternative case takes place
+        // when the photon travels from the DF substrate to the coating. The DF substrate is supposed to be polished, so the photon may not see a rough 
+        // surface.
+        new G4LogicalBorderSurface( "COATING->DF SUBSTRATE", 
+                                    coating_physical, 
+                                    DF_substrate_physical, 
+                                    coating_rough_surf);
+    }
+    return;
+  }
+
+  void APEX::ConstructBoard(G4VPhysicalVolume* mother_physical) const ///< Deprecated
   {
     SiPMBoard board;
     board.SetBaseID(0);
@@ -978,6 +1190,11 @@ namespace nexus{
                                     // understand its meaning)
     G4double x_pos, z_pos;
     G4double y_pos = plate_thickn_/2. +MLS_thickn_ +coating_thickn_ +tolerance;
+
+    if(detach_DF_)
+    {
+      y_pos += wlsp_DF_gap_ + DF_substrate_thickn_;
+    }
 
     if(generation_region_=="custom"){
       G4double random_radius =  UniformRandomInRange(gen_diameter_/2., 0.);

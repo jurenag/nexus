@@ -4,6 +4,7 @@
 #include "GeometryBase.h"
 
 class G4VPhysicalVolume;
+class G4MaterialPropertiesTable;
 class G4GenericMessenger;
 class G4UserLimits;
 
@@ -32,7 +33,10 @@ namespace nexus {
     void ConstructSiPMSAndBoard(G4VPhysicalVolume*) const;          ///< Alternative to ConstructBoard, which fixes the colliding-volumes problem.
     void ConstructReflectiveFoil(G4VPhysicalVolume*) const;         ///< Called by Construct(). Adds the reflective foil that encloses every APEX face but one.
                                                                     ///<                        This reflective foil has holes which match the SiPM positions.
-    void ConstructDichroicFilter(G4VPhysicalVolume*) const;         ///< Called by Construct(). Adds the dichroic filter (DF).
+    void ConstructAttachedDichroicFilter(G4VPhysicalVolume*) const; ///< Called by Construct() if !remove_MLS_ and !detach_DF_. Constructs a dichroic filter (DF)
+                                                                    ///< which is attached to (in contact with) the WLS plate.
+    void ConstructDetachedDichroicFilter(G4VPhysicalVolume*) const; ///< Called by Construct() if !remove_MLS_ and detach_DF_. Constructs a DF which is detached
+                                                                    ///< from WLS plate.
 
     void ConstructBoard(G4VPhysicalVolume*) const;        ///< Deprecated. Constructs a SiPM board (a SiPMBoard object)
                                                           // The reason why this one is deprecated is the following one. 
@@ -59,8 +63,14 @@ namespace nexus {
                                                                     ///< 'gar'  - The APEX is placed in Gaseous ARgon
                                                                     ///< 'air'  - The APEX is placed in air - ¡Note that the implemented air has no bulk-absorption length yet!
                                                                     ///< Default behaviour is that of surrounding_media_=='lar'.
+    G4bool detach_DF_;                                              ///< Whether to detach the DF from the WLS plate. If so, as a consequence, a substrate that acts as a mechanical 
+                                                                    ///< support for the MLS is added. Note that, if detach_DF_ is true, the DF is floating on top of the WLS plate,
+                                                                    ///< which is an unphysical situation.
+    G4double wlsp_DF_gap_;                                          ///< This parameter only makes a difference if detach_DF_ is set to true. Thickness of the gap which is left between the DF and the WLS plate.
+    G4double DF_substrate_thickn_;                                  ///< This parameter only makes a difference if detach_DF_ is set to true. Thickness of the DF substrate.
+    G4MaterialPropertiesTable* DF_substrate_mpt_;                   ///< This parameter only makes a difference if detach_DF_ is set to true. Material Properties Table of the DF substrate.
     G4double MLS_thickn_;                                           ///< Thickness of the DF multilayer structure (MLS) which is deposited on top of the WLS plate
-    G4double MLS_rindex_;                                           ///< Effective refractive index of the multi-layer structure
+    G4double MLS_rindex_;                                           ///< Effective refractive index of the multi-layer structure. Currently unused.
     G4double coating_thickn_;                                       ///< Thickness of the coating layer that is deposited over the MLS
     G4double coating_rindex_;                                       ///< Refractive index of the coating layer that is deposited over the MLS
     G4bool remove_coating_;                                         ///< Whether to remove the coating layer that is deposited over the MLS
