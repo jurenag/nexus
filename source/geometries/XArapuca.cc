@@ -81,6 +81,7 @@ namespace nexus{
   secondary_wls_attlength_              (1.     *m                    ),
   cromophore_concentration_             (40.                          ),
   cryogenic_temperature_                (false                        ),
+  remove_reflective_case_               (false                        ),
   case_thickn_                          (1.     *mm                   ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   SiPM_code_                            (1                            ),
   num_phsensors_                        (24                           ),
@@ -291,6 +292,10 @@ namespace nexus{
     G4GenericMessenger::Command& crte_cmd =
       msg_->DeclareProperty("cryogenic_temperature", cryogenic_temperature_,
 			    "Whether the secondary WLShifter is at cryogenic temperature or not. It only makes a difference if G2P_FB118 is used.");
+
+    G4GenericMessenger::Command& rrc_cmd =
+      msg_->DeclareProperty("remove_reflective_case", remove_reflective_case_,
+          "Whether to remove the reflective case or not.");
 
     G4GenericMessenger::Command& ct_cmd =
       msg_->DeclareProperty("case_thickn", case_thickn_,
@@ -629,7 +634,7 @@ namespace nexus{
                           world_logic, 
                           false, 0, true));
 
-    ConstructReflectiveCase(mother_physical);
+    if(!remove_reflective_case_) ConstructReflectiveCase(mother_physical);
     //ConstructCollectors(mother_physical); 
     if(!remove_DFs_ || !remove_DFA_frame_) ConstructDichroicAssemblies(mother_physical);
     if(config_code_==1){

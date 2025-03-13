@@ -102,7 +102,8 @@ namespace nexus {
     G4double secondary_wls_attlength_;                              ///< Attenuation length of the secondary WLShifter, in case EJ286 is used. For config_code_==1 (resp. 2), this is the attenuation length for the WLS plate (WLS fibers).
     G4double cromophore_concentration_;                             ///< Cromophore concentration (in miligrams of cromophore per kilogram of PMMA) of the secondary WLShifter, in case G2P_FB118 is used. For config_code_==1 (resp. 2), this is the cromophore concentration for the WLS plate (WLS fibers).
     G4bool cryogenic_temperature_;                                  ///< Whether the secondary WLShifter is at cryogenic temperature or not. It only makes a difference if G2P_FB118 is used.
-    G4double case_thickn_;                                          ///< Reflective foils thickness
+    G4bool remove_reflective_case_;                                 ///< Whether to remove the reflective case or not. This is the geometry that is constructed by the ConstructReflectiveCase() method.
+    G4double case_thickn_;                                          ///< Thickness of the reflective case which encloses the X-ARAPUCA geometry. Note that this parameter affects the DFA dimensions, even if remove_reflective_case_ is true.
     G4int SiPM_code_;                                               ///< Integer signalling which SiPM to construct
                                                                     ///< 1                  -> Hamamatsu S13360-6050VE
                                                                     ///< 2                  -> Hamamatsu S13360-5075HD-HQR
