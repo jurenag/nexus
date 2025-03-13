@@ -96,6 +96,9 @@ G4double PTPPhotonGenerator::RandomEnergy(){
 
 void PTPPhotonGenerator::LoadNCheckPTPData(){
 
+    // I lost track of the source for the data that is listed below. Anyhow, at some point I
+    // should replace this one with the data from the G4MaterialPropertiesTable* PTP defined
+    // in source/materials/OpticalMaterialProperties.cc
     bin_edges_ =    {3.104*eV, 3.1261*eV, 3.1372*eV, 3.1545*eV, 3.1656*eV, 
                     3.1781*eV, 3.1869*eV, 3.1946*eV, 3.2016*eV, 3.2102*eV, 
                     3.2136*eV, 3.222*eV, 3.2307*eV, 3.2389*eV, 3.2454*eV, 
