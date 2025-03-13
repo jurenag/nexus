@@ -1955,10 +1955,20 @@ namespace nexus{
       z_pos = gen_z_ +(random_radius*cos(random_angle));
     }
     else{ // Default behaviour is that of generation_region_=="random"
-      x_pos = UniformRandomInRange( DFA_length_/2.,
-                                    -1.*DFA_length_/2.);
-      z_pos = UniformRandomInRange( DFA_width_/2.,
-                                    -1.*DFA_width_/2.);
+      if(!remove_DFs_ || !remove_DFA_frame_)
+      { // In this case, the generation vertex (GV) is sampled over the DFA (including the frame)
+          x_pos = UniformRandomInRange( DFA_length_/2.,
+            -1.*DFA_length_/2.);
+          z_pos = UniformRandomInRange( DFA_width_/2.,
+            -1.*DFA_width_/2.);
+      }
+      else
+      { // In this case, the generation vertex (GV) is sampled over the WLSplate
+          x_pos = UniformRandomInRange( plate_length_/2.,
+            -1.*plate_length_/2.);
+          z_pos = UniformRandomInRange( plate_width_/2.,
+            -1.*plate_width_/2.);
+      }
     }
     return G4ThreeVector(x_pos, y_pos, z_pos);
   }

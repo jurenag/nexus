@@ -117,8 +117,9 @@ namespace nexus {
     G4bool double_sided_;                                           ///< Whether there are dichroic filters on both sides of the secondary-WLS material
     G4bool collectors_are_reflective_;                              ///< Whether the collectors that replace the dichroic filters are reflective or not                                      
     G4String generation_region_;                                    ///< Where to place the generation vertex (GV).
-                                                                    ///< "random"   - The GV is randomly sampled over the DFA (including the frame)
-                                                                    ///< "dichroic" - The GV is randomly sampled over the DFs (not including the frame)
+                                                                    ///< "random"   - The GV is randomly sampled over
+                                                                    ///<                - the DFA (including the frame), if at least one of (remove_DFs_, remove_DFA_frame_) is False, or
+                                                                    ///<                - the WLS-plate, if both of (remove_DFs_, remove_DFA_frame_) are True
                                                                     ///< "dichroic" - The GV is randomly sampled over the DFs (not including the frame). To this end, at least one of
                                                                     ///<              (remove_DFs_, remove_DFA_frame_) must be False.
                                                                     ///< "custom"   - The GV is randomly sampled within a circle centered in (gen_x_, -, gen_z_)
