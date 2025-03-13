@@ -1767,12 +1767,17 @@ namespace nexus{
   G4bool XArapuca::geometry_is_ill_formed()
   {
 
+    // Some checks are independent of the configuration code. Perform those tests here:
+    if(generation_region_=="dichroic" && remove_DFs_ && remove_DFA_frame_){
+      G4Exception("[XArapuca]", "geometry_is_ill_formed()", FatalException,
+      "The generation region is set to 'dichroic', but both the dichroic filters and the DFA frame are removed.");
+    } 
+
     if(DF_substrate_thickn_>=DF_thickn_){
         G4Exception("[XArapuca]", "geometry_is_ill_formed()", FatalException,
         "The dichroic filters substrate thickness cannot be bigger or equal to the overall dichroic filter thickness.");
     }
 
-    // Some checks are independent of the configuration code. Perform those tests here:
     if(DF_thickn_>DFA_thickn_){
         G4Exception("[XArapuca]", "geometry_is_ill_formed()", FatalException,
         "The dichroic filters thickness cannot be bigger than the frame thickness.");
