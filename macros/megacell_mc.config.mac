@@ -46,13 +46,13 @@
 /Geometry/XArapuca/gen_x 26.0 cm
 /Geometry/XArapuca/gen_z 26.0 cm
 /Geometry/XArapuca/gen_diameter                         1.    cm
+# Check that you are setting a DF_substrate_mpt that is in agreement with the following value
 #/Geometry/XArapuca/path_to_inwards_dichroic_data        python_apps/dichroic_curve_generator/output/CP500.0CW20.0TAC0.02   # Broken paths, maybe useful
 #/Geometry/XArapuca/path_to_outwards_dichroic_data       python_apps/dichroic_curve_generator/output/CP500.0CW20.0TAC0.02   # for future reference
 /Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
 /Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
 #/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
 #/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
-#                                                       CHECK THAT YOU ARE SETTING THE MPT FOR THE SUBSTRATE MPT IN THE .CC FILE! THIS CANNOT BE SET VIA MACRO YET!
 
 #---- config_code_==1 parameters ----#
 /Geometry/XArapuca/plate_length                         619.    mm

@@ -47,6 +47,7 @@
 /Geometry/XArapuca/gen_x                                0.     cm
 /Geometry/XArapuca/gen_z                                0.     cm
 /Geometry/XArapuca/gen_diameter                         2.    cm
+# Check that you are setting a DF_substrate_mpt that is in agreement with the following value
 /Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/zaot/november_22_production/shifted_g4like_transmitance_files/CP460.0
 /Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/zaot/november_22_production/shifted_g4like_transmitance_files/CP460.0
 

@@ -41,13 +41,13 @@
 /Geometry/XArapuca/double_sided                         true
 /Geometry/XArapuca/collectors_are_reflective            true
 /Geometry/XArapuca/generation_region                    dichroic
+# Check that you are setting a DF_substrate_mpt that is in agreement with the following value
 #/Geometry/XArapuca/path_to_inwards_dichroic_data        /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
 #/Geometry/XArapuca/path_to_outwards_dichroic_data       /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
 /Geometry/XArapuca/path_to_inwards_dichroic_data        /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
 /Geometry/XArapuca/path_to_outwards_dichroic_data       /home/jurenag/cernbox/work_stuff/documentation_and_notes/materiales/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
 #/Geometry/XArapuca/path_to_inwards_dichroic_data        /home/jurenag/installations/nexus-source/data/full_reflection_test_dichroic_data
 #/Geometry/XArapuca/path_to_outwards_dichroic_data       /home/jurenag/installations/nexus-source/data/full_reflection_test_dichroic_data
-#                                                       CHECK THAT YOU ARE SETTING THE MPT FOR THE SUBSTRATE MPT IN THE .CC FILE! THIS CANNOT BE SET VIA MACRO YET!
 
 #---- config_code_==1 parameters ----#
 /Geometry/XArapuca/plate_length                         100.    mm

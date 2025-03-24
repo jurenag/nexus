@@ -39,6 +39,7 @@
 /Geometry/XArapuca/double_sided                         true
 /Geometry/XArapuca/collectors_are_reflective            true
 /Geometry/XArapuca/generation_vertex_over_df            false    
+# Check that you are setting a DF_substrate_mpt that is in agreement with the following value
 /Geometry/XArapuca/path_to_dichroic_data                data/filters_data/opto/ific_meas/g4_dichroic_data_lar
 
 #---- config_code_==1 parameters ----#
