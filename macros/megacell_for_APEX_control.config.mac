@@ -31,7 +31,7 @@
 /Geometry/XArapuca/DFA_frame_is_specular                true
 /Geometry/XArapuca/remove_DFs                           false
 /Geometry/XArapuca/remove_DFA_frame                     false
-/Geometry/XArapuca/secondary_wls_attlength              1.5     m
+/Geometry/XArapuca/secondary_wls_attlength              -1.5     m
 /Geometry/XArapuca/cromophore_concentration             16.
 /Geometry/XArapuca/cryogenic_temperature                true
 /Geometry/XArapuca/remove_reflective_case               false
