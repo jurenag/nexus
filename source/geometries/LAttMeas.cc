@@ -476,7 +476,12 @@ namespace nexus{
                 plate_dz_/2.);
 
     G4Material* plastic_scintillator = G4NistManager::Instance()->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
-    plastic_scintillator->SetMaterialPropertiesTable(opticalprops::G2P_FB118(wls_attlength_));
+    plastic_scintillator->SetMaterialPropertiesTable(opticalprops::G2P_FB118(
+      16.,
+      wls_attlength_,
+      true,
+      true
+    ));
 
     G4LogicalVolume* plate_logic =
       new G4LogicalVolume(plate_solid, plastic_scintillator, plate_name);
