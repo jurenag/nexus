@@ -102,6 +102,7 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* G2P_FB118(
     G4double cromophore_concentration,
+    G4double fake_fixed_attenuation_length = -1.*m,
     G4bool cryogenic_temperature = false,
     G4bool verbosity = true
   );
