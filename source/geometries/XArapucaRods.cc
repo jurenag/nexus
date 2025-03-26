@@ -70,7 +70,7 @@ namespace nexus{
   DFA_frame_is_specular_                (false                        ),
   remove_DFs_                           (false                        ),  
   remove_DFA_frame_                     (false                        ),
-  secondary_wls_attlength_              (1.     *m                    ),
+  secondary_wls_attlength_              (-1.     *m                   ),
   cromophore_concentration_             (16.                          ),
   case_thickn_                          (1.     *mm                   ),   ///Get foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
   SiPM_code_                            (1                            ),
@@ -215,10 +215,10 @@ namespace nexus{
 
     G4GenericMessenger::Command& swlsal_cmd =
       msg_->DeclareProperty("secondary_wls_attlength", secondary_wls_attlength_,
-			    "Attenuation length of the secondary WLShifter, in case EJ286 is used.");
+			    "Constant (wavelength indepedent) attenuation length of the secondary WLShifter.");
     swlsal_cmd.SetUnitCategory("Length");
-    swlsal_cmd.SetParameterName("secondary_wls_attlength", false);
-    swlsal_cmd.SetRange("secondary_wls_attlength>0.");
+    // Allow negative values for this parameter, so that it can be used as a flag
+    // to signal that G2P_FB118() should use its own attenuation length spectrum.
 
     G4GenericMessenger::Command& crco_cmd =
       msg_->DeclareProperty("cromophore_concentration", cromophore_concentration_,
@@ -568,7 +568,7 @@ namespace nexus{
     //pvt->SetMaterialPropertiesTable(opticalprops::EJ286(secondary_wls_attlength_));
     pvt->SetMaterialPropertiesTable(opticalprops::G2P_FB118(
       cromophore_concentration_,
-      -1.,
+      secondary_wls_attlength_,
       true,
       true
     ));
