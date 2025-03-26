@@ -1920,15 +1920,18 @@ namespace nexus{
 
   G4ThreeVector XArapuca::GenerateVertex(const G4String&) const{
 
-    G4double tolerance = 0.1*mm;    // Small distance over the dichroic filter assembly 
-                                    // (DFA) from which photons are launched. Also, the 
-                                    // width of the outter border projected over the DF 
-                                    // from which photons won't be launched (Just see the 
-                                    // implementation in x_pos and z_pos below to understand 
-                                    // its meaning)
-
+    G4double tolerance = 0.1*mm;    // If at least one of (remove_DFs_, remove_DFA_frame_)
+                                    // is false, then tolerance is an small distance (in the
+                                    // Y axis) over the dichroic filter assembly (DFA) from
+                                    // which photons are launched. If both of them are True,
+                                    // then this is an small distance (in the Y axis) over
+                                    // the plate from which the photons are launched. Also,
+                                    // in case the "dichroic" generation region was specifed,
+                                    // this distance is the width of the outter border
+                                    // projected over the DF from which photons won't be
+                                    // launched. (Just see the "dichroic" implementation in
+                                    // x_pos and z_pos below to understand its meaning)
     G4double x_pos, z_pos;
-    G4double y_pos = (internal_thickn_/2.) +DFA_thickn_ +tolerance;
 
     if(generation_region_=="dichroic"){
       std::random_device rd;  //Will be used to obtain a seed for the random number engine
@@ -1969,6 +1972,15 @@ namespace nexus{
             -1.*plate_width_/2.);
       }
     }
+
+    G4double y_pos;
+    if(remove_DFs_ && remove_DFA_frame_){
+      y_pos = (plate_thickn_/2.) +tolerance;
+    }
+    else{
+      y_pos = (internal_thickn_/2.) +DFA_thickn_ +tolerance;
+    }
+
     return G4ThreeVector(x_pos, y_pos, z_pos);
   }
 
