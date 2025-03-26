@@ -425,7 +425,7 @@ namespace nexus{
                                       plate_width_, 
                                       opticalprops::G2P_FB118(
                                         cromophore_concentration_,
-                                        WLSp_rindex_,
+                                        // WLSp_rindex_, No longer used here, this is related to an open issue (search for occurrences of 'Open issue')
                                         cryogenic_temperature_,
                                         true
                                       ),
@@ -887,6 +887,19 @@ namespace nexus{
     
     G4Box* MLS_half_solid = new G4Box("AUX", plate_length_/2., MLS_thickn_/4., plate_width_/2.);
     G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
+
+    // Open issue: Some time ago, the refractive index of the opticalprops::G2P_FB118() G4MaterialPropertiesTable pointer
+    // was set via a G4double parameter, i.e. its refractive index was constant and fixed to the given G4double input.
+    // The refractive index of the MLS material (which should be set to that of the wavelength shifting plate according
+    // to the second alternative of DF implementation explained above) was set to the WLSp_rindex_ attribute, which was,
+    // at the same time, set to the refractive index of the opticalprops::G2P_FB118() G4MaterialPropertiesTable. However,
+    // at some point (before 13/03/2025), the refractive index of the opticalprops::G2P_FB118() G4MaterialPropertiesTable
+    // was set to some hardcoded array which depends on the wavelength (which was done for the sake of realism), while the
+    // MLS rindex remained set to the constant value given to the WLSp_rindex_ array (which is no longer the refractive
+    // index of the WLS plate). Although both refractive indices are similar, they are not exactly the same. Thus, to
+    // stick to a more realistic implementation, we should try to retrieve this hardcoded wavelength-dependent refractive
+    // index from opticalprops::G2P_FB118(), and give it to opticalprops::TunableRIMat() here.
+
     mat->SetMaterialPropertiesTable(opticalprops::TunableRIMat(WLSp_rindex_));  // Change this to MLS_rindex_ if you
                                                                                 // want to go for the first alternative
                                                                                 // of DF implementation explained above
