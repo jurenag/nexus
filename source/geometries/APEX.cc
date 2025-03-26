@@ -425,6 +425,7 @@ namespace nexus{
                                       plate_width_, 
                                       opticalprops::G2P_FB118(
                                         cromophore_concentration_,
+                                        -1.,
                                         // WLSp_rindex_, No longer used here, this is related to an open issue (search for occurrences of 'Open issue')
                                         cryogenic_temperature_,
                                         true
