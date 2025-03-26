@@ -664,6 +664,7 @@ namespace nexus{
                                     plate_width_, 
                                     opticalprops::G2P_FB118(
                                       cromophore_concentration_,
+                                      -1.,
                                       cryogenic_temperature_,
                                       true
                                     ),
@@ -749,7 +750,7 @@ namespace nexus{
     G4Tubs* fiber_solid = new G4Tubs(fiber_name, 0., fiber_radius_, fiber_length_/2., 0., twopi);
     G4Material* pvt = G4NistManager::Instance()->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
     pvt->SetMaterialPropertiesTable(opticalprops::EJ286(secondary_wls_attlength_));
-    //pvt->SetMaterialPropertiesTable(opticalprops::G2P_FB118(cromophore_concentration_, 1.502, cryogenic_temperature_, true));
+    //pvt->SetMaterialPropertiesTable(opticalprops::G2P_FB118(cromophore_concentration_, -1., cryogenic_temperature_, true));
     G4LogicalVolume* fiber_logic = new G4LogicalVolume(fiber_solid, pvt, fiber_name);
     fiber_logic->SetUserLimits(ul_);
 
