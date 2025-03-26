@@ -568,7 +568,7 @@ namespace nexus{
     //pvt->SetMaterialPropertiesTable(opticalprops::EJ286(secondary_wls_attlength_));
     pvt->SetMaterialPropertiesTable(opticalprops::G2P_FB118(
       cromophore_concentration_,
-      -1,
+      -1.,
       true,
       true
     ));

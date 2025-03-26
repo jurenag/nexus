@@ -222,7 +222,7 @@ namespace nexus{
   generation_mode_("random"),
   wrap_with_collector_(false),
   mpt_(opticalprops::G2P_FB118( 16.,
-                                -1,
+                                -1.,
                                 true,
                                 true))
   {
