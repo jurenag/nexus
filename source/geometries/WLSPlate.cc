@@ -65,6 +65,8 @@ namespace nexus{
   generation_mode_("random"),
   wrap_with_collector_(true),
   mpt_(opticalprops::G2P_FB118( 16.,
+                                -1.,
+                                true,
                                 true))
   {
     msg_ = new G4GenericMessenger(this, "/Geometry/WLSPlate/",
@@ -220,6 +222,8 @@ namespace nexus{
   generation_mode_("random"),
   wrap_with_collector_(false),
   mpt_(opticalprops::G2P_FB118( 16.,
+                                -1,
+                                true,
                                 true))
   {
   }
