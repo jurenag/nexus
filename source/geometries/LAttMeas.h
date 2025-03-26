@@ -51,7 +51,10 @@ namespace nexus {
     G4double plate_z_pos_;                      ///< the geometric center of the black box
 
     G4double plate_dx_, plate_dy_, plate_dz_;   ///< Dimensions of the WLS plate
-    G4double wls_attlength_;                    ///< Attenuation length of the WLS plate
+    G4double wls_attlength_;                    ///< Attenuation length of the WLS plate. Note that, since the
+                                                ///< G2P_FB118() G4MaterialProperties table is used, if a negative
+                                                ///< value is given, then it is ignored and the real (measured)
+                                                ///< attenuation length spectrum is used.
     G4double gap_;                              ///< Gap between the WLS plate and the adapter/PMT
 
     G4bool with_holder_;                                    ///< Whether to construct the holder or not
