@@ -99,7 +99,9 @@ namespace nexus {
     G4bool DFA_frame_is_specular_;                                  ///< Whether the DFA frame is specular-spikely reflective or diffusively reflective. It only makes a difference if DFA_frame_is_vikuiti_coated_==True or if DFA_frame_reflectivity_!=0.0
     G4bool remove_DFs_;                                             ///< Whether to remove the dichroic filters or not
     G4bool remove_DFA_frame_;                                       ///< Whether to remove the dichroic filters assembly frame
-    G4double secondary_wls_attlength_;                              ///< Attenuation length of the secondary WLShifter, in case EJ286 is used. For config_code_==1 (resp. 2), this is the attenuation length for the WLS plate (WLS fibers).
+    G4double secondary_wls_attlength_;                              ///< Constant (wavelength indepedent) attenuation length of the secondary WLShifter. For the particular case when the G2P_FB118() G4MaterialPropertiesTable is used, the G2P_FB118() function should take care of
+                                                                    ///< of ignoring this input and setting the real (wavelength dependent) measured attenuation-length spectrum if a non positive (negative or null) is given to this parameter. For config_code_==1 (resp. 2), this
+                                                                    ///< is the attenuation length for the WLS plate (WLS fibers).
     G4double cromophore_concentration_;                             ///< Cromophore concentration (in miligrams of cromophore per kilogram of PMMA) of the secondary WLShifter, in case G2P_FB118 is used. For config_code_==1 (resp. 2), this is the cromophore concentration for the WLS plate (WLS fibers).
     G4bool cryogenic_temperature_;                                  ///< Whether the secondary WLShifter is at cryogenic temperature or not. It only makes a difference if G2P_FB118 is used.
     G4bool remove_reflective_case_;                                 ///< Whether to remove the reflective case or not. This is the geometry that is constructed by the ConstructReflectiveCase() method.
