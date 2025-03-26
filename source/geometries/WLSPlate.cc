@@ -64,8 +64,7 @@ namespace nexus{
   generation_y_pos_(0.0), // Generating the photons inside the WLSPlate
   generation_mode_("random"),
   wrap_with_collector_(true),
-  mpt_(opticalprops::G2P_FB118( 16., 
-                                1.502, 
+  mpt_(opticalprops::G2P_FB118( 16.,
                                 true))
   {
     msg_ = new G4GenericMessenger(this, "/Geometry/WLSPlate/",
@@ -220,8 +219,7 @@ namespace nexus{
   generation_y_pos_(1.*cm),
   generation_mode_("random"),
   wrap_with_collector_(false),
-  mpt_(opticalprops::G2P_FB118( 16., 
-                                1.502, 
+  mpt_(opticalprops::G2P_FB118( 16.,
                                 true))
   {
   }
