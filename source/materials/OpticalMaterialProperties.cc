@@ -2075,7 +2075,6 @@ namespace opticalprops {
 
   G4MaterialPropertiesTable* G2P_FB118(
     G4double cromophore_concentration,
-    G4double rindex,
     G4bool cryogenic_temperature,
     G4bool verbosity
   )
