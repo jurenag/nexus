@@ -66,7 +66,7 @@ namespace nexus{
   plate_thickn_                         (6.0    *mm                   ),   ///Y // The values for these dimensions were measured from an step
   plate_width_                          (495.    *mm                  ),   ///Z // file which we received from F. Cavanna
   WLSp_rindex_                          (1.502                        ),
-  secondary_wls_attlength_              (1.     *m                    ),
+  secondary_wls_attlength_              (-1.     *m                   ),
   cromophore_concentration_             (40.                          ),
   cryogenic_temperature_                (false                        ),
   reflective_foil_thickn_               (0.065  *mm                   ),   /// Got foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
@@ -177,10 +177,10 @@ namespace nexus{
 
     G4GenericMessenger::Command& swlsal_cmd =
       msg_->DeclareProperty("secondary_wls_attlength", secondary_wls_attlength_,
-			    "Attenuation length of the secondary WLShifter (the WLS plate), in case EJ286 is used.");
+			    "Constant (wavelength indepedent) attenuation length of the secondary WLShifter.");
     swlsal_cmd.SetUnitCategory("Length");
-    swlsal_cmd.SetParameterName("secondary_wls_attlength", false);
-    swlsal_cmd.SetRange("secondary_wls_attlength>0.");
+    // Allow negative values for this parameter, so that it can be used as a flag
+    // to signal that G2P_FB118() should use its own attenuation length spectrum.
 
     G4GenericMessenger::Command& crco_cmd =
       msg_->DeclareProperty("cromophore_concentration", cromophore_concentration_,
@@ -425,7 +425,7 @@ namespace nexus{
                                       plate_width_, 
                                       opticalprops::G2P_FB118(
                                         cromophore_concentration_,
-                                        -1.,
+                                        secondary_wls_attlength_,
                                         // WLSp_rindex_, No longer used here, this is related to an open issue (search for occurrences of 'Open issue')
                                         cryogenic_temperature_,
                                         true

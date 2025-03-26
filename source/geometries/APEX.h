@@ -77,7 +77,9 @@ namespace nexus {
     G4bool remove_MLS_;                                             ///< Whether to remove the DF (the MLS) together with the coating layer that is deposited on top of it
     G4double plate_length_, plate_thickn_, plate_width_;            ///< WLS plate dimensions
     G4double WLSp_rindex_;                                          ///< Refractive index of the wavelength shifting plate
-    G4double secondary_wls_attlength_;                              ///< Attenuation length of the secondary WLShifter (the WLS plate), in case EJ286 is used.
+    G4double secondary_wls_attlength_;                              ///< Constant (wavelength indepedent) attenuation length of the secondary WLShifter. For the particular case when the G2P_FB118() G4MaterialPropertiesTable is used, the G2P_FB118() function should take care of
+                                                                    ///< of ignoring this input and setting the real (wavelength dependent) measured attenuation-length spectrum if a non positive (negative or null) is given to this parameter. For config_code_==1 (resp. 2), this
+                                                                    ///< is the attenuation length for the WLS plate (WLS fibers).
     G4double cromophore_concentration_;                             ///< Cromophore concentration (in miligrams of cromophore per kilogram of PMMA) of the secondary WLShifter (the WLS plate), in case G2P_FB118 is used.
     G4bool cryogenic_temperature_;                                  ///< Whether the secondary WLShifter is at cryogenic temperature or not. It only makes a difference if G2P_FB118 is used.
     G4double reflective_foil_thickn_;                               ///< Reflective foil thickness
