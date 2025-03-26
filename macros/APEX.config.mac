@@ -17,7 +17,7 @@
 /Geometry/APEX/plate_thickn                         6.0     mm
 /Geometry/APEX/plate_width                          495.    mm
 /Geometry/APEX/WLSp_rindex                          1.502
-/Geometry/APEX/secondary_wls_attlength              1.5     m
+/Geometry/APEX/secondary_wls_attlength              -1.5     m
 /Geometry/APEX/cromophore_concentration             16.
 /Geometry/APEX/cryogenic_temperature                true
 /Geometry/APEX/reflective_foil_thickn               0.065   mm
