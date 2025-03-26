@@ -664,7 +664,6 @@ namespace nexus{
                                     plate_width_, 
                                     opticalprops::G2P_FB118(
                                       cromophore_concentration_,
-                                      1.502,
                                       cryogenic_temperature_,
                                       true
                                     ),
