@@ -765,7 +765,9 @@ namespace nexus{
     G4ThreeVector pos(0., 0., 0.);
     if(along_long_side_){
         G4RotationMatrix* rot = new G4RotationMatrix();
-        rot->rotateY(+90.*deg);
+        rot->rotateY(0.0*deg);  // For future debugging:  To comply with along_long_side_ it
+                                //                        may be needed to rotate the fibers
+                                //                        +90 degrees along the Y axis here
         
         for(G4int i=0; i<fiber_planes_no_; i++){
             // geometry_is_ill_formed() ensures the divisibility of fibers_no_ by fiber_planes_no_
