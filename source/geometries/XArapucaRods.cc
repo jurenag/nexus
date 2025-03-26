@@ -566,7 +566,12 @@ namespace nexus{
 
     G4Material* pvt = G4NistManager::Instance()->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
     //pvt->SetMaterialPropertiesTable(opticalprops::EJ286(secondary_wls_attlength_));
-    pvt->SetMaterialPropertiesTable(opticalprops::G2P_FB118(cromophore_concentration_));
+    pvt->SetMaterialPropertiesTable(opticalprops::G2P_FB118(
+      cromophore_concentration_,
+      -1,
+      true,
+      true
+    ));
 
     G4LogicalVolume* rod_logic = new G4LogicalVolume( geometry_solid, 
                                                       pvt, 
