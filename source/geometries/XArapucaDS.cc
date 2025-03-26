@@ -513,7 +513,7 @@ namespace nexus{
     WLSPlate* plate = new WLSPlate( plate_length_, 
                                     plate_thickn_, 
                                     plate_width_, 
-                                    opticalprops::G2P_FB118(SS_cromophore_concentration_, 1.502, true), 
+                                    opticalprops::G2P_FB118(SS_cromophore_concentration_, true), 
                                     false,
                                     only_sipms_along_long_sides_ ? false : true,
                                     only_sipms_along_long_sides_ ? false : true,
