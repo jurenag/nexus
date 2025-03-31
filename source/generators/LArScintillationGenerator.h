@@ -34,7 +34,10 @@ namespace nexus {
     G4GenericMessenger* msg_;
 
     const GeometryBase* geom_;      ///< Pointer to the detector geometry
-    G4double pn_x_, pn_y_, pn_z_;   ///< Coordinates for the normal vector to the lambertian emitter plane 
+    G4bool lambertian_;             ///< Whether to use a lambertian emitter or a collimated photon emitter.
+    G4double pn_x_, pn_y_, pn_z_;   ///< If lambertian_ is true, then these are the coordinates for the
+                                    ///< normal vector to the lambertian emitter plane. Else, these are the
+                                    ///< coordinates of the photon momentum direction.
     G4String region_;               ///< Region label that is given to the geometry to generate a vertex
 
     std::random_device rd_;     ///< Weak random generator (used to seed mt19937 random gen.)

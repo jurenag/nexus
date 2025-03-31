@@ -22,6 +22,7 @@ LArScintillationGenerator::LArScintillationGenerator():
 G4VPrimaryGenerator(),
 msg_(0),
 geom_(0), 
+lambertian_(true),
 pn_x_(0.), pn_y_(1.), pn_z_(0.),
 region_(""),
 rd_{},
@@ -36,15 +37,41 @@ sampler_(0)
       bin_edges_.begin(), bin_edges_.end(), emission_spectrum_.begin()
         );
 
-  msg_ = new G4GenericMessenger(this, "/Generator/LArScintillation/",
-    "Control commands of LAr scintillation generator.");
+  msg_ = new G4GenericMessenger(
+    this,
+    "/Generator/LArScintillation/",
+    "Control commands of LAr scintillation generator."
+  );
 
-  msg_->DeclareProperty("region", region_,
-    "Set the region of the geometry where the vertex will be generated.");
+  msg_->DeclareProperty(
+    "lambertian",
+    lambertian_,
+    "Whether to use a lambertian emitter or a collimated photon emitter."
+  );
 
-  msg_->DeclareProperty("pn_x", pn_x_, "X coordinate of PTP plane normal vector.");
-  msg_->DeclareProperty("pn_y", pn_y_, "Y coordinate of PTP plane normal vector.");
-  msg_->DeclareProperty("pn_z", pn_z_, "Z coordinate of PTP plane normal vector.");
+  msg_->DeclareProperty(
+    "pn_x",
+    pn_x_,
+    "X coordinate of the lambertian-emitter plane normal vector or the photon direction, depending on the value given to the 'lambertian_' attribute."
+  );
+  
+  msg_->DeclareProperty(
+    "pn_y",
+    pn_y_,
+    "Y coordinate of the lambertian-emitter plane normal vector or the photon direction, depending on the value given to the 'lambertian_' attribute."
+  );
+
+  msg_->DeclareProperty(
+    "pn_z",
+    pn_z_,
+    "Z coordinate of the lambertian-emitter plane normal vector or the photon direction, depending on the value given to the 'lambertian_' attribute."
+  );
+
+  msg_->DeclareProperty(
+    "region",
+    region_,
+    "Set the region of the geometry where the vertex will be generated."
+  );
 
   DetectorConstruction* detconst = (DetectorConstruction*) G4RunManager::GetRunManager()->GetUserDetectorConstruction();
   geom_ = detconst->GetGeometry();
@@ -61,8 +88,7 @@ void LArScintillationGenerator::GeneratePrimaryVertex(G4Event* event)
 {
 
   G4PrimaryParticle* a_photon = new G4PrimaryParticle(G4OpticalPhoton::Definition());
-
-  G4ThreeVector photon_momentum_dir = G4LambertianRand(G4ThreeVector(pn_x_, pn_y_, pn_z_));
+  G4ThreeVector photon_momentum_dir = (lambertian_ ? G4LambertianRand(G4ThreeVector(pn_x_, pn_y_, pn_z_)) : G4ThreeVector(pn_x_, pn_y_, pn_z_));
   a_photon->SetMomentumDirection(photon_momentum_dir);
   a_photon->SetPolarization(G4PlaneVectorRand(photon_momentum_dir));
   a_photon->SetKineticEnergy(RandomEnergy());
