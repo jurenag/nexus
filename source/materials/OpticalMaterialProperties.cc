@@ -2242,21 +2242,218 @@ namespace opticalprops {
     
     } else {
 
-      // WLS_abs_energy got 100 entries      
-      WLS_abs_energy = {optPhotMinE_, h_Planck*c_light/(429.0*nm), h_Planck*c_light/(427.0*nm), h_Planck*c_light/(426.0*nm), h_Planck*c_light/(425.0*nm), h_Planck*c_light/(424.0*nm), h_Planck*c_light/(423.0*nm), h_Planck*c_light/(422.0*nm), h_Planck*c_light/(421.0*nm), h_Planck*c_light/(420.0*nm), h_Planck*c_light/(419.0*nm), h_Planck*c_light/(418.0*nm), h_Planck*c_light/(417.0*nm), h_Planck*c_light/(416.0*nm), h_Planck*c_light/(415.0*nm), h_Planck*c_light/(414.0*nm), h_Planck*c_light/(413.0*nm), h_Planck*c_light/(412.0*nm), h_Planck*c_light/(411.0*nm), h_Planck*c_light/(410.0*nm), h_Planck*c_light/(409.0*nm), h_Planck*c_light/(408.0*nm), h_Planck*c_light/(407.0*nm), h_Planck*c_light/(406.0*nm), h_Planck*c_light/(405.0*nm), h_Planck*c_light/(404.0*nm), h_Planck*c_light/(403.0*nm), h_Planck*c_light/(402.0*nm), h_Planck*c_light/(401.0*nm), h_Planck*c_light/(400.0*nm), h_Planck*c_light/(399.0*nm), h_Planck*c_light/(398.0*nm), h_Planck*c_light/(397.0*nm), h_Planck*c_light/(396.0*nm), h_Planck*c_light/(395.0*nm), h_Planck*c_light/(394.0*nm), h_Planck*c_light/(393.0*nm), h_Planck*c_light/(392.0*nm), h_Planck*c_light/(391.0*nm), h_Planck*c_light/(390.0*nm), h_Planck*c_light/(389.0*nm), h_Planck*c_light/(388.0*nm), h_Planck*c_light/(387.0*nm), h_Planck*c_light/(386.0*nm), h_Planck*c_light/(385.0*nm), h_Planck*c_light/(384.0*nm), h_Planck*c_light/(383.0*nm), h_Planck*c_light/(382.0*nm), h_Planck*c_light/(381.0*nm), h_Planck*c_light/(380.0*nm), h_Planck*c_light/(379.0*nm), h_Planck*c_light/(378.0*nm), h_Planck*c_light/(377.0*nm), h_Planck*c_light/(376.0*nm), h_Planck*c_light/(375.0*nm), h_Planck*c_light/(374.0*nm), h_Planck*c_light/(373.0*nm), h_Planck*c_light/(372.0*nm), h_Planck*c_light/(371.0*nm), h_Planck*c_light/(370.0*nm), h_Planck*c_light/(369.0*nm), h_Planck*c_light/(368.0*nm), h_Planck*c_light/(367.0*nm), h_Planck*c_light/(366.0*nm), h_Planck*c_light/(365.0*nm), h_Planck*c_light/(364.0*nm), h_Planck*c_light/(363.0*nm), h_Planck*c_light/(362.0*nm), h_Planck*c_light/(361.0*nm), h_Planck*c_light/(360.0*nm), h_Planck*c_light/(359.0*nm), h_Planck*c_light/(358.0*nm), h_Planck*c_light/(357.0*nm), h_Planck*c_light/(356.0*nm), h_Planck*c_light/(355.0*nm), h_Planck*c_light/(354.0*nm), h_Planck*c_light/(353.0*nm), h_Planck*c_light/(352.0*nm), h_Planck*c_light/(351.0*nm), h_Planck*c_light/(350.0*nm), h_Planck*c_light/(349.0*nm), h_Planck*c_light/(348.0*nm), h_Planck*c_light/(347.0*nm), h_Planck*c_light/(346.0*nm), h_Planck*c_light/(345.0*nm), h_Planck*c_light/(344.0*nm), h_Planck*c_light/(343.0*nm), h_Planck*c_light/(342.0*nm), h_Planck*c_light/(341.0*nm), h_Planck*c_light/(340.0*nm), h_Planck*c_light/(339.0*nm), h_Planck*c_light/(338.0*nm), h_Planck*c_light/(337.0*nm), h_Planck*c_light/(336.0*nm), h_Planck*c_light/(335.0*nm), h_Planck*c_light/(334.0*nm), h_Planck*c_light/(333.0*nm), h_Planck*c_light/(332.0*nm), h_Planck*c_light/(330.0*nm), optPhotMaxE_};
+      /// ------------------------------------------------------------------------
+      //// START: Implementation 1 of cryogenic-curves for G2P_FB118 bars
+      //// In this implementation, the WLS-absorption curves in the >490 nm range
+      //// are discarded (the data is prohibitively noisy there), while the data
+      //// in the [428 nm, 490 nm] range is smoothened out, by re-defining every
+      //// point there using the average of 10 points atound it (+/- 5 points).
+
+      // // WLS_abs_energy has 162 entries
+      // WLS_abs_energy = {
+      //   optPhotMinE_, h_Planck*c_light/(491.0*nm),
+      //   h_Planck*c_light/(489.0*nm), h_Planck*c_light/(488.0*nm), h_Planck*c_light/(487.0*nm), h_Planck*c_light/(486.0*nm),
+      //   h_Planck*c_light/(485.0*nm), h_Planck*c_light/(484.0*nm), h_Planck*c_light/(483.0*nm), h_Planck*c_light/(482.0*nm),
+      //   h_Planck*c_light/(481.0*nm), h_Planck*c_light/(480.0*nm), h_Planck*c_light/(479.0*nm), h_Planck*c_light/(478.0*nm),
+      //   h_Planck*c_light/(477.0*nm), h_Planck*c_light/(476.0*nm), h_Planck*c_light/(475.0*nm), h_Planck*c_light/(474.0*nm),
+      //   h_Planck*c_light/(473.0*nm), h_Planck*c_light/(472.0*nm), h_Planck*c_light/(471.0*nm), h_Planck*c_light/(470.0*nm),
+      //   h_Planck*c_light/(469.0*nm), h_Planck*c_light/(468.0*nm), h_Planck*c_light/(467.0*nm), h_Planck*c_light/(466.0*nm), 
+      //   h_Planck*c_light/(465.0*nm), h_Planck*c_light/(464.0*nm), h_Planck*c_light/(463.0*nm), h_Planck*c_light/(462.0*nm), 
+      //   h_Planck*c_light/(461.0*nm), h_Planck*c_light/(460.0*nm), h_Planck*c_light/(459.0*nm), h_Planck*c_light/(458.0*nm), 
+      //   h_Planck*c_light/(457.0*nm), h_Planck*c_light/(456.0*nm), h_Planck*c_light/(455.0*nm), h_Planck*c_light/(454.0*nm), 
+      //   h_Planck*c_light/(453.0*nm), h_Planck*c_light/(452.0*nm), h_Planck*c_light/(451.0*nm), h_Planck*c_light/(450.0*nm), 
+      //   h_Planck*c_light/(449.0*nm), h_Planck*c_light/(448.0*nm), h_Planck*c_light/(447.0*nm), h_Planck*c_light/(446.0*nm), 
+      //   h_Planck*c_light/(445.0*nm), h_Planck*c_light/(444.0*nm), h_Planck*c_light/(443.0*nm), h_Planck*c_light/(442.0*nm), 
+      //   h_Planck*c_light/(441.0*nm), h_Planck*c_light/(440.0*nm), h_Planck*c_light/(439.0*nm), h_Planck*c_light/(438.0*nm), 
+      //   h_Planck*c_light/(437.0*nm), h_Planck*c_light/(436.0*nm), h_Planck*c_light/(435.0*nm), h_Planck*c_light/(434.0*nm), 
+      //   h_Planck*c_light/(433.0*nm), h_Planck*c_light/(432.0*nm), h_Planck*c_light/(431.0*nm), h_Planck*c_light/(430.0*nm), 
+      //   h_Planck*c_light/(429.0*nm), h_Planck*c_light/(428.0*nm), h_Planck*c_light/(427.0*nm), h_Planck*c_light/(426.0*nm), 
+      //   h_Planck*c_light/(425.0*nm), h_Planck*c_light/(424.0*nm), h_Planck*c_light/(423.0*nm), h_Planck*c_light/(422.0*nm), 
+      //   h_Planck*c_light/(421.0*nm), h_Planck*c_light/(420.0*nm), h_Planck*c_light/(419.0*nm), h_Planck*c_light/(418.0*nm), 
+      //   h_Planck*c_light/(417.0*nm), h_Planck*c_light/(416.0*nm), h_Planck*c_light/(415.0*nm), h_Planck*c_light/(414.0*nm), 
+      //   h_Planck*c_light/(413.0*nm), h_Planck*c_light/(412.0*nm), h_Planck*c_light/(411.0*nm), h_Planck*c_light/(410.0*nm), 
+      //   h_Planck*c_light/(409.0*nm), h_Planck*c_light/(408.0*nm), h_Planck*c_light/(407.0*nm), h_Planck*c_light/(406.0*nm), 
+      //   h_Planck*c_light/(405.0*nm), h_Planck*c_light/(404.0*nm), h_Planck*c_light/(403.0*nm), h_Planck*c_light/(402.0*nm), 
+      //   h_Planck*c_light/(401.0*nm), h_Planck*c_light/(400.0*nm), h_Planck*c_light/(399.0*nm), h_Planck*c_light/(398.0*nm), 
+      //   h_Planck*c_light/(397.0*nm), h_Planck*c_light/(396.0*nm), h_Planck*c_light/(395.0*nm), h_Planck*c_light/(394.0*nm), 
+      //   h_Planck*c_light/(393.0*nm), h_Planck*c_light/(392.0*nm), h_Planck*c_light/(391.0*nm), h_Planck*c_light/(390.0*nm), 
+      //   h_Planck*c_light/(389.0*nm), h_Planck*c_light/(388.0*nm), h_Planck*c_light/(387.0*nm), h_Planck*c_light/(386.0*nm), 
+      //   h_Planck*c_light/(385.0*nm), h_Planck*c_light/(384.0*nm), h_Planck*c_light/(383.0*nm), h_Planck*c_light/(382.0*nm), 
+      //   h_Planck*c_light/(381.0*nm), h_Planck*c_light/(380.0*nm), h_Planck*c_light/(379.0*nm), h_Planck*c_light/(378.0*nm), 
+      //   h_Planck*c_light/(377.0*nm), h_Planck*c_light/(376.0*nm), h_Planck*c_light/(375.0*nm), h_Planck*c_light/(374.0*nm), 
+      //   h_Planck*c_light/(373.0*nm), h_Planck*c_light/(372.0*nm), h_Planck*c_light/(371.0*nm), h_Planck*c_light/(370.0*nm), 
+      //   h_Planck*c_light/(369.0*nm), h_Planck*c_light/(368.0*nm), h_Planck*c_light/(367.0*nm), h_Planck*c_light/(366.0*nm), 
+      //   h_Planck*c_light/(365.0*nm), h_Planck*c_light/(364.0*nm), h_Planck*c_light/(363.0*nm), h_Planck*c_light/(362.0*nm), 
+      //   h_Planck*c_light/(361.0*nm), h_Planck*c_light/(360.0*nm), h_Planck*c_light/(359.0*nm), h_Planck*c_light/(358.0*nm), 
+      //   h_Planck*c_light/(357.0*nm), h_Planck*c_light/(356.0*nm), h_Planck*c_light/(355.0*nm), h_Planck*c_light/(354.0*nm), 
+      //   h_Planck*c_light/(353.0*nm), h_Planck*c_light/(352.0*nm), h_Planck*c_light/(351.0*nm), h_Planck*c_light/(350.0*nm), 
+      //   h_Planck*c_light/(349.0*nm), h_Planck*c_light/(348.0*nm), h_Planck*c_light/(347.0*nm), h_Planck*c_light/(346.0*nm), 
+      //   h_Planck*c_light/(345.0*nm), h_Planck*c_light/(344.0*nm), h_Planck*c_light/(343.0*nm), h_Planck*c_light/(342.0*nm), 
+      //   h_Planck*c_light/(341.0*nm), h_Planck*c_light/(340.0*nm), h_Planck*c_light/(339.0*nm), h_Planck*c_light/(338.0*nm), 
+      //   h_Planck*c_light/(337.0*nm), h_Planck*c_light/(336.0*nm), h_Planck*c_light/(335.0*nm), h_Planck*c_light/(334.0*nm), 
+      //   h_Planck*c_light/(333.0*nm), h_Planck*c_light/(332.0*nm),
+      //   h_Planck*c_light/(330.0*nm), optPhotMaxE_};
+
+      // concentration = 24.0;
+      // WLS_absLength[concentration] = {
+      //   noAbsLength_, noAbsLength_, 
+      //   7.0554*m, 6.4876*m, 6.299*m, 5.9561*m, 5.7001*m, 5.6756*m, 4.0226*m, 4.2702*m, 4.1852*m, 4.1972*m,
+      //   4.5137*m, 4.5968*m, 4.549*m, 4.3575*m, 4.3193*m, 4.3932*m, 4.2522*m, 4.2737*m, 3.8106*m, 3.6119*m,
+      //   3.5602*m, 3.1752*m, 3.0353*m, 3.0105*m, 3.0182*m, 2.9702*m, 2.7934*m, 2.6073*m, 2.3136*m, 2.2657*m,
+      //   2.1992*m, 2.1515*m, 2.2252*m, 2.1586*m, 2.0997*m, 1.9817*m, 1.8994*m, 1.8082*m, 1.7774*m, 1.7467*m,
+      //   1.7008*m, 1.6745*m, 1.6328*m, 1.4867*m, 1.4272*m, 1.3828*m, 1.3325*m, 1.3078*m, 1.2878*m, 1.2581*m,
+      //   1.2277*m, 1.1979*m, 1.1653*m, 1.1097*m, 1.08*m, 1.0695*m, 1.068*m, 1.0633*m, 1.0545*m, 1.045*m,
+      //   1.017*m, 0.9865*m, 1.0562*m, 0.9898*m, 0.937*m, 0.8589*m, 0.7399*m, 0.6456*m, 0.599*m, 0.5546*m,
+      //   0.4671*m, 0.3892*m, 0.2797*m, 0.1958*m, 0.1371*m, 0.0911*m, 0.0595*m, 0.039*m, 0.026*m, 0.0177*m,
+      //   0.0124*m, 0.0089*m, 0.0066*m, 0.005*m, 0.0039*m, 0.0032*m, 0.0027*m, 0.0024*m, 0.0022*m, 0.002*m,
+      //   0.002*m, 0.002*m, 0.002*m, 0.002*m, 0.002*m, 0.0021*m, 0.0021*m, 0.0021*m, 0.0022*m, 0.0021*m,
+      //   0.0021*m, 0.0021*m, 0.0021*m, 0.002*m, 0.002*m, 0.0019*m, 0.0018*m, 0.0017*m, 0.0016*m, 0.0015*m,
+      //   0.0015*m, 0.0014*m, 0.0014*m, 0.0014*m, 0.0014*m, 0.0014*m, 0.0014*m, 0.0015*m, 0.0015*m, 0.0015*m,
+      //   0.0015*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m,
+      //   0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0017*m, 0.0017*m, 0.0018*m, 0.0019*m,
+      //   0.0019*m, 0.002*m, 0.002*m, 0.0021*m, 0.0022*m, 0.0022*m, 0.0023*m, 0.0023*m, 0.0024*m, 0.0024*m,
+      //   0.0025*m, 0.0026*m, 0.0026*m, 0.0028*m, 0.0029*m, 0.003*m, 0.0032*m, 0.0034*m,
+      //   noAbsLength_, noAbsLength_
+      // };
+      // available_concentrations.push_back(concentration);
+      
+      // concentration = 40.0;
+      // WLS_absLength[concentration] = {
+      //   noAbsLength_, noAbsLength_,
+      //   4.2332*m, 3.8925*m, 3.7794*m, 3.5737*m, 3.42*m, 3.4054*m, 2.4136*m, 2.5621*m, 2.5111*m, 2.5183*m,
+      //   2.7083*m, 2.7581*m, 2.7294*m, 2.6145*m, 2.5916*m, 2.6359*m, 2.5513*m, 2.5643*m, 2.2864*m, 2.1671*m,
+      //   2.1361*m, 1.9051*m, 1.8212*m, 1.8063*m, 1.8109*m, 1.7821*m, 1.6761*m, 1.5644*m, 1.3882*m, 1.3594*m,
+      //   1.3196*m, 1.2909*m, 1.3351*m, 1.2952*m, 1.2598*m, 1.189*m, 1.1396*m, 1.0849*m, 1.0664*m, 1.048*m,
+      //   1.0205*m, 1.0047*m, 0.9797*m, 0.892*m, 0.8563*m, 0.8297*m, 0.7995*m, 0.7847*m, 0.7727*m, 0.7549*m,
+      //   0.7366*m, 0.7188*m, 0.6992*m, 0.6658*m, 0.648*m, 0.6417*m, 0.6408*m, 0.638*m, 0.6327*m, 0.627*m,
+      //   0.6102*m, 0.5919*m, 0.6337*m, 0.5939*m, 0.5622*m, 0.5154*m, 0.4439*m, 0.3874*m, 0.3594*m, 0.3328*m,
+      //   0.2803*m, 0.2336*m, 0.1678*m, 0.1175*m, 0.0823*m, 0.0547*m, 0.0357*m, 0.0234*m, 0.0156*m, 0.0106*m,
+      //   0.0074*m, 0.0053*m, 0.0039*m, 0.003*m, 0.0024*m, 0.0019*m, 0.0016*m, 0.0014*m, 0.0013*m, 0.0012*m,
+      //   0.0012*m, 0.0012*m, 0.0012*m, 0.0012*m, 0.0012*m, 0.0013*m, 0.0013*m, 0.0013*m, 0.0013*m, 0.0013*m,
+      //   0.0013*m, 0.0013*m, 0.0013*m, 0.0012*m, 0.0012*m, 0.0011*m, 0.0011*m, 0.001*m, 0.001*m, 0.0009*m,
+      //   0.0009*m, 0.0009*m, 0.0008*m, 0.0008*m, 0.0008*m, 0.0008*m, 0.0009*m, 0.0009*m, 0.0009*m, 0.0009*m,
+      //   0.0009*m, 0.0009*m, 0.0009*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m,
+      //   0.001*m, 0.0009*m, 0.0009*m, 0.0009*m, 0.001*m, 0.001*m, 0.001*m, 0.0011*m, 0.0011*m, 0.0011*m,
+      //   0.0012*m, 0.0012*m, 0.0012*m, 0.0013*m, 0.0013*m, 0.0013*m, 0.0014*m, 0.0014*m, 0.0014*m, 0.0015*m,
+      //   0.0015*m, 0.0015*m, 0.0016*m, 0.0017*m, 0.0017*m, 0.0018*m, 0.0019*m, 0.002*m,
+      //   noAbsLength_, noAbsLength_
+      // };
+      // available_concentrations.push_back(concentration);
+      
+      // concentration = 80.0;
+      // WLS_absLength[concentration] = {
+      //   noAbsLength_, noAbsLength_,
+      //   2.1166*m, 1.9463*m, 1.8897*m, 1.7868*m, 1.71*m, 1.7027*m, 1.2068*m, 1.2811*m, 1.2556*m, 1.2592*m,
+      //   1.3541*m, 1.3791*m, 1.3647*m, 1.3073*m, 1.2958*m, 1.318*m, 1.2757*m, 1.2821*m, 1.1432*m, 1.0836*m,
+      //   1.0681*m, 0.9526*m, 0.9106*m, 0.9032*m, 0.9055*m, 0.8911*m, 0.838*m, 0.7822*m, 0.6941*m, 0.6797*m,
+      //   0.6598*m, 0.6455*m, 0.6676*m, 0.6476*m, 0.6299*m, 0.5945*m, 0.5698*m, 0.5425*m, 0.5332*m, 0.524*m,
+      //   0.5103*m, 0.5024*m, 0.4898*m, 0.446*m, 0.4282*m, 0.4149*m, 0.3998*m, 0.3923*m, 0.3864*m, 0.3774*m,
+      //   0.3683*m, 0.3594*m, 0.3496*m, 0.3329*m, 0.324*m, 0.3209*m, 0.3204*m, 0.319*m, 0.3164*m, 0.3135*m,
+      //   0.3051*m, 0.296*m, 0.3169*m, 0.2969*m, 0.2811*m, 0.2577*m, 0.222*m, 0.1937*m, 0.1797*m, 0.1664*m,
+      //   0.1401*m, 0.1168*m, 0.0839*m, 0.0587*m, 0.0411*m, 0.0273*m, 0.0179*m, 0.0117*m, 0.0078*m, 0.0053*m,
+      //   0.0037*m, 0.0027*m, 0.002*m, 0.0015*m, 0.0012*m, 0.001*m, 0.0008*m, 0.0007*m, 0.0007*m, 0.0006*m,
+      //   0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0007*m, 0.0007*m, 0.0007*m,
+      //   0.0007*m, 0.0007*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0005*m, 0.0005*m, 0.0005*m,
+      //   0.0005*m, 0.0004*m, 0.0004*m, 0.0004*m, 0.0004*m, 0.0004*m, 0.0004*m, 0.0005*m, 0.0005*m, 0.0005*m,
+      //   0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m,
+      //   0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0006*m, 0.0006*m,
+      //   0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0007*m,
+      //   0.0008*m, 0.0008*m, 0.0008*m, 0.0008*m, 0.0009*m, 0.0009*m, 0.001*m, 0.001*m,
+      //   noAbsLength_, noAbsLength_
+      // };
+      // available_concentrations.push_back(concentration);
+
+      //// END: Implementation 1 of cryogenic-curves for G2P_FB118 bars
+      /// ------------------------------------------------------------------------
+      // START: Implementation 2 of cryogenic-curves for G2P_FB118 bars
+      // In this implementation, the WLS-absorption curves in the >428 nm range
+      // are discarded - although the data in the [428 nm, 490 nm] range is not
+      // prohibitively noisy, its measurement may be affected by systematic
+      // errors which make the data unreliable.
+
+      // WLS_abs_energy has 100 entries
+      WLS_abs_energy = {
+        optPhotMinE_, h_Planck*c_light/(429.0*nm),
+        h_Planck*c_light/(427.0*nm), h_Planck*c_light/(426.0*nm), h_Planck*c_light/(425.0*nm), h_Planck*c_light/(424.0*nm),
+        h_Planck*c_light/(423.0*nm), h_Planck*c_light/(422.0*nm), h_Planck*c_light/(421.0*nm), h_Planck*c_light/(420.0*nm), 
+        h_Planck*c_light/(419.0*nm), h_Planck*c_light/(418.0*nm), h_Planck*c_light/(417.0*nm), h_Planck*c_light/(416.0*nm), 
+        h_Planck*c_light/(415.0*nm), h_Planck*c_light/(414.0*nm), h_Planck*c_light/(413.0*nm), h_Planck*c_light/(412.0*nm), 
+        h_Planck*c_light/(411.0*nm), h_Planck*c_light/(410.0*nm), h_Planck*c_light/(409.0*nm), h_Planck*c_light/(408.0*nm), 
+        h_Planck*c_light/(407.0*nm), h_Planck*c_light/(406.0*nm), h_Planck*c_light/(405.0*nm), h_Planck*c_light/(404.0*nm), 
+        h_Planck*c_light/(403.0*nm), h_Planck*c_light/(402.0*nm), h_Planck*c_light/(401.0*nm), h_Planck*c_light/(400.0*nm), 
+        h_Planck*c_light/(399.0*nm), h_Planck*c_light/(398.0*nm), h_Planck*c_light/(397.0*nm), h_Planck*c_light/(396.0*nm), 
+        h_Planck*c_light/(395.0*nm), h_Planck*c_light/(394.0*nm), h_Planck*c_light/(393.0*nm), h_Planck*c_light/(392.0*nm), 
+        h_Planck*c_light/(391.0*nm), h_Planck*c_light/(390.0*nm), h_Planck*c_light/(389.0*nm), h_Planck*c_light/(388.0*nm), 
+        h_Planck*c_light/(387.0*nm), h_Planck*c_light/(386.0*nm), h_Planck*c_light/(385.0*nm), h_Planck*c_light/(384.0*nm), 
+        h_Planck*c_light/(383.0*nm), h_Planck*c_light/(382.0*nm), h_Planck*c_light/(381.0*nm), h_Planck*c_light/(380.0*nm), 
+        h_Planck*c_light/(379.0*nm), h_Planck*c_light/(378.0*nm), h_Planck*c_light/(377.0*nm), h_Planck*c_light/(376.0*nm), 
+        h_Planck*c_light/(375.0*nm), h_Planck*c_light/(374.0*nm), h_Planck*c_light/(373.0*nm), h_Planck*c_light/(372.0*nm), 
+        h_Planck*c_light/(371.0*nm), h_Planck*c_light/(370.0*nm), h_Planck*c_light/(369.0*nm), h_Planck*c_light/(368.0*nm), 
+        h_Planck*c_light/(367.0*nm), h_Planck*c_light/(366.0*nm), h_Planck*c_light/(365.0*nm), h_Planck*c_light/(364.0*nm), 
+        h_Planck*c_light/(363.0*nm), h_Planck*c_light/(362.0*nm), h_Planck*c_light/(361.0*nm), h_Planck*c_light/(360.0*nm), 
+        h_Planck*c_light/(359.0*nm), h_Planck*c_light/(358.0*nm), h_Planck*c_light/(357.0*nm), h_Planck*c_light/(356.0*nm), 
+        h_Planck*c_light/(355.0*nm), h_Planck*c_light/(354.0*nm), h_Planck*c_light/(353.0*nm), h_Planck*c_light/(352.0*nm), 
+        h_Planck*c_light/(351.0*nm), h_Planck*c_light/(350.0*nm), h_Planck*c_light/(349.0*nm), h_Planck*c_light/(348.0*nm), 
+        h_Planck*c_light/(347.0*nm), h_Planck*c_light/(346.0*nm), h_Planck*c_light/(345.0*nm), h_Planck*c_light/(344.0*nm), 
+        h_Planck*c_light/(343.0*nm), h_Planck*c_light/(342.0*nm), h_Planck*c_light/(341.0*nm), h_Planck*c_light/(340.0*nm), 
+        h_Planck*c_light/(339.0*nm), h_Planck*c_light/(338.0*nm), h_Planck*c_light/(337.0*nm), h_Planck*c_light/(336.0*nm), 
+        h_Planck*c_light/(335.0*nm), h_Planck*c_light/(334.0*nm), h_Planck*c_light/(333.0*nm), h_Planck*c_light/(332.0*nm),
+        h_Planck*c_light/(330.0*nm), optPhotMaxE_
+      };
 
       concentration = 24.0;
       WLS_absLength[concentration] = {
-        noAbsLength_, noAbsLength_, 105.6195*m, 98.9756*m, 93.7018*m, 85.8943*m, 73.9896*m, 64.5622*m, 59.9049*m, 55.4598*m, 46.7084*m, 38.9244*m, 27.9654*m, 19.5784*m, 13.7083*m, 9.1076*m, 5.951*m, 3.9015*m, 2.5981*m, 1.7734*m, 1.2388*m, 0.8895*m, 0.6559*m, 0.499*m, 0.3929*m, 0.3204*m, 0.2713*m, 0.2387*m, 0.2174*m, 0.2049*m, 0.1984*m, 0.1963*m, 0.1971*m, 0.2002*m, 0.204*m, 0.2084*m, 0.2118*m, 0.2136*m, 0.215*m, 0.2147*m, 0.2142*m, 0.212*m, 0.2086*m, 0.2033*m, 0.1966*m, 0.1887*m, 0.179*m, 0.1686*m, 0.159*m, 0.1511*m, 0.1458*m, 0.1422*m, 0.1401*m, 0.1395*m, 0.1387*m, 0.1393*m, 0.1421*m, 0.1455*m, 0.1487*m, 0.1513*m, 0.1532*m, 0.1551*m, 0.1566*m, 0.1579*m, 0.1594*m, 0.1613*m, 0.1609*m, 0.1592*m, 0.1597*m, 0.1586*m, 0.1572*m, 0.1566*m, 0.1558*m, 0.1568*m, 0.1586*m, 0.1621*m, 0.1675*m, 0.174*m, 0.1796*m, 0.1853*m, 0.1924*m, 0.199*m, 0.2041*m, 0.2102*m, 0.2165*m, 0.2218*m, 0.2275*m, 0.2322*m, 0.2375*m, 0.2427*m, 0.2484*m, 0.2556*m, 0.2636*m, 0.2758*m, 0.2882*m, 0.3031*m, 0.3204*m, 0.3359*m, noAbsLength_, noAbsLength_};
+        noAbsLength_, noAbsLength_,
+        1.0562*m, 0.9898*m, 0.937*m, 0.8589*m, 0.7399*m, 0.6456*m, 0.599*m, 0.5546*m, 0.4671*m, 0.3892*m,
+        0.2797*m, 0.1958*m, 0.1371*m, 0.0911*m, 0.0595*m, 0.039*m, 0.026*m, 0.0177*m, 0.0124*m, 0.0089*m,
+        0.0066*m, 0.005*m, 0.0039*m, 0.0032*m, 0.0027*m, 0.0024*m, 0.0022*m, 0.002*m, 0.002*m, 0.002*m,
+        0.002*m, 0.002*m, 0.002*m, 0.0021*m, 0.0021*m, 0.0021*m, 0.0022*m, 0.0021*m, 0.0021*m, 0.0021*m,
+        0.0021*m, 0.002*m, 0.002*m, 0.0019*m, 0.0018*m, 0.0017*m, 0.0016*m, 0.0015*m, 0.0015*m, 0.0014*m,
+        0.0014*m, 0.0014*m, 0.0014*m, 0.0014*m, 0.0014*m, 0.0015*m, 0.0015*m, 0.0015*m, 0.0015*m, 0.0016*m,
+        0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m,
+        0.0016*m, 0.0016*m, 0.0016*m, 0.0016*m, 0.0017*m, 0.0017*m, 0.0018*m, 0.0019*m, 0.0019*m, 0.002*m, 
+        0.002*m, 0.0021*m, 0.0022*m, 0.0022*m, 0.0023*m, 0.0023*m, 0.0024*m, 0.0024*m, 0.0025*m, 0.0026*m, 
+        0.0026*m, 0.0028*m, 0.0029*m, 0.003*m, 0.0032*m, 0.0034*m,
+        noAbsLength_, noAbsLength_
+      };
       available_concentrations.push_back(concentration);
 
       concentration = 40.0;
-      WLS_absLength[concentration] = {noAbsLength_, noAbsLength_, 63.3725*m, 59.3861*m, 56.2219*m, 51.5374*m, 44.3946*m, 38.7381*m, 35.9438*m, 33.2767*m, 28.0258*m, 23.3554*m, 16.78*m, 11.7478*m, 8.2258*m, 5.4653*m, 3.5714*m, 2.3417*m, 1.5596*m, 1.0648*m, 0.7441*m, 0.5345*m, 0.3944*m, 0.3002*m, 0.2366*m, 0.193*m, 0.1636*m, 0.144*m, 0.1312*m, 0.1237*m, 0.1198*m, 0.1186*m, 0.119*m, 0.1209*m, 0.1232*m, 0.1258*m, 0.1279*m, 0.1289*m, 0.1298*m, 0.1296*m, 0.1293*m, 0.128*m, 0.126*m, 0.1228*m, 0.1187*m, 0.114*m, 0.1082*m, 0.102*m, 0.0962*m, 0.0914*m, 0.0883*m, 0.0861*m, 0.0849*m, 0.0845*m, 0.084*m, 0.0844*m, 0.0861*m, 0.0881*m, 0.09*m, 0.0916*m, 0.0927*m, 0.0939*m, 0.0948*m, 0.0955*m, 0.0964*m, 0.0976*m, 0.0973*m, 0.0963*m, 0.0966*m, 0.0959*m, 0.0951*m, 0.0947*m, 0.0943*m, 0.0949*m, 0.0959*m, 0.0981*m, 0.1013*m, 0.1052*m, 0.1085*m, 0.112*m, 0.1163*m, 0.1202*m, 0.1233*m, 0.1269*m, 0.1307*m, 0.1339*m, 0.1373*m, 0.1401*m, 0.1433*m, 0.1464*m, 0.1498*m, 0.1542*m, 0.1589*m, 0.1663*m, 0.1737*m, 0.1827*m, 0.193*m, 0.2023*m, noAbsLength_, noAbsLength_};
+      WLS_absLength[concentration] = {
+        noAbsLength_, noAbsLength_,
+        0.6337*m, 0.5939*m, 0.5622*m, 0.5154*m, 0.4439*m, 0.3874*m, 0.3594*m, 0.3328*m, 0.2803*m, 0.2336*m,
+        0.1678*m, 0.1175*m, 0.0823*m, 0.0547*m, 0.0357*m, 0.0234*m, 0.0156*m, 0.0106*m, 0.0074*m, 0.0053*m,
+        0.0039*m, 0.003*m, 0.0024*m, 0.0019*m, 0.0016*m, 0.0014*m, 0.0013*m, 0.0012*m, 0.0012*m, 0.0012*m,
+        0.0012*m, 0.0012*m, 0.0012*m, 0.0013*m, 0.0013*m, 0.0013*m, 0.0013*m, 0.0013*m, 0.0013*m, 0.0013*m,
+        0.0013*m, 0.0012*m, 0.0012*m, 0.0011*m, 0.0011*m, 0.001*m, 0.001*m, 0.0009*m, 0.0009*m, 0.0009*m,
+        0.0008*m, 0.0008*m, 0.0008*m, 0.0008*m, 0.0009*m, 0.0009*m, 0.0009*m, 0.0009*m, 0.0009*m, 0.0009*m,
+        0.0009*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m, 0.001*m, 0.0009*m,
+        0.0009*m, 0.0009*m, 0.001*m, 0.001*m, 0.001*m, 0.0011*m, 0.0011*m, 0.0011*m, 0.0012*m, 0.0012*m,
+        0.0012*m, 0.0013*m, 0.0013*m, 0.0013*m, 0.0014*m, 0.0014*m, 0.0014*m, 0.0015*m, 0.0015*m, 0.0015*m,
+        0.0016*m, 0.0017*m, 0.0017*m, 0.0018*m, 0.0019*m, 0.002*m,
+        noAbsLength_, noAbsLength_
+      };
       available_concentrations.push_back(concentration);
 
       concentration = 80.0;
-      WLS_absLength[concentration] = {noAbsLength_, noAbsLength_, 31.6873*m, 29.6941*m, 28.1119*m, 25.7697*m, 22.1983*m, 19.3701*m, 17.9729*m, 16.6393*m, 14.0139*m, 11.6787*m, 8.391*m, 5.8749*m, 4.1139*m, 2.7337*m, 1.7867*m, 1.1719*m, 0.7808*m, 0.5334*m, 0.373*m, 0.2682*m, 0.1982*m, 0.1511*m, 0.1193*m, 0.0975*m, 0.0828*m, 0.073*m, 0.0666*m, 0.0629*m, 0.0609*m, 0.0603*m, 0.0605*m, 0.0615*m, 0.0626*m, 0.0639*m, 0.0649*m, 0.0655*m, 0.0659*m, 0.0658*m, 0.0657*m, 0.065*m, 0.064*m, 0.0624*m, 0.0604*m, 0.058*m, 0.0551*m, 0.052*m, 0.0491*m, 0.0467*m, 0.0451*m, 0.044*m, 0.0434*m, 0.0432*m, 0.043*m, 0.0432*m, 0.044*m, 0.0451*m, 0.046*m, 0.0468*m, 0.0474*m, 0.0479*m, 0.0484*m, 0.0488*m, 0.0492*m, 0.0498*m, 0.0497*m, 0.0492*m, 0.0493*m, 0.049*m, 0.0486*m, 0.0484*m, 0.0481*m, 0.0484*m, 0.049*m, 0.05*m, 0.0516*m, 0.0536*m, 0.0553*m, 0.057*m, 0.0591*m, 0.0611*m, 0.0626*m, 0.0645*m, 0.0663*m, 0.0679*m, 0.0697*m, 0.0711*m, 0.0726*m, 0.0742*m, 0.0759*m, 0.0781*m, 0.0805*m, 0.0841*m, 0.0879*m, 0.0923*m, 0.0975*m, 0.1022*m, noAbsLength_, noAbsLength_};
+      WLS_absLength[concentration] = {
+        noAbsLength_, noAbsLength_,
+        0.3169*m, 0.2969*m, 0.2811*m, 0.2577*m, 0.222*m, 0.1937*m, 0.1797*m, 0.1664*m, 0.1401*m, 0.1168*m,
+        0.0839*m, 0.0587*m, 0.0411*m, 0.0273*m, 0.0179*m, 0.0117*m, 0.0078*m, 0.0053*m, 0.0037*m, 0.0027*m,
+        0.002*m, 0.0015*m, 0.0012*m, 0.001*m, 0.0008*m, 0.0007*m, 0.0007*m, 0.0006*m, 0.0006*m, 0.0006*m,
+        0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0007*m,
+        0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0004*m, 
+        0.0004*m, 0.0004*m, 0.0004*m, 0.0004*m, 0.0004*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 
+        0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 
+        0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0005*m, 0.0006*m, 0.0006*m, 0.0006*m, 0.0006*m, 
+        0.0006*m, 0.0006*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0007*m, 0.0008*m, 0.0008*m, 
+        0.0008*m, 0.0008*m, 0.0009*m, 0.0009*m, 0.001*m, 0.001*m,
+        noAbsLength_, noAbsLength_
+      };
       available_concentrations.push_back(concentration);
+
+      // END: Implementation 2 of cryogenic-curves for G2P_FB118 bars
+      /// ------------------------------------------------------------------------
     }
 
     G4double cromophore_concentration_ = FindClosestNumber(cromophore_concentration, &available_concentrations);
