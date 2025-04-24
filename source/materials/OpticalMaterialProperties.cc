@@ -921,10 +921,11 @@ namespace opticalprops {
     mpt->AddProperty("RINDEX", energies_rindex, rindex, 2);
 
     // Absorption length (ABSLENGTH)
-    G4double energies_abslength[]  = {optPhotMinE_, optPhotMaxE_};
-    G4double abslength[] = {noAbsLength_, noAbsLength_};
-
-    mpt->AddProperty("ABSLENGTH", energies_abslength, abslength, 2);
+    //// START: Implementation 1 of the pTP attenuation length
+    std::vector<G4double> abs_energy = {optPhotMinE_, optPhotMaxE_};
+    std::vector<G4double> absLength = {1. * mm, 1. * mm};
+    //// END: Implementation 1 of the pTP attenuation length
+    mpt->AddProperty("ABSLENGTH", abs_energy, absLength);
 
     // Rayleigh scattering length (RAYLEIGH)
     std::vector<G4double> rayleigh_scattering_energy = {optPhotMinE_, optPhotMaxE_};
