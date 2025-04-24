@@ -925,6 +925,37 @@ namespace opticalprops {
     std::vector<G4double> abs_energy = {optPhotMinE_, optPhotMaxE_};
     std::vector<G4double> absLength = {1. * mm, 1. * mm};
     //// END: Implementation 1 of the pTP attenuation length
+    /// ------------------------------------------------------------------------
+    //// START: Implementation 2 of the pTP attenuation length
+    //// In this implementation, the attenuation length was extrapolated from
+    //// the extinction coefficient of pTP dissolved in cyclohexane. The
+    //// extrapolation was done by using the mass density and the mollecular
+    //// weight of crystalline pTP. This extrapolation may be wrong for two
+    //// reasons: 1) in crystalline pTP, interactions between pTP molecules
+    //// may not be negligible, and 2) the density of a pTP evaporation+deposition
+    //// film may be different from the tabulated density for crystalline pTP.
+    // std::vector<G4double> abs_energy = { optPhotMinE_,
+    //   h_Planck * c_light / (443.77 * nm), h_Planck * c_light / (432.53 * nm), h_Planck * c_light / (420.92 * nm),
+    //   h_Planck * c_light / (410.65 * nm), h_Planck * c_light / (404.58 * nm), h_Planck * c_light / (399.3 * nm),
+    //   h_Planck * c_light / (392.96 * nm), h_Planck * c_light / (386.09 * nm), h_Planck * c_light / (378.96 * nm),
+    //   h_Planck * c_light / (373.94 * nm), h_Planck * c_light / (366.81 * nm), h_Planck * c_light / (359.68 * nm),
+    //   h_Planck * c_light / (352.02 * nm), h_Planck * c_light / (344.89 * nm), h_Planck * c_light / (337.24 * nm),
+    //   h_Planck * c_light / (330.4 * nm), h_Planck * c_light / (327.46 * nm), h_Planck * c_light / (325.65 * nm),
+    //   h_Planck * c_light / (323.5 * nm), h_Planck * c_light / (321.87 * nm), h_Planck * c_light / (320.86 * nm),
+    //   h_Planck * c_light / (320.4 * nm), h_Planck * c_light / (319.54 * nm), h_Planck * c_light / (319.29 * nm),
+    //   h_Planck * c_light / (318.22 * nm), h_Planck * c_light / (317.53 * nm)
+    // };
+
+    // std::vector<G4double> absLength = { noAbsLength_,
+    //   4.626 * um, 4.553 * um, 4.359 * um, 4.212 * um, 4.052 * um, 4.107 * um,
+    //   3.954 * um, 3.768 * um, 3.518 * um, 3.369 * um, 3.167 * um, 3.017 * um,
+    //   2.855 * um, 2.709 * um, 2.476 * um, 2.204 * um, 1.863 * um, 1.62 * um,
+    //   1.382 * um, 1.185 * um, 1.061 * um, 0.982 * um, 0.903 * um, 0.839 * um,
+    //   0.763 * um, 0.704 * um
+    // };
+    //// END: Implementation 2 of the pTP attenuation length
+    /// ------------------------------------------------------------------------
+
     mpt->AddProperty("ABSLENGTH", abs_energy, absLength);
 
     // Rayleigh scattering length (RAYLEIGH)
