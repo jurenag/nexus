@@ -132,28 +132,36 @@ namespace opticalprops {
     mpt->AddProperty("RINDEX", ri_energy, rIndex);
 
     // ABSORPTION LENGTH
+    // This data was digitized from Figure 5 of DOI:10.1016/S0030-4018(00)01152-4
+    // In such figure, the absorption length as of ~372 nm seems to reach the
+    // experimental precision. I.e. the attenuation length for >372 nm probably
+    // keeps growing above ~11 cm and up to the order of the few meters.
     std::vector<G4double> abs_energy = {
-      optPhotMinE_,  6.46499 * eV,
-      6.54000 * eV,  6.59490 * eV,  6.64000 * eV,  6.72714 * eV,
-      6.73828 * eV,  6.75000 * eV,  6.82104 * eV,  6.86000 * eV,
-      6.88000 * eV,  6.89000 * eV,  7.00000 * eV,  7.01000 * eV,
-      7.01797 * eV,  7.05000 * eV,  7.08000 * eV,  7.08482 * eV,
-      7.30000 * eV,  7.36000 * eV,  7.40000 * eV,  7.48000 * eV,
-      7.52000 * eV,  7.58000 * eV,  7.67440 * eV,  7.76000 * eV,
-      7.89000 * eV,  7.93000 * eV,  8.00000 * eV,
+      optPhotMinE_,
+      h_Planck * c_light / (600.0 * nm), h_Planck * c_light / (550.00 * nm), h_Planck * c_light / (500.00 * nm),
+      h_Planck * c_light / (460.00 * nm), h_Planck * c_light / (410.00 * nm), h_Planck * c_light / (372.41 * nm),
+      h_Planck * c_light / (341.38 * nm), h_Planck * c_light / (327.59 * nm), h_Planck * c_light / (320.69 * nm),
+      h_Planck * c_light / (317.24 * nm), h_Planck * c_light / (313.79 * nm), h_Planck * c_light / (310.34 * nm),
+      h_Planck * c_light / (306.9 * nm), h_Planck * c_light / (303.45 * nm), h_Planck * c_light / (300.0 * nm),
+      h_Planck * c_light / (296.55 * nm), h_Planck * c_light / (293.1 * nm), h_Planck * c_light / (289.66 * nm),
+      h_Planck * c_light / (286.21 * nm), h_Planck * c_light / (282.76 * nm), h_Planck * c_light / (279.31 * nm),
+      h_Planck * c_light / (272.41 * nm), h_Planck * c_light / (262.07 * nm), h_Planck * c_light / (248.28 * nm),
+      h_Planck * c_light / (237.93 * nm), h_Planck * c_light / (224.14 * nm), h_Planck * c_light / (213.79 * nm),
+      h_Planck * c_light / (210.34 * nm), h_Planck * c_light / (206.9 * nm), h_Planck * c_light / (203.45 * nm),
+      h_Planck * c_light / (200.0 * nm),
       optPhotMaxE_
     };
 
     std::vector<G4double> absLength = {
-      noAbsLength_, noAbsLength_,
-      200.0 * cm,   200.0 * cm,  90.0 * cm,  45.0 * cm,
-      45.0 * cm,    30.0 * cm,  24.0 * cm,  21.0 * cm,
-      20.0 * cm,    19.0 * cm,  16.0 * cm,  14.0 * cm,
-      13.0 * cm,     8.5 * cm,   8.0 * cm,   6.0 * cm,
-       1.5 * cm,     1.2 * cm,   1.0 * cm,   .65 * cm,
-        .4 * cm,     .37 * cm,   .32 * cm,   .28 * cm,
-        .22 * cm,    .215 * cm,  .00005*cm,
-      .00005* cm
+      noAbsLength_,
+      100.0 * cm, 100.0 * cm, 100.0 * cm, 100.0 * cm, 100.0 * cm,
+      11.45 * cm, 5.502 * cm, 2.917 * cm, 1.862 * cm, 1.309 * cm,
+      0.977 * cm, 0.724 * cm, 0.501 * cm, 0.403 * cm, 0.352 * cm,
+      0.271 * cm, 0.238 * cm, 0.166 * cm, 0.132 * cm, 0.117 * cm,
+      0.096 * cm, 0.098 * cm, 0.099 * cm, 0.098 * cm, 0.097 * cm,
+      0.096 * cm, 0.097 * cm, 0.099 * cm, 0.102 * cm, 0.113 * cm,
+      0.117 * cm,
+      0.0
     };
 
     mpt->AddProperty("ABSLENGTH", abs_energy, absLength);
