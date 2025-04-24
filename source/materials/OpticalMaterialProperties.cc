@@ -926,6 +926,12 @@ namespace opticalprops {
 
     mpt->AddProperty("ABSLENGTH", energies_abslength, abslength, 2);
 
+    // Rayleigh scattering length (RAYLEIGH)
+    std::vector<G4double> rayleigh_scattering_energy = {optPhotMinE_, optPhotMaxE_};
+    std::vector<G4double> rayleigh_scattering_length = {2.75 * um, 2.75 * um};
+
+    mpt->AddProperty("RAYLEIGH", rayleigh_scattering_energy, rayleigh_scattering_length);
+
     // WLS ABSORPTION LENGTH
     // Getting the LAr scintillation spectrum from researchgate.net/figure/Scintillation-light-spectrum-of-LAr-recorded-with-sulfur-beam-excitation-blue-in-color_fig7_258169905
     // , it is clear that there's almost no LAr scintillation for wavelengths bigger than 145nm. The following WLS absorption length is set so as to absorb every LAr scintillation
