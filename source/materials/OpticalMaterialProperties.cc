@@ -126,8 +126,8 @@ namespace opticalprops {
     rIndex.push_back(rIndex[rIndex.size()-1]);  // optPhotMaxE_ to the value obtained at optPhotFusedSilicaMaxE_
 
     // for (unsigned int i=0; i<ri_energy.size(); i++) {
-    // G4cout << "* FusedSilica rIndex:  " << std::setw(5) << ri_energy[i]/eV
-    //       << " eV -> " << rIndex[i] << G4endl;
+    // G4cout << "* FusedSilica rIndex:  " << std::setw(5) << ((h_Planck * c_light)/ri_energy[i])/nm
+    //       << " nm -> " << rIndex[i] << G4endl;
     // }
     mpt->AddProperty("RINDEX", ri_energy, rIndex);
 
