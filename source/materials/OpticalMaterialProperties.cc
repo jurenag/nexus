@@ -132,34 +132,33 @@ namespace opticalprops {
     mpt->AddProperty("RINDEX", ri_energy, rIndex);
 
     // ABSORPTION LENGTH
-    // This data was digitized from Figure 5 of DOI:10.1016/S0030-4018(00)01152-4
-    // In such figure, the absorption length as of ~372 nm seems to reach the
-    // experimental precision. I.e. the attenuation length for >372 nm probably
-    // keeps growing above ~11 cm and up to the order of the few meters.
+    // This data was taken from Table 1 of DOI:10.1016/S0030-4018(00)01152-4
+    // In such table, the measured data for the complex refractive index (both
+    // the real and the imaginary part) are shown. The absorption length is computed
+    // out of such data as vacuum_wavelength_cm/(4*pi*k), where k is the imaginary
+    // part of the refractive index.
     std::vector<G4double> abs_energy = {
       optPhotMinE_,
-      h_Planck * c_light / (600.0 * nm), h_Planck * c_light / (550.00 * nm), h_Planck * c_light / (500.00 * nm),
-      h_Planck * c_light / (460.00 * nm), h_Planck * c_light / (410.00 * nm), h_Planck * c_light / (372.41 * nm),
-      h_Planck * c_light / (341.38 * nm), h_Planck * c_light / (327.59 * nm), h_Planck * c_light / (320.69 * nm),
-      h_Planck * c_light / (317.24 * nm), h_Planck * c_light / (313.79 * nm), h_Planck * c_light / (310.34 * nm),
-      h_Planck * c_light / (306.9 * nm), h_Planck * c_light / (303.45 * nm), h_Planck * c_light / (300.0 * nm),
-      h_Planck * c_light / (296.55 * nm), h_Planck * c_light / (293.1 * nm), h_Planck * c_light / (289.66 * nm),
-      h_Planck * c_light / (286.21 * nm), h_Planck * c_light / (282.76 * nm), h_Planck * c_light / (279.31 * nm),
-      h_Planck * c_light / (272.41 * nm), h_Planck * c_light / (262.07 * nm), h_Planck * c_light / (248.28 * nm),
-      h_Planck * c_light / (237.93 * nm), h_Planck * c_light / (224.14 * nm), h_Planck * c_light / (213.79 * nm),
-      h_Planck * c_light / (210.34 * nm), h_Planck * c_light / (206.9 * nm), h_Planck * c_light / (203.45 * nm),
-      h_Planck * c_light / (200.0 * nm),
+      h_Planck * c_light / (880.0 * nm), h_Planck * c_light / (840.0 * nm), h_Planck * c_light / (800.0 * nm),
+      h_Planck * c_light / (780.0 * nm), h_Planck * c_light / (760.0 * nm), h_Planck * c_light / (740.0 * nm),
+      h_Planck * c_light / (720.0 * nm), h_Planck * c_light / (700.0 * nm), h_Planck * c_light / (680.0 * nm),
+      h_Planck * c_light / (660.0 * nm), h_Planck * c_light / (640.0 * nm), h_Planck * c_light / (620.0 * nm),
+      h_Planck * c_light / (600.0 * nm), h_Planck * c_light / (580.0 * nm), h_Planck * c_light / (560.0 * nm),
+      h_Planck * c_light / (540.0 * nm), h_Planck * c_light / (520.0 * nm), h_Planck * c_light / (500.0 * nm),
+      h_Planck * c_light / (480.0 * nm), h_Planck * c_light / (460.0 * nm), h_Planck * c_light / (440.0 * nm),
+      h_Planck * c_light / (420.0 * nm), h_Planck * c_light / (400.0 * nm), h_Planck * c_light / (380.0 * nm),
+      h_Planck * c_light / (360.0 * nm), h_Planck * c_light / (340.0 * nm), h_Planck * c_light / (320.0 * nm),
+      h_Planck * c_light / (300.0 * nm), h_Planck * c_light / (280.0 * nm), h_Planck * c_light / (260.0 * nm),
+      h_Planck * c_light / (240.0 * nm), h_Planck * c_light / (220.0 * nm), h_Planck * c_light / (200.0 * nm),
       optPhotMaxE_
     };
 
     std::vector<G4double> absLength = {
       noAbsLength_,
-      100.0 * cm, 100.0 * cm, 100.0 * cm, 100.0 * cm, 100.0 * cm,
-      11.45 * cm, 5.502 * cm, 2.917 * cm, 1.862 * cm, 1.309 * cm,
-      0.977 * cm, 0.724 * cm, 0.501 * cm, 0.403 * cm, 0.352 * cm,
-      0.271 * cm, 0.238 * cm, 0.166 * cm, 0.132 * cm, 0.117 * cm,
-      0.096 * cm, 0.098 * cm, 0.099 * cm, 0.098 * cm, 0.097 * cm,
-      0.096 * cm, 0.097 * cm, 0.099 * cm, 0.102 * cm, 0.113 * cm,
+      140.056 * cm, 83.556 * cm, 48.97 * cm, 47.746 * cm, 50.399 * cm, 49.072 * cm, 47.746 * cm, 50.64 * cm,
+      54.112 * cm, 47.746 * cm, 56.588 * cm, 61.672 * cm, 59.683 * cm, 57.693 * cm, 55.704 * cm, 53.714 * cm,
+      59.114 * cm, 49.735 * cm, 47.746 * cm, 52.293 * cm, 50.02 * cm, 47.746 * cm, 45.472 * cm, 27.49 * cm,
+      19.098 * cm, 6.937 * cm, 1.571 * cm, 0.356 * cm, 0.096 * cm, 0.099 * cm, 0.097 * cm, 0.096 * cm,
       0.117 * cm,
       0.0
     };
