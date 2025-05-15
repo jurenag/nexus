@@ -29,7 +29,8 @@ REGISTER_CLASS(WLSPlate, GeometryBase)
 
 namespace nexus{
 
-  WLSPlate::WLSPlate( G4bool with_LAr, 
+  WLSPlate::WLSPlate( G4int shape_code,
+                      G4bool with_LAr, 
                       G4bool dimples_at_x_plus, 
                       G4bool dimples_at_x_minus,
                       G4bool dimples_at_z_plus, 
@@ -47,6 +48,7 @@ namespace nexus{
   dx_(487.*mm),
   dy_(3.5*mm),
   dz_(93.*mm), //<Default WLS plate dimensions taken from FD1 TDR vol. IX
+  shape_code_(shape_code),
   with_LAr_env_(with_LAr),
   dimples_at_x_plus_(dimples_at_x_plus),
   dimples_at_x_minus_(dimples_at_x_minus),
@@ -72,6 +74,13 @@ namespace nexus{
     msg_ = new G4GenericMessenger(this, "/Geometry/WLSPlate/",
 				"Control commands of geometry WLSPlate.");
     
+    G4GenericMessenger::Command& sc_cmd =
+      msg_->DeclareProperty("shape_code", shape_code_,
+			    "The shape of the built WLS plate depends on this parameter (0 - rectangular, 1 - triangular).");
+    sc_cmd.SetParameterName("shape_code", false);
+    sc_cmd.SetRange("shape_code>=0");
+    sc_cmd.SetRange("shape_code<=1");
+
     G4GenericMessenger::Command& dx_cmd =
       msg_->DeclareProperty("depth", dx_,
 			    "Depth of the WLS plate.");
@@ -183,9 +192,10 @@ namespace nexus{
 			    "Whether to build a LAr sphere surrounding the WLSPlate..");
   }
 
-  WLSPlate::WLSPlate( G4double dx, 
-                      G4double dy, 
-                      G4double dz, 
+  WLSPlate::WLSPlate( G4double dx,
+                      G4double dy,
+                      G4double dz,
+                      G4int shape_code,
                       G4bool with_LAr, 
                       G4bool dimples_at_x_plus, 
                       G4bool dimples_at_x_minus, 
@@ -204,6 +214,7 @@ namespace nexus{
   dx_(dx),
   dy_(dy),
   dz_(dz),
+  shape_code_(shape_code),
   with_LAr_env_(with_LAr),
   dimples_at_x_plus_(dimples_at_x_plus),
   dimples_at_x_minus_(dimples_at_x_minus),
@@ -231,7 +242,8 @@ namespace nexus{
   WLSPlate::WLSPlate( G4double dx, 
                       G4double dy, 
                       G4double dz, 
-                      G4MaterialPropertiesTable* mpt, 
+                      G4MaterialPropertiesTable* mpt,
+                      G4int shape_code,
                       G4bool with_LAr, 
                       G4bool dimples_at_x_plus,
                       G4bool dimples_at_x_minus,
@@ -251,6 +263,7 @@ namespace nexus{
   dy_(dy),
   dz_(dz),
   mpt_(mpt),
+  shape_code_(shape_code),
   with_LAr_env_(with_LAr),
   dimples_at_x_plus_(dimples_at_x_plus),
   dimples_at_x_minus_(dimples_at_x_minus),

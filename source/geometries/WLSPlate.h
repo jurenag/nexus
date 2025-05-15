@@ -17,7 +17,8 @@ namespace nexus {
   {
   public:
     ///Default constructor
-    WLSPlate(   G4bool with_LAr = true, 
+    WLSPlate(   G4int shape_code = 0,
+                G4bool with_LAr = true, 
                 G4bool dimples_at_x_plus = false, 
                 G4bool dimples_at_x_minus = false,
                 G4bool dimples_at_z_plus = false, 
@@ -35,6 +36,7 @@ namespace nexus {
     WLSPlate(   G4double, 
                 G4double, 
                 G4double, 
+                G4int shape_code = 0,
                 G4bool with_LAr = false, 
                 G4bool dimples_at_x_plus = false, 
                 G4bool dimples_at_x_minus = false, 
@@ -53,7 +55,8 @@ namespace nexus {
     WLSPlate(   G4double, 
                 G4double, 
                 G4double, 
-                G4MaterialPropertiesTable*, 
+                G4MaterialPropertiesTable*,
+                G4int shape_code = 0,
                 G4bool with_LAr = false, 
                 G4bool dimples_at_x_plus = false, 
                 G4bool dimples_at_x_minus = false, 
@@ -80,6 +83,10 @@ namespace nexus {
     G4ThreeVector GenerateVertex(const G4String&) const;
 
   private:
+    G4int shape_code_;                                  ///< The shape of the built WLS plate depends on this parameter. It can take the
+                                                        ///< following values:
+                                                        ///< 0 -> Rectangular plate
+                                                        ///< 1 -> Triangular plate
     G4double dx_, dy_, dz_;                             ///< WLSPlate dimensions 
     G4bool dimples_at_x_plus_;                          ///< Whether to carve dimples at the WLSPlate side which is contained within x>0.0
     G4bool dimples_at_x_minus_;                         ///< Whether to carve dimples at the WLSPlate side which is contained within x<0.0
