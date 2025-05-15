@@ -669,6 +669,7 @@ namespace nexus{
                                       true
                                     ),
                                     //opticalprops::EJ286(secondary_wls_attlength_),
+                                    0,
                                     false,
                                     with_dimples_ && sipms_at_x_plus_,
                                     with_dimples_ && sipms_at_x_minus_,

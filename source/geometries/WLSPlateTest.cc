@@ -212,7 +212,7 @@ namespace nexus{
 
     const G4String plate_name = "WLS_PLATE";
 
-    WLSPlate* plate = new WLSPlate(wlsp_dx_, wlsp_dy_, wlsp_dz_, false);
+    WLSPlate* plate = new WLSPlate(wlsp_dx_, wlsp_dy_, wlsp_dz_, 0, false);
     plate->SetOpticalProperties(opticalprops::EJ286());
     plate->Construct();
     G4LogicalVolume* plate_logic = plate->GetLogicalVolume();

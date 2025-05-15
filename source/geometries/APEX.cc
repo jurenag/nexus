@@ -431,6 +431,7 @@ namespace nexus{
                                         true
                                       ),
                                       //opticalprops::EJ286(secondary_wls_attlength_),
+                                      0,
                                       false,
                                       false,                // dimples_at_x_plus_
                                       false,                // dimples_at_x_minus_

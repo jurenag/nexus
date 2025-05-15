@@ -519,6 +519,7 @@ namespace nexus{
                                       true,
                                       true
                                     ),
+                                    0,
                                     false,
                                     only_sipms_along_long_sides_ ? false : true,
                                     only_sipms_along_long_sides_ ? false : true,
