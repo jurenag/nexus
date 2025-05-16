@@ -87,17 +87,35 @@ namespace nexus {
                                                         ///< following values:
                                                         ///< 0 -> Rectangular plate
                                                         ///< 1 -> Triangular plate
-    G4double dx_, dy_, dz_;                             ///< WLSPlate dimensions 
-    G4bool dimples_at_x_plus_;                          ///< Whether to carve dimples at the WLSPlate side which is contained within x>0.0
-    G4bool dimples_at_x_minus_;                         ///< Whether to carve dimples at the WLSPlate side which is contained within x<0.0
-    G4bool dimples_at_z_plus_;                          ///< Whether to carve dimples at the WLSPlate side which is contained within z>0.0
-    G4bool dimples_at_z_minus_;                         ///< Whether to carve dimples at the WLSPlate side which is contained within z<0.0
-    G4String dimple_type_;                              ///< Dimple type. Might be 'flat', 'cylindrical' or 'spherical'.
-    G4int how_many_dimples_;                            ///< How many dimples to carve on EACH selected side of the plate
-    G4double flat_dimple_width_, flat_dimple_depth_;    ///< Used for flat dimples. The width of the dimple (along the board direction)
-                                                        ///< and its depth, perpendicular to the plate surface.
-    G4double curvy_dimple_radius_;                      ///< Used for cylindrical or spherical dimples. Radius of the dimple.
-    G4bool cut_plate_;                                  ///< Whether to split the WLS plate up into two pieces
+    G4double dx_, dy_, dz_;                             ///< WLSPlate dimensions. dy_ is the length of the WLS plate along the y-axis,
+                                                        ///< unconditionally. If shape_code_==0, then dx_ (resp. dz_) is the length
+                                                        ///< of the WLS plate along the x-axis (resp. z-axis). If shape_code_==1,
+                                                        ///< then dx_ is the span of the triangle along the x-axis (which matches
+                                                        ///< the height of the triangle), while dz_ is the span of the triangle along
+                                                        ///< the z-axis (which matches the base of the triangle).
+    G4bool dimples_at_x_plus_;                          ///< This parameter only makes a difference if shape_code_ is equal to 0. In this
+                                                        ///< case, it is whether to carve dimples at the WLSPlate side which is contained
+                                                        ///< within x>0.0.
+    G4bool dimples_at_x_minus_;                         ///< This parameter only makes a difference if shape_code_ is equal to 0. In this
+                                                        ///< case, it is whether to carve dimples at the WLSPlate side which is contained
+                                                        ///< within x<0.0.
+    G4bool dimples_at_z_plus_;                          ///< This parameter only makes a difference if shape_code_ is equal to 0. In this
+                                                        ///< case, it is whether to carve dimples at the WLSPlate side which is contained
+                                                        ///< within z>0.0.
+    G4bool dimples_at_z_minus_;                         ///< This parameter only makes a difference if shape_code_ is equal to 0. In this
+                                                        ///< case, it is whether to carve dimples at the WLSPlate side which is contained
+                                                        ///< within z<0.0.
+    G4String dimple_type_;                              ///< This parameter only makes a difference if dimples are simulated. It gives
+                                                        ///< the dimple type. Might be 'flat', 'cylindrical' or 'spherical'.
+    G4int how_many_dimples_;                            ///< This parameter only makes a difference if dimples are simulated. It gives how
+                                                        ///< many dimples to carve on EACH selected side of the plate
+    G4double flat_dimple_width_, flat_dimple_depth_;    ///< These parameters only make a difference if flat dimples are simulated. They 
+                                                        ///< give, respectively, the width of the dimple (along the board direction) and its
+                                                        ///< depth, perpendicular to the plate surface.
+    G4double curvy_dimple_radius_;                      ///< This parameter only makes a difference if cylindrical or spherical dimples are
+                                                        ///< simulated. It gives the radius of the dimple.
+    G4bool cut_plate_;                                  ///< This parameter only makes a difference if shape_code_ is equal to 0. Whether
+                                                        ///< to split the WLS plate up into two pieces.
                                                         ///< WARNING: Although the application works fine, the visualization may
                                                         ///<          break down when dimples are used and cut_plate_ is true.
     G4double cut_angle_;                                ///< This parameter only makes a difference if cut_plate_ is true. Angle of the cut,
