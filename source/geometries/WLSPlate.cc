@@ -85,40 +85,40 @@ namespace nexus{
 
     G4GenericMessenger::Command& dx_cmd =
       msg_->DeclareProperty("depth", dx_,
-			    "Depth of the WLS plate.");
+			    "Span of the WLS plate along the X-direction. For more information, check its definition in WLSPlate.h.");
     dx_cmd.SetUnitCategory("Length");
     dx_cmd.SetParameterName("depth", false);
     dx_cmd.SetRange("depth>0.");
 
     G4GenericMessenger::Command& dy_cmd =
       msg_->DeclareProperty("height", dy_,
-			    "Height of the WLS plate.");
+			    "Thickness of the WLS plate. For more information, check its definition in WLSPlate.h.");
     dy_cmd.SetUnitCategory("Length");
     dy_cmd.SetParameterName("height", false);
     dy_cmd.SetRange("height>0.");
 
     G4GenericMessenger::Command& dz_cmd =
       msg_->DeclareProperty("width", dz_,
-			    "Width of the WLS plate.");
+			    "Span of the WLS plate along the Z-direction. For more information, check its definition in WLSPlate.h.");
     dz_cmd.SetUnitCategory("Length");
     dz_cmd.SetParameterName("width", false);
     dz_cmd.SetRange("width>0.");
 
     G4GenericMessenger::Command& daxp_cmd =
       msg_->DeclareProperty("dimples_at_x_plus", dimples_at_x_plus_,
-			    "Whether to carve dimples at the WLSPlate side which is contained within x>0.0.");
+			    "Whether to carve dimples at the rectangular-WLSPlate side which is contained within x>0.0.");
 
     G4GenericMessenger::Command& daxm_cmd =
       msg_->DeclareProperty("dimples_at_x_minus", dimples_at_x_minus_,
-			    "Whether to carve dimples at the WLSPlate side which is contained within x<0.0.");
+			    "Whether to carve dimples at the rectangular-WLSPlate side which is contained within x<0.0.");
 
     G4GenericMessenger::Command& dazp_cmd =
       msg_->DeclareProperty("dimples_at_z_plus", dimples_at_z_plus_,
-			    "Whether to carve dimples at the WLSPlate side which is contained within z>0.0.");
+			    "Whether to carve dimples at the rectangular-WLSPlate side which is contained within z>0.0.");
 
     G4GenericMessenger::Command& dazm_cmd =
       msg_->DeclareProperty("dimples_at_z_minus", dimples_at_z_minus_,
-			    "Whether to carve dimples at the WLSPlate side which is contained within z<0.0.");
+			    "Whether to carve dimples at the rectangular-WLSPlate side which is contained within z<0.0.");
 
     G4GenericMessenger::Command& dt_cmd =
       msg_->DeclareProperty("dimple_type", dimple_type_,
@@ -153,7 +153,7 @@ namespace nexus{
 
     G4GenericMessenger::Command& cp_cmd =
       msg_->DeclareProperty("cut_plate", cut_plate_,
-			    "Whether to split the WLS plate up into two pieces.");
+			    "Whether to split the rectangular-WLSPlate up into two pieces. For more information, check its definition in WLSPlate.h.");
 
     G4GenericMessenger::Command& ca_cmd =
       msg_->DeclareProperty("cut_angle", cut_angle_,
