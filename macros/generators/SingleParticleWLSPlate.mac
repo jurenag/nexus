@@ -21,3 +21,9 @@
 #/Generator/SingleParticle/max_phi   4.7123
 
 /Generator/SingleParticle/region whatever
+
+# To throw photons perpendicular to the WLS plate, from above it:
+# /Generator/SingleParticle/min_costheta 0
+# /Generator/SingleParticle/max_costheta 0
+# /Generator/SingleParticle/min_phi   4.71238898038469
+# /Generator/SingleParticle/max_phi   4.71238898038469
