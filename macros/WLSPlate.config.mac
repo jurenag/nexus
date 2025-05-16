@@ -4,6 +4,8 @@
 
 /process/em/verbose 0
 
+/Geometry/WLSPlate/shape_code               0
+
 # Megacell-like
 #/Geometry/WLSPlate/depth                    619.    mm
 #/Geometry/WLSPlate/height                   5.5     mm
