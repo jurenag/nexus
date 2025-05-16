@@ -422,14 +422,34 @@ namespace nexus{
         if(dimple_type_=="flat"){
             // Yes, using 2*flat_dimple_depth_ as the whole dimension of the carving along the z-axis is ok 
             // (the carvings are subtracted from the very edge of the plate)
-            carving_solid = dynamic_cast<G4VSolid*>(new G4Box("AUX", flat_dimple_width_/2., dy_/2. +tolerance, flat_dimple_depth_));
+            carving_solid = dynamic_cast<G4VSolid*>(
+              new G4Box(
+                "AUX",
+                flat_dimple_width_/2.,
+                dy_/2. +tolerance,
+                flat_dimple_depth_
+              )
+            );
         }
         else if(dimple_type_=="spherical"){
-            carving_solid = dynamic_cast<G4VSolid*>(new G4Orb("AUX", curvy_dimple_radius_));
+            carving_solid = dynamic_cast<G4VSolid*>(
+              new G4Orb(
+                "AUX",
+                curvy_dimple_radius_
+              )
+            );
         }
         else{ //Default is cylindrical dimples
             carving_solid = dynamic_cast<G4VSolid*>(
-                                        new G4Tubs("AUX", 0., curvy_dimple_radius_, dy_/2. +tolerance, 0., twopi));
+              new G4Tubs(
+                "AUX",
+                0.,
+                curvy_dimple_radius_,
+                dy_/2. +tolerance,
+                0.,
+                twopi
+              )
+            );
         }
 
         G4RotationMatrix* rot = new G4RotationMatrix();
@@ -442,14 +462,28 @@ namespace nexus{
 
         if(dimples_at_z_plus_){
           for(G4int i=0; i<how_many_dimples_; i++){
-            transform_ptr = new G4Transform3D(*rot, G4ThreeVector((-1.*dx_/2.)+(1.*(0.5+i)*dx_/(1.*how_many_dimples_)), 0., +dz_/2.));
+            transform_ptr = new G4Transform3D(
+              *rot,
+              G4ThreeVector(
+                (-1.*dx_/2.)+(1.*(0.5+i)*dx_/(1.*how_many_dimples_)),
+                0.,
+                +dz_/2.
+              )
+            );
             carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
           }
         }
 
         if(dimples_at_z_minus_){
           for(G4int i=0; i<how_many_dimples_; i++){
-            transform_ptr = new G4Transform3D(*rot, G4ThreeVector((-1.*dx_/2.)+(1.*(0.5+i)*dx_/(1.*how_many_dimples_)), 0., -1.*dz_/2.));
+            transform_ptr = new G4Transform3D(
+              *rot,
+              G4ThreeVector(
+                (-1.*dx_/2.)+(1.*(0.5+i)*dx_/(1.*how_many_dimples_)),
+                0.,
+                -1.*dz_/2.
+              )
+            );
             carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
           }
         }
@@ -460,14 +494,28 @@ namespace nexus{
 
         if(dimples_at_x_plus_){
           for(G4int i=0; i<how_many_dimples_; i++){
-            transform_ptr = new G4Transform3D(*rot, G4ThreeVector(+dx_/2., 0., (-1.*dz_/2.)+(1.*(0.5+i)*dz_/(1.*how_many_dimples_))));
+            transform_ptr = new G4Transform3D(
+              *rot,
+              G4ThreeVector(
+                +dx_/2.,
+                0.,
+                (-1.*dz_/2.)+(1.*(0.5+i)*dz_/(1.*how_many_dimples_))
+              )
+            );
             carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
           }
         }
 
         if(dimples_at_x_minus_){
           for(G4int i=0; i<how_many_dimples_; i++){
-            transform_ptr = new G4Transform3D(*rot, G4ThreeVector(-1.*dx_/2., 0., (-1.*dz_/2.)+(1.*(0.5+i)*dz_/(1.*how_many_dimples_))));
+            transform_ptr = new G4Transform3D(
+              *rot,
+              G4ThreeVector(
+                -1.*dx_/2.,
+                0.,
+                (-1.*dz_/2.)+(1.*(0.5+i)*dz_/(1.*how_many_dimples_))
+              )
+            );
             carvings_multiunion_solid->AddNode(*carving_solid, *transform_ptr);
           }
         }
@@ -486,24 +534,28 @@ namespace nexus{
 
     if(shape_code_==0 && cut_plate_)
     {
-      G4Para* subtrahend_solid = new G4Para("SUBTRAHEND",
-                                            (dx_/2.)+(cut_thickness_/2.),
-                                            2.*(dy_/2.), 
-                                            2.*(dz_/2.),
-                                            0.0,
-                                            cut_angle_,                   // Parallelepiped angle with respect to 
-                                                                          // the WLS-plate side which is dz_ long
-                                            0.0);
+      G4Para* subtrahend_solid = new G4Para(
+        "SUBTRAHEND",
+        (dx_/2.)+(cut_thickness_/2.),
+        2.*(dy_/2.), 
+        2.*(dz_/2.),
+        0.0,
+        cut_angle_,                   // Parallelepiped angle with respect to 
+                                      // the WLS-plate side which is dz_ long
+        0.0
+      );
       
-      G4SubtractionSolid* half_plate_solid = new G4SubtractionSolid(plate_name, 
-                                                                    geometry_solid, 
-                                                                    subtrahend_solid, 
-                                                                    nullptr, 
-                                                                    G4ThreeVector(dx_/2., 0., 0.)); // Placing the geometric center of the parallelepiped
-                                                                                                    // (subtrahend) right onto the edge of the WLS plate, 
-                                                                                                    // so that we are left with one half of the plate minus 
-                                                                                                    // half of the cut. The other half of the cut is carved 
-                                                                                                    // from the other half of the plate.
+      G4SubtractionSolid* half_plate_solid = new G4SubtractionSolid(
+        plate_name, 
+        geometry_solid, 
+        subtrahend_solid, 
+        nullptr, 
+        G4ThreeVector(dx_/2., 0., 0.)   // Placing the geometric center of the parallelepiped
+      );                                // (subtrahend) right onto the edge of the WLS plate, 
+                                        // so that we are left with one half of the plate minus 
+                                        // half of the cut. The other half of the cut is carved 
+                                        // from the other half of the plate.
+      
       G4MultiUnion* multiunion_geometry_solid = new G4MultiUnion(plate_name);
 
       G4RotationMatrix* rot_2 = new G4RotationMatrix();
@@ -543,10 +595,12 @@ namespace nexus{
     {
       G4String surface_name = "IMPERFECT_SURFACE";
       G4OpticalSurface* imperfect_surface =
-                new G4OpticalSurface( surface_name, 
-                                      unified, 
-                                      polished, 
-                                      dielectric_dielectric);
+                new G4OpticalSurface(
+                  surface_name, 
+                  unified, 
+                  polished, 
+                  dielectric_dielectric
+                );
       imperfect_surface->SetMaterialPropertiesTable(opticalprops::ImperfectDielectricDielectricSurface(tunneling_probability_));
       new G4LogicalSkinSurface(surface_name, geometry_logic, imperfect_surface);
     }
@@ -590,23 +644,45 @@ namespace nexus{
 
     G4String collector_name = "SURROUNDING_COLLECTOR";
 
-    G4Box* aux = new G4Box( "AUX",    (dx_/2.)+plate_collector_gap+collector_thickn, 
-                                      (dy_/2.)+plate_collector_gap+collector_thickn, 
-                                      (dz_/2.)+plate_collector_gap+collector_thickn);
+    G4Box* aux = new G4Box(
+      "AUX",
+      (dx_/2.)+plate_collector_gap+collector_thickn, 
+      (dy_/2.)+plate_collector_gap+collector_thickn, 
+      (dz_/2.)+plate_collector_gap+collector_thickn
+    );
 
-    G4Box* subtrahend = new G4Box("AUX",  (dx_/2.)+plate_collector_gap,   
-                                          (dy_/2.)+plate_collector_gap,
-                                          (dz_/2.)+plate_collector_gap);
+    G4Box* subtrahend = new G4Box(
+      "AUX",
+      (dx_/2.)+plate_collector_gap,   
+      (dy_/2.)+plate_collector_gap,
+      (dz_/2.)+plate_collector_gap
+    );
 
-    G4SubtractionSolid* collector_solid = new G4SubtractionSolid( collector_name, 
-                                                                  aux, subtrahend);
+    G4SubtractionSolid* collector_solid = new G4SubtractionSolid(
+      collector_name, 
+      aux,
+      subtrahend
+    );
 
     G4Material* concrete = G4NistManager::Instance()->FindOrBuildMaterial("G4_CONCRETE");
 
-    G4LogicalVolume* collector_logic = new G4LogicalVolume(collector_solid, concrete, collector_name);
+    G4LogicalVolume* collector_logic = new G4LogicalVolume(
+      collector_solid,
+      concrete,
+      collector_name
+    );
 
-    new G4PVPlacement(nullptr, G4ThreeVector{}, collector_logic, collector_name, 
-                      world_logic_vol, false, 0, true);
+    new G4PVPlacement(
+      nullptr,
+      G4ThreeVector{},
+      collector_logic,
+      collector_name, 
+      world_logic_vol,
+      false,
+      0,
+      true
+    );
+
     return;
   }
 
