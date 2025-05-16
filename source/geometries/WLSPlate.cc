@@ -690,10 +690,14 @@ namespace nexus{
   {
     if(generation_mode_=="random"){
       G4double tolerance = 1.*mm;
-      G4double x_pos =  UniformRandomInRange( (dx_/2.)-tolerance, 
-                                              (-dx_/2.)+tolerance);
-      G4double z_pos =  UniformRandomInRange( (dz_/2.)-tolerance, 
-                                              (-dz_/2)+tolerance); 
+      G4double x_pos = UniformRandomInRange(
+        (dx_/2.)-tolerance, 
+        (-dx_/2.)+tolerance
+      );
+      G4double z_pos = UniformRandomInRange(
+        (dz_/2.)-tolerance, 
+        (-dz_/2)+tolerance
+      ); 
       return G4ThreeVector(x_pos, generation_y_pos_, z_pos);
 
     }
