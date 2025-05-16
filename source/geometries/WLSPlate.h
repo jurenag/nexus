@@ -129,7 +129,10 @@ namespace nexus {
     G4double generation_y_pos_;                         ///< The y-position of the generation vertex of photons.
     G4String generation_mode_;                          ///< Controls the generation vertex of photons. It can take the following values
                                                         ///< "random"       - The x- and z-positions of the generation vertex are randomly sampled 
-                                                        ///<                  in the intervals (-dx_/2, dx_/2) and (-dz_/2, dz_/2), respectively.
+                                                        ///<                  over the surface of the WLS-plate. For the case of the rectangular 
+                                                        ///<                  plate, the x- (resp. z-) position is randomly sampled from the interval
+                                                        ///<                  (-dx_/2, dx_/2) (resp. (-dz_/2, dz_/2)). For the triangular case,
+                                                        ///<                  the boundaries of both variables depend linearly on each other.
                                                         ///< any other case - The x- and z-positions of the generation vertex are set to 0.0.
     G4bool wrap_with_collector_;                        ///< If True, the WLSPlate is placed within a box which is made out of a fully absorbent 
                                                         ///< material. There's a 0.1 mm gap between the inner faces of the box and the WLSPlate faces

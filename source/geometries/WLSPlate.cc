@@ -688,16 +688,43 @@ namespace nexus{
 
   G4ThreeVector WLSPlate::GenerateVertex(const G4String&) const
   {
-    if(generation_mode_=="random"){
+    if(generation_mode_=="random")
+    {
       G4double tolerance = 1.*mm;
-      G4double x_pos = UniformRandomInRange(
-        (dx_/2.)-tolerance, 
-        (-dx_/2.)+tolerance
-      );
-      G4double z_pos = UniformRandomInRange(
-        (dz_/2.)-tolerance, 
-        (-dz_/2)+tolerance
-      ); 
+      G4double x_pos, z_pos;
+
+      if(shape_code_==0)
+      {
+        x_pos = UniformRandomInRange(
+          (dx_/2.)-tolerance, 
+          (-dx_/2.)+tolerance
+        );
+        z_pos = UniformRandomInRange(
+          (dz_/2.)-tolerance, 
+          (-dz_/2)+tolerance
+        );
+      }
+      else if(shape_code_==1)
+      {
+        // This parameterization takes into account that its the centroid
+        // of the triangle which is at the origin of the coordinate system
+        x_pos = UniformRandomInRange(
+          (2.*dx_/3.)-tolerance,
+          (-dx_/3.)+(1.*tolerance)
+        );
+
+        G4double positive_margin = ((-1.*x_pos*dz_)/(2.*dx_))+(dz_/3);
+
+        z_pos = UniformRandomInRange(
+          positive_margin-tolerance,
+          -positive_margin+tolerance
+        );
+      }
+      else{
+        G4Exception("[WLSPlate]", "GenerateVertex()",
+                    FatalException, "The given shape code is not recognized.");
+      }
+
       return G4ThreeVector(x_pos, generation_y_pos_, z_pos);
 
     }
