@@ -8,6 +8,8 @@
 
 #include <G4VSolid.hh>
 #include <G4MultiUnion.hh>
+#include <G4TwoVector.hh>
+#include <G4ExtrudedSolid.hh>
 #include <G4OpticalSurface.hh>
 #include <G4LogicalSkinSurface.hh>
 #include <G4SubtractionSolid.hh>
@@ -321,17 +323,100 @@ namespace nexus{
   {
 
     const G4String plate_name = "WLS_PLATE";
-
     G4VSolid* geometry_solid = nullptr;
-    G4Box* whole_plate_solid = new G4Box(plate_name, dx_/2., dy_/2., dz_/2.);
 
-    G4bool has_at_least_one_dimple;
-    has_at_least_one_dimple = dimples_at_x_plus_ || dimples_at_x_minus_;
-    has_at_least_one_dimple = has_at_least_one_dimple || dimples_at_z_plus_ || dimples_at_z_minus_;
-    has_at_least_one_dimple = has_at_least_one_dimple && (how_many_dimples_>=1);
-
-    if(has_at_least_one_dimple)
+    if(shape_code_==0)
     {
+      geometry_solid = dynamic_cast<G4VSolid*>(
+        new G4Box(
+          plate_name,
+          dx_/2.,
+          dy_/2.,
+          dz_/2.
+        )
+      );
+    }
+    else if(shape_code_==1)
+    {
+
+      std::vector<G4TwoVector> polygon;
+      // dx_ (resp. dz_) is the height (resp. base) of the triangle
+      // The centroid of an isosceles triangle is centered with respect
+      // to the base and is displaced by 1/3 of the height above the base.
+      // The 2D polygon which we are creating in the XY plane is the
+      // following:
+      //
+      //                            +y
+      //                            /\
+      //                            |
+      //                      B     |
+      //                      |     +       2*h/3 = 2*dx_/3
+      //        b/2 = dz_/2   |     |    -
+      //                      |     |         -
+      //     -x <--------------------------------C----------> +x
+      //                      |     |         -
+      //       -b/2 = -dz_/2  |     |    -
+      //                      |     +
+      //                      A     |  
+      //                            |
+      //                            v
+      //                            -y
+      //
+      // where the vertical line (parallel to the y axis) which goes from
+      // point A to point B is, the base of the triangle. Note that after
+      // extrusion in the Z direction, we will need to rotate the triangle
+      // 90º degrees about the X-axis, so that the thickness dimension of
+      // the plate is set along the Y-axis, as for the rectangular plate
+      // case.
+
+      // Point A of the sketch above
+      polygon.push_back(G4TwoVector(-1.*dx_/3., -1.*dz_/2.));
+      // Point B of the sketch above
+      polygon.push_back(G4TwoVector(-1.*dx_/3., dz_/2.));
+      // Point C of the sketch above
+      polygon.push_back(G4TwoVector(2.*dx_/3., 0.));
+
+      // Extrude the polygon
+      geometry_solid = dynamic_cast<G4VSolid*>(
+        new G4ExtrudedSolid(
+          plate_name,
+          polygon,
+          dy_/2.
+        )
+      );
+
+      // If we want to use dimples with the triangle-plate case, in the body of the
+      // if(has_at_least_one_dimple) block below, we will need to consider different
+      // rotations and positionings for the carving_solid depending on whether the
+      // plate is rectangular or triangular. The reason for this is that the triangular
+      // base is extruded along the Z direction (which is a constraint imposed by the
+      // G4ExtrudedSolid constructor). In other words, the thickness (dy_) of the
+      // triangular plate lays along the Z direction, whereas the thickness (dy_) of
+      // the rectangular plate lays along the Y direction. This matters because the
+      // triangular solid prism cannot be rotated until a physical volume is created
+      // out of it. Furthermore, this is not the only caveat when extending the use
+      // of dimples to the triangular case, since we must also consider that
+      // in the triangular prism, as defined in WLSPlate.h, dimples can only
+      // exist on the base located in the X>0 half-plane. This, combined with the fact
+      // that we do not expect to study the impact of dimples in the triangular case,
+      // makes it not worth extending the dimples code for the triangular case.
+      // Note this comment for future versions of the code.
+
+    }
+    else{
+        G4Exception("[WLSPlate]", "ConstructWLSPlate()",
+                    FatalException, "The given shape code is not recognized.");
+    }
+
+    if(shape_code_==0)
+    {
+      G4bool has_at_least_one_dimple;
+      has_at_least_one_dimple = dimples_at_x_plus_ || dimples_at_x_minus_;
+      has_at_least_one_dimple = has_at_least_one_dimple || dimples_at_z_plus_ || dimples_at_z_minus_;
+      has_at_least_one_dimple = has_at_least_one_dimple && (how_many_dimples_>=1);
+
+      if(has_at_least_one_dimple)
+      {
         G4double tolerance = 0.5*mm; // To avoid boolean subtraction of matching surfaces
         G4VSolid* carving_solid = nullptr;
         if(dimple_type_=="flat"){
@@ -389,16 +474,18 @@ namespace nexus{
 
         carvings_multiunion_solid->Voxelize();
 
-        G4SubtractionSolid* dimpled_plate_solid = new G4SubtractionSolid(plate_name, 
-                                                                        whole_plate_solid, carvings_multiunion_solid);
+        G4SubtractionSolid* dimpled_plate_solid = new G4SubtractionSolid(
+          plate_name, 
+          geometry_solid,
+          carvings_multiunion_solid
+        );
+
         geometry_solid = dynamic_cast<G4VSolid*>(dimpled_plate_solid);
-    }
-    else{
-        geometry_solid = dynamic_cast<G4VSolid*>(whole_plate_solid);
+      }
     }
 
-    if(cut_plate_){
-
+    if(shape_code_==0 && cut_plate_)
+    {
       G4Para* subtrahend_solid = new G4Para("SUBTRAHEND",
                                             (dx_/2.)+(cut_thickness_/2.),
                                             2.*(dy_/2.), 
@@ -438,7 +525,7 @@ namespace nexus{
                                                                                                 // just of a 180º rotation about the Y axis apparently has no inverse.
       multiunion_geometry_solid->Voxelize();                                                                                  
       geometry_solid = dynamic_cast<G4VSolid*>(multiunion_geometry_solid);
-    }                          
+    }
 
     G4Material* pvt = G4NistManager::Instance()->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
     if(mpt_ && pvt){
@@ -465,8 +552,30 @@ namespace nexus{
     }
 
     if(world_logic_vol){
-        new G4PVPlacement(nullptr, G4ThreeVector{}, geometry_logic, plate_name, 
-                        world_logic_vol, false, 0, true);
+
+        G4RotationMatrix* rot = new G4RotationMatrix();
+        if(shape_code_==1)
+        { 
+          rot->rotateX(-90.*deg);
+        }
+        
+        // Note that the Z-extrusion for the triangular-plate case is only compensated
+        // with a rotation for the case when the world_logic_vol is provided and the 
+        // physical placement is performed here, by WLSPlate::ConstructWLSPlate(). Otherwise
+        // (p.e. other classes like APEX which create a WLSPlate instance setting the with_LAr_
+        // attribute to False and then retrieve the G4LogicalVolume of the WLS-plate and do
+        // their own placement), the rotation for the Z-extrusion compensation needs to be
+        // done elsewhere later on when the placement is done.
+        new G4PVPlacement(
+          rot,
+          G4ThreeVector{},
+          geometry_logic,
+          plate_name,
+          world_logic_vol,
+          false,
+          0,
+          true
+        );
     }
     else{
         this->SetLogicalVolume(geometry_logic);
