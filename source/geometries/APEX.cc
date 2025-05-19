@@ -331,7 +331,7 @@ namespace nexus{
     // seems not to have access to the physical placement of the biggest volume (in our 
     // case, the vacuum box) which is implemented in line 80 of source/base/DetectorConstruction.cc, 
     // AFTER calling GeometryBase::Construct() (i.e. your geometry must be constructed 
-    // before placing your biggest volume in nexus world volume,so you cannot possibly 
+    // before placing your biggest volume in nexus world volume, so you cannot possibly 
     // have access to the physical placement of your biggest volume when you Construct() it.).
     ///////////////////////////////////////////////////////////////////////////////////////////
     
@@ -428,9 +428,7 @@ namespace nexus{
       {
         ConstructDetachedDichroicFilter(mother_physical);
       }
-      
     } 
-
 
     return;
   }
@@ -469,13 +467,11 @@ namespace nexus{
     plate->Construct();
     G4LogicalVolume* plate_logic = plate->GetLogicalVolume();
     plate_logic->SetUserLimits(ul_);
-
     
     G4VisAttributes wlsp_col = nexus::LightBlueAlpha();
     wlsp_col.SetForceSolid(true);
     plate_logic->SetVisAttributes(wlsp_col);
     
-
     if (!plate_logic) {
       G4Exception("[APEX]", "ConstructWLSPlate()",
                   FatalException, "Null pointer to logical volume.");
