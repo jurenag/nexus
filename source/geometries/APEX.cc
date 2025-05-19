@@ -435,10 +435,24 @@ namespace nexus{
 
   void APEX::ConstructWLSPlate(G4VPhysicalVolume* mother_physical) const
   { 
+    G4bool dimples_at_z_minus = false;
+    G4bool dimples_at_z_plus = false;
 
-    G4bool dimples_at_z_minus = board_position_code_==2 ? with_dimples_ : false; 
-    G4bool dimples_at_z_plus = board_position_code_>=3 ? with_dimples_ : false;   // board_position_code_ is limited to >=1 
-                                                                                  // via a G4GenericMessenger::Command
+    if(shape_code_==0 && with_dimples_)
+    {
+      // Note that board_position_code_ is limited to >=1 
+      // via a G4GenericMessenger::Command
+      if(board_position_code_>=2)
+      {
+        dimples_at_z_minus = true;
+
+        if(board_position_code_>=3)
+        {
+          dimples_at_z_plus = true;
+        }
+      }
+    }
+
     WLSPlate* plate = new WLSPlate(
       plate_length_, 
       plate_thickn_, 
