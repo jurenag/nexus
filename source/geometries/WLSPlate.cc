@@ -314,7 +314,7 @@ namespace nexus{
         this->SetLogicalVolume(sphere_logic);
     }
     ConstructWLSPlate(sphere_logic);
-    if(wrap_with_collector_) ConstructCollector(sphere_logic);
+    if(shape_code_==0 && wrap_with_collector_) ConstructCollector(sphere_logic);
     return;
 
   }

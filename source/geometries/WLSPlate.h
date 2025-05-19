@@ -78,8 +78,9 @@ namespace nexus {
     void          SetOpticalProperties(G4MaterialPropertiesTable*);
     void Construct();
     void ConstructWLSPlate(G4LogicalVolume*);
-    void ConstructCollector(G4LogicalVolume*);            ///< Called if the wrap_with_collector_ attribute is true. 
-                                                          ///< Check such attribute documentation for more information.
+    void ConstructCollector(G4LogicalVolume*);            ///< Called if the shape_code_ attribute is set to 0 and the
+                                                          ///< wrap_with_collector_ attribute is true. Check such attributes
+                                                          ///< documentation for more information.
     G4ThreeVector GenerateVertex(const G4String&) const;
 
   private:
@@ -134,8 +135,9 @@ namespace nexus {
                                                         ///<                  (-dx_/2, dx_/2) (resp. (-dz_/2, dz_/2)). For the triangular case,
                                                         ///<                  the boundaries of both variables depend linearly on each other.
                                                         ///< any other case - The x- and z-positions of the generation vertex are set to 0.0.
-    G4bool wrap_with_collector_;                        ///< If True, the WLSPlate is placed within a box which is made out of a fully absorbent 
-                                                        ///< material. There's a 0.1 mm gap between the inner faces of the box and the WLSPlate faces
+    G4bool wrap_with_collector_;                        ///< This parameter only makes a difference if shape_code_ is set to 0. If True, the
+                                                        ///< WLSPlate is placed within a box which is made out of a fully absorbent material.
+                                                        ///< There's a 0.1 mm gap between the inner faces of the box and the WLSPlate faces.
                                                         ///< so that there's no optical contact between both.
     G4MaterialPropertiesTable* mpt_;                    ///< WLS optical properties
     G4bool with_LAr_env_;                               ///< Whether to build a LAr environment or not 
