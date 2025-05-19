@@ -690,7 +690,7 @@ namespace nexus{
   {
     if(generation_mode_=="random")
     {
-      G4double tolerance = 1.*mm;
+      G4double tolerance = 0.5*mm;
       G4double x_pos, z_pos;
 
       if(shape_code_==0)
@@ -713,11 +713,29 @@ namespace nexus{
           (-dx_/3.)+(1.*tolerance)
         );
 
-        G4double positive_margin = ((-1.*x_pos*dz_)/(2.*dx_))+(dz_/3);
+        // Under the assumption that the triangle height (dx_) is bigger
+        // than the tolerance (t), i.e. dx_>t, and that the tolerance is
+        // is smaller than 1.0, then you can prove that, for
+        //
+        //      ((-1.*x_pos*dz_)/(2.*dx_))+(dz_/3)-(k*tolerance) > 0     (1)
+        //
+        // to hold in the whole range of
+        //
+        //    x_pos \in [(-dx_/3.)+(1.*tolerance), (2.*dx_/3.)-tolerance],
+        //
+        // (which is the range of random generation of x_pos), it is needed
+        // that k < dz_/(2*dx_). The reason why we need the inequality (1)
+        // above is that UniformRandomInRange(x, y) works for x>y (otherwise
+        // we are inverting the range, which makes no sense). That's why
+        // we are introducing the factor k in the range limits of the z_pos
+        // random generation.
+
+        G4double k = 0.5 * dz_/(2.*dx_); // < dz_/(2*dx_)
+        G4double positive_margin = ((-1.*x_pos*dz_)/(2.*dx_))+(dz_/3)-(k*tolerance);
 
         z_pos = UniformRandomInRange(
-          positive_margin-tolerance,
-          -positive_margin+tolerance
+          positive_margin,
+          -1.*positive_margin
         );
       }
       else{
