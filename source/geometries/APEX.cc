@@ -339,18 +339,28 @@ namespace nexus{
     const G4String world_name = "VACUUM_CAPSULE";
 
     G4Box* world_solid =
-        new G4Box(world_name,
-                (overall_length_/2.)+world_extra_thickn_,
-                (overall_thickn_/2.)+world_extra_thickn_,
-                (overall_width_/2.) +world_extra_thickn_);
+        new G4Box(
+          world_name,
+          (overall_length_/2.)+world_extra_thickn_,
+          (overall_thickn_/2.)+world_extra_thickn_,
+          (overall_width_/2.) +world_extra_thickn_
+        );
                 
     G4Material* vacuum =
     G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 
     G4LogicalVolume* world_logic = 
-        new G4LogicalVolume(world_solid, vacuum, world_name, 0, 0, 0, true);
-    world_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+        new G4LogicalVolume(
+          world_solid,
+          vacuum,
+          world_name,
+          0,
+          0,
+          0,
+          true
+        );
 
+    world_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     this->SetLogicalVolume(world_logic);
 
     // surrounding_media_ box that contains all other volumes.
@@ -373,26 +383,37 @@ namespace nexus{
     const G4String sm_box_name = sm_name+"_BOX";
 
     G4Box* sm_box_solid =
-      new G4Box(sm_box_name,
-                (overall_length_+world_extra_thickn_)/2.,
-                (overall_thickn_+world_extra_thickn_)/2.,
-                (overall_width_ +world_extra_thickn_)/2.);
+      new G4Box(
+        sm_box_name,
+        (overall_length_+world_extra_thickn_)/2.,
+        (overall_thickn_+world_extra_thickn_)/2.,
+        (overall_width_ +world_extra_thickn_)/2.
+      );
 
     G4Material* sm_material = G4NistManager::Instance()->FindOrBuildMaterial(sm_name);
     sm_material->SetMaterialPropertiesTable(mpt_ptr);
 
     G4LogicalVolume* sm_box_logic =
-      new G4LogicalVolume(sm_box_solid, sm_material, sm_box_name);
+      new G4LogicalVolume(
+        sm_box_solid,
+        sm_material,
+        sm_box_name
+      );
     sm_box_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     G4VPhysicalVolume* mother_physical = 
         dynamic_cast<G4VPhysicalVolume*>(
-        new G4PVPlacement(new G4RotationMatrix(), 
-                          G4ThreeVector(0., 0., 0.), 
-                          sm_box_logic, 
-                          sm_box_name, 
-                          world_logic, 
-                          false, 0, true));
+          new G4PVPlacement(
+            new G4RotationMatrix(), 
+            G4ThreeVector(0., 0., 0.), 
+            sm_box_logic, 
+            sm_box_name, 
+            world_logic, 
+            false,
+            0,
+            true
+          )
+        );
 
     ConstructWLSPlate(mother_physical);
     ConstructSiPMSAndBoard(mother_physical);
@@ -420,28 +441,31 @@ namespace nexus{
     G4bool dimples_at_z_minus = board_position_code_==2 ? with_dimples_ : false; 
     G4bool dimples_at_z_plus = board_position_code_>=3 ? with_dimples_ : false;   // board_position_code_ is limited to >=1 
                                                                                   // via a G4GenericMessenger::Command
-    WLSPlate* plate = new WLSPlate  ( plate_length_, 
-                                      plate_thickn_, 
-                                      plate_width_, 
-                                      opticalprops::G2P_FB118(
-                                        cromophore_concentration_,
-                                        secondary_wls_attlength_,
-                                        // WLSp_rindex_, No longer used here, this is related to an open issue (search for occurrences of 'Open issue')
-                                        cryogenic_temperature_,
-                                        true
-                                      ),
-                                      //opticalprops::EJ286(secondary_wls_attlength_),
-                                      0,
-                                      false,
-                                      false,                // dimples_at_x_plus_
-                                      false,                // dimples_at_x_minus_
-                                      dimples_at_z_plus,    // dimples_at_z_plus_
-                                      dimples_at_z_minus,   // dimples_at_z_minus_
-                                      dimple_type_, 
-                                      num_phsensors_, 
-                                      flat_dimple_width_, 
-                                      flat_dimple_depth_, 
-                                      curvy_dimple_radius_);
+    WLSPlate* plate = new WLSPlate(
+      plate_length_, 
+      plate_thickn_, 
+      plate_width_, 
+      opticalprops::G2P_FB118(
+        cromophore_concentration_,
+        secondary_wls_attlength_,
+        // WLSp_rindex_, No longer used here, this is related to an open issue (search for occurrences of 'Open issue')
+        cryogenic_temperature_,
+        true
+      ),
+      //opticalprops::EJ286(secondary_wls_attlength_),
+      0,
+      false,
+      false,                // dimples_at_x_plus_
+      false,                // dimples_at_x_minus_
+      dimples_at_z_plus,    // dimples_at_z_plus_
+      dimples_at_z_minus,   // dimples_at_z_minus_
+      dimple_type_, 
+      num_phsensors_, 
+      flat_dimple_width_, 
+      flat_dimple_depth_, 
+      curvy_dimple_radius_
+    );
+
     plate->Construct();
     G4LogicalVolume* plate_logic = plate->GetLogicalVolume();
     plate_logic->SetUserLimits(ul_);
@@ -457,8 +481,16 @@ namespace nexus{
                   FatalException, "Null pointer to logical volume.");
     }
 
-    new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), plate_logic->GetName(), 
-                      plate_logic, mother_physical, false, 0, true);
+    new G4PVPlacement(
+      nullptr,
+      G4ThreeVector(0., 0., 0.),
+      plate_logic->GetName(), 
+      plate_logic,
+      mother_physical,
+      false,
+      0,
+      true
+    );
     
     return;
   }
@@ -503,17 +535,25 @@ namespace nexus{
     if(board_position_code_==1) // Board in the middle of a large face
     {
       sipm_rot->rotateX(0.0*deg);
-      base_pos.set( (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
-                    -1.*(plate_thickn_/2.)-1.*(sipm_thickn/2.)-gap_,    // Note that what's placed in the global origin of 
-                                                                        // coordinates is the plate, not the reflective foil. 
-                    0.);
+      base_pos.set(
+        (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
+        -1.*(plate_thickn_/2.)-1.*(sipm_thickn/2.)-gap_,    // Note that what's placed in the global origin of 
+        0.                                                  // coordinates is the plate, not the reflective foil. 
+      );
 
       G4int phsensor_id = 0;
-      for (G4int i=0; i<num_phsensors_; ++i) {
-        new G4PVPlacement(sipm_rot, base_pos+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
-                          sipm->GetModel(), sipm_logic_vol,
-                          mother_physical, true, phsensor_id, true);
-
+      for (G4int i=0; i<num_phsensors_; ++i)
+      {
+        new G4PVPlacement(
+          sipm_rot,
+          base_pos+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
+          sipm->GetModel(),
+          sipm_logic_vol,
+          mother_physical,
+          true,
+          phsensor_id,
+          true
+        );
         phsensor_id += 1;
       }
     }
@@ -527,15 +567,24 @@ namespace nexus{
       }
 
       sipm_rot->rotateX(-90.*deg);
-      base_pos.set( (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
-                    sipms_y_pos,
-                    -1.*(plate_width_/2.)-1.*(sipm_thickn/2.)-gap_);
+      base_pos.set(
+        (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
+        sipms_y_pos,
+        -1.*(plate_width_/2.)-1.*(sipm_thickn/2.)-gap_
+      );
 
       G4int phsensor_id = 0;
       for (G4int i=0; i<num_phsensors_; ++i) {
-        new G4PVPlacement(sipm_rot, base_pos+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
-                          sipm->GetModel(), sipm_logic_vol,
-                          mother_physical, true, phsensor_id, true);
+        new G4PVPlacement(
+          sipm_rot,
+          base_pos+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
+          sipm->GetModel(),
+          sipm_logic_vol,
+          mother_physical,
+          true,
+          phsensor_id,
+          true
+        );
         phsensor_id += 1;
       }
 
@@ -545,15 +594,24 @@ namespace nexus{
         G4ThreeVector base_pos_2;
 
         sipm_rot_2->rotateX(+90.*deg);
-        base_pos_2.set( (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
-                        sipms_y_pos,
-                        (plate_width_/2.)+(sipm_thickn/2.)+gap_);
+        base_pos_2.set(
+          (-1.*board_length_/2.) + (0.5*board_length_/num_phsensors_),
+          sipms_y_pos,
+          (plate_width_/2.)+(sipm_thickn/2.)+gap_
+        );
 
         phsensor_id = 0;
         for (G4int i=0; i<num_phsensors_; ++i) {
-          new G4PVPlacement(sipm_rot_2, base_pos_2+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
-                            sipm->GetModel(), sipm_logic_vol,
-                            mother_physical, true, phsensor_id, true);
+          new G4PVPlacement(
+            sipm_rot_2,
+            base_pos_2+G4ThreeVector(i*board_length_/num_phsensors_, 0., 0.),
+            sipm->GetModel(),
+            sipm_logic_vol,
+            mother_physical,
+            true,
+            phsensor_id,
+            true
+          );
           phsensor_id += 1;
         }
       }
@@ -566,9 +624,12 @@ namespace nexus{
     G4double board_thickn = 1.*mm;
 
     G4Box* board_solid =
-        new G4Box(  board_name, board_length_/2., 
-                                sipm_height/2.,     // Board height matches that of the SiPMs
-                                board_thickn/2.);
+        new G4Box(
+          board_name,
+          board_length_/2., 
+          sipm_height/2.,     // Board height matches that of the SiPMs
+          board_thickn/2.
+        );
 
     G4LogicalVolume* board_logic = 
         new G4LogicalVolume(board_solid, materials::FR4(), board_name);
@@ -591,16 +652,25 @@ namespace nexus{
     if(board_position_code_==1) // Board in the middle of a large face
     {
       board_rot->rotateX(90.0*deg);
-      board_pos.set(0.,
-                    -1.*(plate_thickn_/2.)-gap_
-                    -sipm_thickn-1.*(board_thickn/2.),  // Note that what's placed in the global origin of 
-                                                        // coordinates is the plate, not the reflective foil. 
-                    0.);
+      board_pos.set(
+        0.,
+        -1.*(plate_thickn_/2.)-gap_
+        -sipm_thickn-1.*(board_thickn/2.),  // Note that what's placed in the global origin of 
+                                            // coordinates is the plate, not the reflective foil. 
+        0.
+      );
+
       //Place it
-      new G4PVPlacement(board_rot, board_pos,
-                        "COATED_BOARD", board_logic,
-                        mother_physical,
-                        false, 0, true);
+      new G4PVPlacement(
+        board_rot,
+        board_pos,
+        "COATED_BOARD",
+        board_logic,
+        mother_physical,
+        false,
+        0,
+        true
+      );
     }
     else  // board_position_code_ is 2 or 3
     {
@@ -612,15 +682,23 @@ namespace nexus{
       }
 
       board_rot->rotateX(0.0*deg);
-      board_pos.set(0.,
-                    board_y_pos,
-                    -1.*(plate_width_/2.)-gap_
-                    -sipm_thickn-1.*(board_thickn/2.));
+      board_pos.set(
+        0.,
+        board_y_pos,
+        -1.*(plate_width_/2.)-gap_
+        -sipm_thickn-1.*(board_thickn/2.)
+      );
       //Place it
-      new G4PVPlacement(board_rot, board_pos,
-                        "COATED_BOARD", board_logic,
-                        mother_physical,
-                        false, 0, true);
+      new G4PVPlacement(
+        board_rot,
+        board_pos,
+        "COATED_BOARD",
+        board_logic,
+        mother_physical,
+        false,
+        0,
+        true
+      );
 
       if(board_position_code_>=3)
       {
@@ -628,15 +706,23 @@ namespace nexus{
         G4ThreeVector board_pos_2;
 
         board_rot_2->rotateX(0.0*deg);
-        board_pos_2.set(0.,
-                        board_y_pos,
-                        (plate_width_/2.)+gap_
-                        +sipm_thickn+(board_thickn/2.));
+        board_pos_2.set(
+          0.,
+          board_y_pos,
+          (plate_width_/2.)+gap_
+          +sipm_thickn+(board_thickn/2.)
+        );
         //Place it
-        new G4PVPlacement(board_rot_2, board_pos_2,
-                          "COATED_BOARD", board_logic,
-                          mother_physical,
-                          false, 0, true);
+        new G4PVPlacement(
+          board_rot_2,
+          board_pos_2,
+          "COATED_BOARD",
+          board_logic,
+          mother_physical,
+          false,
+          0,
+          true
+        );
       }
     }
     return;
@@ -649,23 +735,36 @@ namespace nexus{
     // The reflective foil covers every face of the plate but one
     // Get its volume as a subtraction solid from two boxes
 
-    G4Box* aux_outer_box = new G4Box(  "AUX_OUTER_BOX", 
-                                        (plate_length_  + (2.*reflective_foil_thickn_))/2., 
-                                        (plate_thickn_+reflective_foil_thickn_)/2., 
-                                        (plate_width_  + (2.*reflective_foil_thickn_))/2.);
+    G4Box* aux_outer_box = new G4Box(
+      "AUX_OUTER_BOX", 
+      (plate_length_  + (2.*reflective_foil_thickn_))/2., 
+      (plate_thickn_+reflective_foil_thickn_)/2., 
+      (plate_width_  + (2.*reflective_foil_thickn_))/2.
+    );
 
     // Extra thickness to prevent boolean subtraction of solids with matching surfaces
     // See geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/Detector/Geometry/geomSolids.html#solids-made-by-boolean-operations
 
     G4double tolerance = 1.*mm; // To prevent matching surfaces in the boolean subtraction
-    G4Box* aux_inner_box =  new G4Box(  "AUX_INNER_BOX", 
-                                        plate_length_/2., 
-                                        (plate_thickn_/2.)+tolerance, 
-                                        plate_width_/2.);
+    G4Box* aux_inner_box =  new G4Box(
+      "AUX_INNER_BOX",
+      plate_length_/2.,
+      (plate_thickn_/2.)+tolerance,
+      plate_width_/2.
+    );
 
-    G4SubtractionSolid* ref_foil_solid =    new G4SubtractionSolid( ref_foil_name, 
-                                                                    aux_outer_box, aux_inner_box, 
-                                                                    nullptr, G4ThreeVector(0., (reflective_foil_thickn_/2.)+tolerance, 0.));
+    G4SubtractionSolid* ref_foil_solid = new G4SubtractionSolid(
+      ref_foil_name,
+      aux_outer_box,
+      aux_inner_box,
+      nullptr,
+      G4ThreeVector(
+        0.,
+        (reflective_foil_thickn_/2.)+tolerance,
+        0.
+      )
+    );
+
     SiPMMPPC* sipm_ptr = nullptr;
     if(SiPM_code_==1){
       sipm_ptr = new HamamatsuS133606050VE();
@@ -687,15 +786,17 @@ namespace nexus{
     G4double sipm_thickness = sipm_ptr->GetThickness();
 
     G4double thickness_of_dummy_sipm = reflective_foil_thickn_+(0.1*mm);
-    G4Box* dummy_sipm =  new G4Box( "DUMMY_SIPM", 
-                                    sipm_transverse_dim/2., 
-                                    thickness_of_dummy_sipm/2., // Setting here the reflective-foil thickness plus some tolerance so that:
-                                                                //  1)  if board_position_code_==1, the carved hole is a pass-through hole
-                                                                //  2)  if board_position_code_>=2, we prevent matching surfaces in the boolean subtraction
-                                                                //      In this second case, the value of the tolerance actually matters. It must be big 
-                                                                //      enough so as to prevent matching surfaces, but small enough so as to not carve too 
-                                                                //      much the horizontal portion of the reflective foil.
-                                    sipm_transverse_dim/2.);
+    G4Box* dummy_sipm =  new G4Box(
+      "DUMMY_SIPM", 
+      sipm_transverse_dim/2., 
+      thickness_of_dummy_sipm/2., // Setting here the reflective-foil thickness plus some tolerance so that:
+                                  //  1)  if board_position_code_==1, the carved hole is a pass-through hole
+                                  //  2)  if board_position_code_>=2, we prevent matching surfaces in the boolean subtraction
+                                  //      In this second case, the value of the tolerance actually matters. It must be big 
+                                  //      enough so as to prevent matching surfaces, but small enough so as to not carve too 
+                                  //      much the horizontal portion of the reflective foil.
+      sipm_transverse_dim/2.
+    );
 
     G4MultiUnion* reflective_foil_holes = new G4MultiUnion("REF_FOIL_HOLES");
 
@@ -716,10 +817,12 @@ namespace nexus{
 
     reflective_foil_holes->Voxelize();
 
-    G4ThreeVector vec = G4ThreeVector(0., 
-                                      -1.*plate_thickn_/2., // Minus half the thickness of AUX_OUTER_BOX 
-                                                            // plus half the reflective-foil thickness
-                                      0.);
+    G4ThreeVector vec = G4ThreeVector(
+      0., 
+      -1.*plate_thickn_/2., // Minus half the thickness of AUX_OUTER_BOX 
+                            // plus half the reflective-foil thickness
+      0.
+    );
 
     G4double sipms_y_pos = 0.;
     if(align_lower_edges_of_plate_and_SiPMs_) 
@@ -736,28 +839,44 @@ namespace nexus{
     }
 
     if(board_position_code_!=1){
-      vec = G4ThreeVector(0.,
-                          sipms_y_pos,
-                          -1.*(plate_width_/2.)-1.*(reflective_foil_thickn_/2.));   // Minus half the width of the plate
-                                                                                    // minus half the reflective-foil thickness
+      vec = G4ThreeVector(
+        0.,
+        sipms_y_pos,
+        -1.*(plate_width_/2.)-1.*(reflective_foil_thickn_/2.)     // Minus half the width of the plate
+      );                                                          // minus half the reflective-foil thickness
     }
 
-    ref_foil_solid = new G4SubtractionSolid(ref_foil_name, 
-                                            ref_foil_solid, reflective_foil_holes, 
-                                            nullptr, vec);
+    ref_foil_solid = new G4SubtractionSolid(
+      ref_foil_name, 
+      ref_foil_solid,
+      reflective_foil_holes, 
+      nullptr,
+      vec
+    );
+
     if(board_position_code_>=3){
                                               // If board_position_code_ is 3, then also carve the holes for a second strip of SiPMs
-      G4ThreeVector vec_2 = G4ThreeVector(0.,
-                                          sipms_y_pos,
-                                          (plate_width_/2.)+(reflective_foil_thickn_/2.));  // Minus half the width of the plate
-                                                                                            // minus half the reflective-foil thickness
-      ref_foil_solid = new G4SubtractionSolid(ref_foil_name, 
-                                              ref_foil_solid, reflective_foil_holes, 
-                                              nullptr, vec_2);
+      G4ThreeVector vec_2 = G4ThreeVector(
+        0.,
+        sipms_y_pos,
+        (plate_width_/2.)+(reflective_foil_thickn_/2.)    // Minus half the width of the plate
+      );                                                  // minus half the reflective-foil thickness
+
+      ref_foil_solid = new G4SubtractionSolid(
+        ref_foil_name, 
+        ref_foil_solid,
+        reflective_foil_holes, 
+        nullptr,
+        vec_2
+      );
     }
     
     G4LogicalVolume* ref_case_logic = 
-      new G4LogicalVolume(ref_foil_solid, materials::FR4(), ref_foil_name);
+      new G4LogicalVolume(
+        ref_foil_solid,
+        materials::FR4(),
+        ref_foil_name
+      );
 
     // Set its color for visualization purposes
     G4VisAttributes ref_case_col = nexus::WhiteAlpha();
@@ -767,7 +886,13 @@ namespace nexus{
     //Now create the reflectivie optical surface
     const G4String ref_surf_name = "REF_SURFACE";
     G4OpticalSurface* refsurf_opsurf = 
-      new G4OpticalSurface(ref_surf_name, unified, ground, dielectric_metal, 1);
+      new G4OpticalSurface(
+        ref_surf_name,
+        unified,
+        ground,
+        dielectric_metal,
+        1
+      );
     
     // From geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/TrackingAndPhysics/physicsProcess.html#optical-photon-processes
     // The dielectric_metal->ground configuration of the unified model works as:
@@ -781,12 +906,23 @@ namespace nexus{
     // configuration model.
 
     refsurf_opsurf->SetMaterialPropertiesTable(opticalprops::Vikuiti());
-    new G4LogicalSkinSurface(ref_surf_name, ref_case_logic, refsurf_opsurf);   
+    new G4LogicalSkinSurface(
+      ref_surf_name,
+      ref_case_logic,
+      refsurf_opsurf
+    );
     
-    new G4PVPlacement(  nullptr, G4ThreeVector(0., -1.*reflective_foil_thickn_/2., 0.),
-                        ref_foil_name, ref_case_logic, 
-                        mother_physical,
-                        false, 0, true);
+    new G4PVPlacement(
+      nullptr,
+      G4ThreeVector(0., -1.*reflective_foil_thickn_/2., 0.),
+      ref_foil_name,
+      ref_case_logic,
+      mother_physical,
+      false,
+      0,
+      true
+    );
+
     return;
   }
 
@@ -887,7 +1023,12 @@ namespace nexus{
 
     // This function is called by APEX::Construct() only if !remove_MLS_ and !detach_DF_
     
-    G4Box* MLS_half_solid = new G4Box("AUX", plate_length_/2., MLS_thickn_/4., plate_width_/2.);
+    G4Box* MLS_half_solid = new G4Box(
+      "AUX",
+      plate_length_/2.,
+      MLS_thickn_/4.,
+      plate_width_/2.
+    );
     G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
 
     // Open issue: Some time ago, the refractive index of the opticalprops::G2P_FB118() G4MaterialPropertiesTable pointer
@@ -920,7 +1061,11 @@ namespace nexus{
                                                                                 // length below 6.5 eV (i.e. above 190
                                                                                 // nm) is set to opticalprops::noAbsLength_.
 
-    G4LogicalVolume* MLS_half_logic = new G4LogicalVolume(MLS_half_solid, mat, "MLS_HALF");
+    G4LogicalVolume* MLS_half_logic = new G4LogicalVolume(
+      MLS_half_solid,
+      mat,
+      "MLS_HALF"
+    );
             
     G4VisAttributes MLS_col = nexus::BloodRedAlpha();
     //MLS_col.SetForceSolid(true);
@@ -928,15 +1073,41 @@ namespace nexus{
 
     // Place the MLS
     G4VPhysicalVolume* MLS_first_half = dynamic_cast<G4VPhysicalVolume*>(   // This is the outermost one
-        new G4PVPlacement(nullptr, G4ThreeVector(0., plate_thickn_/2.
-                                                    +MLS_thickn_/2.         // Note that the thickness of MLS_half_solid is MLS_thickn_/2
-                                                    +MLS_thickn_/4., 0.), 
-                          "FIRST_MLS_HALF", MLS_half_logic, mother_physical, true, 0, true));
+        new G4PVPlacement(
+          nullptr,
+          G4ThreeVector(
+            0.,
+            plate_thickn_/2.
+            +MLS_thickn_/2.         // Note that the thickness of MLS_half_solid is MLS_thickn_/2
+            +MLS_thickn_/4.,
+            0.
+          ), 
+          "FIRST_MLS_HALF",
+          MLS_half_logic,
+          mother_physical,
+          true,
+          0,
+          true
+        )
+      );
 
     G4VPhysicalVolume* MLS_second_half = dynamic_cast<G4VPhysicalVolume*>(  // This is the internal one
-        new G4PVPlacement(nullptr, G4ThreeVector(0., plate_thickn_/2.
-                                                    +MLS_thickn_/4., 0.), 
-                          "SECOND_MLS_HALF", MLS_half_logic, mother_physical, true, 1, true));
+        new G4PVPlacement(
+          nullptr,
+          G4ThreeVector(
+            0.,
+            plate_thickn_/2.
+            +MLS_thickn_/4.,
+            0.
+          ), 
+          "SECOND_MLS_HALF",
+          MLS_half_logic,
+          mother_physical,
+          true,
+          1,
+          true
+        )
+      );
 
     // Check that there's dichroic information for ingoing (wrt APEX) photons
     if(path_to_inwards_dichroic_data_==""){
@@ -952,11 +1123,13 @@ namespace nexus{
 
     // Construct the ingoing optical surface
     setenv("G4DICHROICDATA", path_to_inwards_dichroic_data_, 1);
-    G4OpticalSurface* df_inwards_opsurf =                 // G4OpticalSurface constructor loads the
-        new G4OpticalSurface( "DICHROIC_INWARDS_OPSURF",  // dichroic information from the file which
-                              dichroic,                   // is currently pointed to by the environment
-                              polished,                   // variable G4DICHROICDATA
-                              dielectric_dichroic);
+    G4OpticalSurface* df_inwards_opsurf =
+        new G4OpticalSurface(           // G4OpticalSurface constructor loads the
+          "DICHROIC_INWARDS_OPSURF",    // dichroic information from the file which
+          dichroic,                     // is currently pointed to by the environment
+          polished,                     // variable G4DICHROICDATA
+          dielectric_dichroic
+        );
 
     // Construct the outgoung optical surface
     setenv("G4DICHROICDATA", path_to_outwards_dichroic_data_, 1);   // Note that, if you did not compile the modified version of G4 code, 
@@ -964,32 +1137,46 @@ namespace nexus{
                                                                     // one (i.e. the one I am setting from path_to_inwards_dichroic_data_), 
                                                                     // is the one that will apply for every dichroic boundary in the simulation.
     G4OpticalSurface* df_outwards_opsurf =   
-        new G4OpticalSurface( "DICHROIC_OUTWARDS_OPSURF", 
-                              dichroic, 
-                              polished, 
-                              dielectric_dichroic);
+        new G4OpticalSurface(
+          "DICHROIC_OUTWARDS_OPSURF", 
+          dichroic, 
+          polished, 
+          dielectric_dichroic
+        );
 
     // Endow the MLS_first_half->MLS_second_half surface with the ingoing optical surface
-    new G4LogicalBorderSurface( "MLS1->MLS2", 
-                                MLS_first_half, 
-                                MLS_second_half, 
-                                df_inwards_opsurf);
+    new G4LogicalBorderSurface(
+      "MLS1->MLS2",
+      MLS_first_half,
+      MLS_second_half,
+      df_inwards_opsurf
+    );
 
     // Endow the MLS_second_half->MLS_first_half surface with the outgoing optical surface
-    new G4LogicalBorderSurface( "MLS2->MLS1", 
-                                MLS_second_half, 
-                                MLS_first_half, 
-                                df_outwards_opsurf);      
+    new G4LogicalBorderSurface(
+      "MLS2->MLS1",
+      MLS_second_half,
+      MLS_first_half,
+      df_outwards_opsurf
+    );
+
     // pTP coating
     if(!remove_coating_)
     {
-        G4Box* coating_solid = new G4Box( "COATING", 
-                                          plate_length_/2., coating_thickn_/2., plate_width_/2.);
+        G4Box* coating_solid = new G4Box(
+          "COATING",
+          plate_length_/2.,
+          coating_thickn_/2.,
+          plate_width_/2.
+        );
 
         G4Material* coating_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TERPHENYL");
         coating_mat->SetMaterialPropertiesTable(opticalprops::PTP(coating_rindex_));
-        G4LogicalVolume* coating_logic = 
-                            new G4LogicalVolume(coating_solid, coating_mat, "COATING");   
+        G4LogicalVolume* coating_logic = new G4LogicalVolume(
+          coating_solid,
+          coating_mat,
+          "COATING"
+        );
 
         G4VisAttributes coating_col = nexus::TitaniumGreyAlpha();
         coating_col.SetForceSolid(true);
@@ -997,31 +1184,57 @@ namespace nexus{
 
         // Place the coating
         G4VPhysicalVolume* coating_physical = dynamic_cast<G4VPhysicalVolume*>(
-            new G4PVPlacement(  nullptr, G4ThreeVector(0.,  plate_thickn_/2.
-                                                            +MLS_thickn_
-                                                            +coating_thickn_/2., 0.), 
-                                "COATING", coating_logic, mother_physical, false, 0, true));
+          new G4PVPlacement(
+            nullptr,
+            G4ThreeVector(
+              0.,
+              plate_thickn_/2.
+              +MLS_thickn_
+              +coating_thickn_/2.,
+              0.
+            ),
+            "COATING",
+            coating_logic,
+            mother_physical,
+            false,
+            0,
+            true
+          )
+        );
 
         // Make the LAR-coating interface rough, so that photons cannot be trapped within the coating
-        G4OpticalSurface* coating_rough_surf =
-                new G4OpticalSurface("COATING_ROUGH_SURFACE", glisur, ground, dielectric_dielectric, .01);
-                // 0.01 is the polish value for glisur model that was measured for TPB in doi.org/10.1140/epjc/s10052-018-5807-z
-                // This is the best reference we have, since both PTP and TPB are the result of an evaporation+deposition process
-        new G4LogicalBorderSurface( "SURROUNDINGS->COATING", 
-                                    mother_physical, 
-                                    coating_physical, 
-                                    coating_rough_surf);
-        new G4LogicalBorderSurface( "COATING->SURROUNDINGS", 
-                                    coating_physical, 
-                                    mother_physical, 
-                                    coating_rough_surf);
+        G4OpticalSurface* coating_rough_surf = new G4OpticalSurface(
+          "COATING_ROUGH_SURFACE",
+          glisur,
+          ground,
+          dielectric_dielectric,
+          .01                     // 0.01 is the polish value for glisur model that was
+        );                        // measured for TPB in doi.org/10.1140/epjc/s10052-018-5807-z
+                                  // This is the best reference we have, since both PTP and
+                                  // TPB are the result of an evaporation+deposition process
+                
+        new G4LogicalBorderSurface(
+          "SURROUNDINGS->COATING",
+          mother_physical,
+          coating_physical,
+          coating_rough_surf
+        );
+
+        new G4LogicalBorderSurface(
+          "COATING->SURROUNDINGS",
+          coating_physical,
+          mother_physical,
+          coating_rough_surf
+        );
         // We will also add roughness for the coating->MLS interface, but only with such ordering. The alternative case takes place
         // when the photon travels from the MLS to the coating. The MLS is supposed to be polished, so the photon may not see a rough 
         // surface.
-        new G4LogicalBorderSurface( "COATING->MLS", 
-                                    coating_physical, 
-                                    MLS_first_half, 
-                                    coating_rough_surf);
+        new G4LogicalBorderSurface(
+          "COATING->MLS",
+          coating_physical,
+          MLS_first_half,
+          coating_rough_surf
+        );
     }
     return;
   }
@@ -1060,42 +1273,78 @@ namespace nexus{
     
 
     // DF substrate
-    G4Box* DF_substrate_solid = new G4Box(  "DICHROIC_FILTER_SUBSTRATE", 
-                                            plate_length_/2., 
-                                            DF_substrate_thickn_/2., 
-                                            plate_width_/2.);
+    G4Box* DF_substrate_solid = new G4Box(
+      "DICHROIC_FILTER_SUBSTRATE", 
+      plate_length_/2., 
+      DF_substrate_thickn_/2., 
+      plate_width_/2.
+    );
 
     G4Material* DF_substrate_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
     DF_substrate_mat->SetMaterialPropertiesTable(DF_substrate_mpt_);
 
-    G4LogicalVolume* DF_substrate_logic = new G4LogicalVolume(  DF_substrate_solid, 
-                                                                DF_substrate_mat, 
-                                                                "DICHROIC_FILTER_SUBSTRATE");
+    G4LogicalVolume* DF_substrate_logic = new G4LogicalVolume(
+      DF_substrate_solid,
+      DF_substrate_mat,
+      "DICHROIC_FILTER_SUBSTRATE"
+    );
 
     G4VPhysicalVolume* DF_substrate_physical = dynamic_cast<G4VPhysicalVolume*>(
-        new G4PVPlacement(  nullptr, G4ThreeVector(0.,  plate_thickn_/2.
-                                                        +wlsp_DF_gap_
-                                                        +MLS_thickn_
-                                                        +DF_substrate_thickn_/2., 0.),
-                            "DICHROIC_FILTER_SUBSTRATE", DF_substrate_logic, mother_physical, false, 0, true));
-    // DF MLS
-    G4Box* MLS_solid = new G4Box( "MLS", 
-                                  plate_length_/2., 
-                                  MLS_thickn_/2., 
-                                  plate_width_/2.);
+      new G4PVPlacement(
+        nullptr,
+        G4ThreeVector(
+          0.,
+          plate_thickn_/2.
+          +wlsp_DF_gap_
+          +MLS_thickn_
+          +DF_substrate_thickn_/2.,
+          0.
+        ),
+        "DICHROIC_FILTER_SUBSTRATE",
+        DF_substrate_logic,
+        mother_physical,
+        false,
+        0,
+        true
+      )
+    );
 
-    G4LogicalVolume* MLS_logic = new G4LogicalVolume( MLS_solid, 
-                                                      DF_substrate_mat,   // Yes, in the detached DF model, the
-                                                      "MLS");             // MLS MPT is that of the DF substrate
+    // DF MLS
+    G4Box* MLS_solid = new G4Box(
+      "MLS",
+      plate_length_/2.,
+      MLS_thickn_/2.,
+      plate_width_/2.
+    );
+
+    G4LogicalVolume* MLS_logic = new G4LogicalVolume(
+      MLS_solid, 
+      DF_substrate_mat,   // Yes, in the detached DF model, the
+      "MLS"               // MLS MPT is that of the DF substrate
+    );
+    
     G4VisAttributes MLS_col = nexus::BloodRedAlpha();
     //MLS_col.SetForceSolid(true);
     MLS_logic->SetVisAttributes(MLS_col);
 
     G4VPhysicalVolume* MLS_physical = dynamic_cast<G4VPhysicalVolume*>(
-        new G4PVPlacement(nullptr, G4ThreeVector(0.,  plate_thickn_/2.
-                                                      +wlsp_DF_gap_
-                                                      +MLS_thickn_/2., 0.), 
-                          "MLS", MLS_logic, mother_physical, false, 0, true));
+      new G4PVPlacement(
+        nullptr,
+        G4ThreeVector(
+          0.,
+          plate_thickn_/2.
+          +wlsp_DF_gap_
+          +MLS_thickn_/2.,
+          0.
+        ), 
+        "MLS",
+        MLS_logic,
+        mother_physical,
+        false,
+        0,
+        true
+      )
+    );
 
     // Check that there's dichroic information for ingoing (wrt APEX) photons
     if(path_to_inwards_dichroic_data_==""){
@@ -1111,11 +1360,13 @@ namespace nexus{
 
     // Construct the ingoing optical surface
     setenv("G4DICHROICDATA", path_to_inwards_dichroic_data_, 1);
-    G4OpticalSurface* df_inwards_opsurf =                 // G4OpticalSurface constructor loads the
-        new G4OpticalSurface( "DICHROIC_INWARDS_OPSURF",  // dichroic information from the file which
-                              dichroic,                   // is currently pointed to by the environment
-                              polished,                   // variable G4DICHROICDATA
-                              dielectric_dichroic);
+    G4OpticalSurface* df_inwards_opsurf =
+        new G4OpticalSurface(             // G4OpticalSurface constructor loads the
+          "DICHROIC_INWARDS_OPSURF",      // dichroic information from the file which
+          dichroic,                       // is currently pointed to by the environment
+          polished,                       // variable G4DICHROICDATA
+          dielectric_dichroic
+        );
 
     // Construct the outgoung optical surface
     setenv("G4DICHROICDATA", path_to_outwards_dichroic_data_, 1);   // Note that, if you did not compile the modified version of G4 code, 
@@ -1123,32 +1374,46 @@ namespace nexus{
                                                                     // one (i.e. the one I am setting from path_to_inwards_dichroic_data_), 
                                                                     // is the one that will apply for every dichroic boundary in the simulation.
     G4OpticalSurface* df_outwards_opsurf =   
-        new G4OpticalSurface( "DICHROIC_OUTWARDS_OPSURF", 
-                              dichroic, 
-                              polished, 
-                              dielectric_dichroic);
+        new G4OpticalSurface(
+          "DICHROIC_OUTWARDS_OPSURF",
+          dichroic,
+          polished,
+          dielectric_dichroic
+        );
 
     // Endow the DF_substrate_physical->MLS_physical surface with the ingoing optical surface
-    new G4LogicalBorderSurface( "DF SUBSTRATE->DF MLS", 
-                                DF_substrate_physical, 
-                                MLS_physical, 
-                                df_inwards_opsurf);
+    new G4LogicalBorderSurface(
+      "DF SUBSTRATE->DF MLS", 
+      DF_substrate_physical, 
+      MLS_physical, 
+      df_inwards_opsurf
+    );
 
     // Endow the MLS_physical->DF_substrate_physical surface with the outgoing optical surface
-    new G4LogicalBorderSurface( "DF MLS->DF SUBSTRATE", 
-                                MLS_physical, 
-                                DF_substrate_physical, 
-                                df_outwards_opsurf);      
+    new G4LogicalBorderSurface(
+      "DF MLS->DF SUBSTRATE",
+      MLS_physical,
+      DF_substrate_physical,
+      df_outwards_opsurf
+    );
+
     // pTP coating
     if(!remove_coating_)
     {
-        G4Box* coating_solid = new G4Box( "COATING", 
-                                          plate_length_/2., coating_thickn_/2., plate_width_/2.);
+        G4Box* coating_solid = new G4Box(
+          "COATING", 
+          plate_length_/2.,
+          coating_thickn_/2.,
+          plate_width_/2.
+        );
 
         G4Material* coating_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TERPHENYL");
         coating_mat->SetMaterialPropertiesTable(opticalprops::PTP(coating_rindex_));
-        G4LogicalVolume* coating_logic = 
-                            new G4LogicalVolume(coating_solid, coating_mat, "COATING");   
+        G4LogicalVolume* coating_logic = new G4LogicalVolume(
+          coating_solid,
+          coating_mat,
+          "COATING"
+        );
 
         G4VisAttributes coating_col = nexus::TitaniumGreyAlpha();
         coating_col.SetForceSolid(true);
@@ -1156,33 +1421,58 @@ namespace nexus{
 
         // Place the coating
         G4VPhysicalVolume* coating_physical = dynamic_cast<G4VPhysicalVolume*>(
-            new G4PVPlacement(  nullptr, G4ThreeVector(0.,  plate_thickn_/2.
-                                                            +wlsp_DF_gap_
-                                                            +MLS_thickn_
-                                                            +DF_substrate_thickn_
-                                                            +coating_thickn_/2., 0.), 
-                                "COATING", coating_logic, mother_physical, false, 0, true));
+          new G4PVPlacement(
+            nullptr,
+            G4ThreeVector(
+              0.,
+              plate_thickn_/2.
+              +wlsp_DF_gap_
+              +MLS_thickn_
+              +DF_substrate_thickn_
+              +coating_thickn_/2.,
+              0.
+            ), 
+            "COATING",
+            coating_logic,
+            mother_physical,
+            false,
+            0,
+            true
+          )
+        );
 
         // Make the LAR-coating interface rough, so that photons cannot be trapped within the coating
         G4OpticalSurface* coating_rough_surf =
-                new G4OpticalSurface("COATING_ROUGH_SURFACE", glisur, ground, dielectric_dielectric, .01);
+                new G4OpticalSurface(
+                  "COATING_ROUGH_SURFACE",
+                  glisur,
+                  ground,
+                  dielectric_dielectric,
+                  .01
+                );
                 // 0.01 is the polish value for glisur model that was measured for TPB in doi.org/10.1140/epjc/s10052-018-5807-z
                 // This is the best reference we have, since both PTP and TPB are the result of an evaporation+deposition process
-        new G4LogicalBorderSurface( "SURROUNDINGS->COATING", 
-                                    mother_physical, 
-                                    coating_physical, 
-                                    coating_rough_surf);
-        new G4LogicalBorderSurface( "COATING->SURROUNDINGS", 
-                                    coating_physical, 
-                                    mother_physical, 
-                                    coating_rough_surf);
+        new G4LogicalBorderSurface(
+          "SURROUNDINGS->COATING",
+          mother_physical,
+          coating_physical,
+          coating_rough_surf
+        );
+        new G4LogicalBorderSurface(
+          "COATING->SURROUNDINGS", 
+          coating_physical,
+          mother_physical,
+          coating_rough_surf
+        );
         // We will also add roughness for the coating->DF substrate, but only with such ordering. The alternative case takes place
         // when the photon travels from the DF substrate to the coating. The DF substrate is supposed to be polished, so the photon may not see a rough 
         // surface.
-        new G4LogicalBorderSurface( "COATING->DF SUBSTRATE", 
-                                    coating_physical, 
-                                    DF_substrate_physical, 
-                                    coating_rough_surf);
+        new G4LogicalBorderSurface(
+          "COATING->DF SUBSTRATE",
+          coating_physical,
+          DF_substrate_physical,
+          coating_rough_surf
+        );
     }
     return;
   }
@@ -1205,21 +1495,33 @@ namespace nexus{
     if(board_position_code_==1) // Board in the middle of a large face
     {
       rot->rotateX(-90.0*deg);
-      pos.set(0.,
-              -1.*(plate_thickn_/2.)-1.*(board.GetOverallThickness()/2.)-gap_,  // Note that what's placed in the global origin of 
-                                                                                // coordinates is the plate, not the reflective foil. 
-              0.);
+      pos.set(
+        0.,
+        -1.*(plate_thickn_/2.)-1.*(board.GetOverallThickness()/2.)-gap_,  // Note that what's placed in the global origin of 
+                                                                          // coordinates is the plate, not the reflective foil. 
+        0.
+      );
     }
     else
     {
       rot->rotateY(+180.0*deg);
-      pos.set(0., 
-              0., 
-              -1.*(plate_length_/2.)-1.*(board.GetOverallThickness()/2.));
+      pos.set(
+        0.,
+        0.,
+        -1.*(plate_length_/2.)-1.*(board.GetOverallThickness()/2.)
+      );
     }
   
-    new G4PVPlacement(rot, pos, "SIPMS_BOARD", board_logic_vol, 
-                      mother_physical, false, 0, false);
+    new G4PVPlacement(
+      rot,
+      pos,
+      "SIPMS_BOARD",
+      board_logic_vol,
+      mother_physical,
+      false,
+      0,
+      false
+    );
     // SiPMBoard logical volume is an encasing volume which may collide into other volumes
     // No need to set pSurfCheck for that volume (dimples). As we are setting pSurfCheck=false
     // (so that no harmless-overlap warning pops up in a with-dimples configuration), you have to
@@ -1252,10 +1554,14 @@ namespace nexus{
       z_pos = gen_z_ +(random_radius*cos(random_angle));
     }
     else{ // Default behaviour is that of generation_region_=="random"
-      x_pos = UniformRandomInRange( plate_length_/2.,
-                                    -1.*plate_length_/2.);
-      z_pos = UniformRandomInRange( plate_width_/2.,
-                                    -1.*plate_width_/2.);
+      x_pos = UniformRandomInRange(
+        plate_length_/2.,
+        -1.*plate_length_/2.
+      );
+      z_pos = UniformRandomInRange(
+        plate_width_/2.,
+        -1.*plate_width_/2.
+      );
     }
     return G4ThreeVector(x_pos, y_pos, z_pos);
   }
