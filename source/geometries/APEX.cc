@@ -464,10 +464,17 @@ namespace nexus{
       }
     }
 
+    // The ternary operators in the first arguments of the WLSPlate
+    // constructor fix the fact that the WLSPlate class aligns the 
+    // base of the triangular plate (if shape_code_ equals 1) with
+    // the Z-axis, while the APEX class aligns the base of the
+    // triangular plate with the X-axis. Take into account that the
+    // documentation in APEX.h says that, for shape_code_==1,
+    // plate_length_ should give the length of the triangular plate base.
     WLSPlate* plate = new WLSPlate(
-      plate_length_, 
-      plate_thickn_, 
-      plate_width_, 
+      shape_code_==0 ? plate_length_ : plate_width_,
+      plate_thickn_,
+      shape_code_==0 ? plate_width_ : plate_length_,
       opticalprops::G2P_FB118(
         cromophore_concentration_,
         secondary_wls_attlength_,
@@ -476,7 +483,7 @@ namespace nexus{
         true
       ),
       //opticalprops::EJ286(secondary_wls_attlength_),
-      0,
+      shape_code_,
       false,
       false,                // dimples_at_x_plus_
       false,                // dimples_at_x_minus_
@@ -502,9 +509,26 @@ namespace nexus{
                   FatalException, "Null pointer to logical volume.");
     }
 
+    G4RotationMatrix* rot = new G4RotationMatrix();
+    if(shape_code_==1)
+    { 
+      // The rotation about the X axis compensates the fact that the extrusion of the
+      // triangular polygon performed by the WLSPlate class is aligned with the Z axis.
+      // For more information check the WLSPlate::ConstructWLSPlate() method
+      // documentation. The rotation about the Y axis is needed to align the
+      // the triangular-plate base with the X axis.
+      rot->rotateY(90.*deg);
+      rot->rotateX(-90.*deg);
+    }
+
     new G4PVPlacement(
-      nullptr,
-      G4ThreeVector(0., 0., 0.),
+      rot,
+      // For the triangular plate case, the WLSPlate class places the plate in the
+      // centroid of the (isosceles) triangular polygon. Correcting its position to
+      // make its center coincide with half the triangle height, is more convenient
+      // to reuse the rectangular-plate code. Particularly, the SiPMs-board code
+      // and the vertex generation code.
+      shape_code_==0 ? G4ThreeVector(0., 0., 0.) : G4ThreeVector(0., 0., -plate_width_/6.),
       plate_logic->GetName(), 
       plate_logic,
       mother_physical,

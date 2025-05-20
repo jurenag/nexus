@@ -79,7 +79,15 @@ namespace nexus {
     G4double coating_rindex_;                                       ///< Refractive index of the coating layer that is deposited over the MLS
     G4bool remove_coating_;                                         ///< Whether to remove the coating layer that is deposited over the MLS
     G4bool remove_MLS_;                                             ///< Whether to remove the DF (the MLS) together with the coating layer that is deposited on top of it
-    G4double plate_length_, plate_thickn_, plate_width_;            ///< WLS plate dimensions
+    G4double plate_length_, plate_thickn_, plate_width_;            ///< These are the WLS plate dimensions. In any case, plate_thickn_ is the span of the WLS plate along the y-axis. The rest of the
+                                                                    ///< dimensions depend on the shape_code_ parameter. If shape_code_==0, then plate_length_ (resp. plate_width_) is the length of the
+                                                                    ///< rectangular WLS plate along the x-axis (resp. z-axis). If shape_code_==1, then plate_length_ (resp. plate_width_) is the span
+                                                                    ///< of the triangular WLS plate along the x-axis (resp. z-axis), which matches the base (resp. height) of the modelled isosceles
+                                                                    ///< triangle. N.B.: Note that the X-Z parameterization of triangular case of the WLSPlate class is inverted with respect to the one
+                                                                    ///< we use here. I.e. in the WLSPlate class, the height of the triangle is laid along the X axis, while here, it is laid along the
+                                                                    ///< Z axis. The reason for this is that we want to keep the same orientation of the SiPM boards across the rectangular and
+                                                                    ///< triangular cases. I.e. in both cases the SiPM board spans along the X-direction. Unifying this is convenient in the sense that
+                                                                    ///< further code and offline analysis can be shared.
     G4double WLSp_rindex_;                                          ///< Refractive index of the wavelength shifting plate
     G4double secondary_wls_attlength_;                              ///< Constant (wavelength indepedent) attenuation length of the secondary WLShifter. For the particular case when the G2P_FB118() G4MaterialPropertiesTable is used, the G2P_FB118() function should take care of
                                                                     ///< of ignoring this input and setting the real (wavelength dependent) measured attenuation-length spectrum if a non positive (negative or null) is given to this parameter. For config_code_==1 (resp. 2), this
