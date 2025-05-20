@@ -715,7 +715,7 @@ namespace nexus{
 
         // Under the assumption that the triangle height (dx_) is bigger
         // than the tolerance (t), i.e. dx_>t, and that the tolerance is
-        // is smaller than 1.0, then you can prove that, for
+        // smaller than 1.0, then you can prove that, for
         //
         //      ((-1.*x_pos*dz_)/(2.*dx_))+(dz_/3)-(k*tolerance) > 0     (1)
         //
@@ -730,7 +730,7 @@ namespace nexus{
         // we are introducing the factor k in the range limits of the z_pos
         // random generation.
 
-        G4double k = 0.5 * dz_/(2.*dx_); // < dz_/(2*dx_)
+        G4double k = 0.5 * dz_/(2.*dx_); // Smaller than dz_/(2*dx_)
         G4double positive_margin = ((-1.*x_pos*dz_)/(2.*dx_))+(dz_/3)-(k*tolerance);
 
         z_pos = UniformRandomInRange(
