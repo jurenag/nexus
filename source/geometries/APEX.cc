@@ -20,6 +20,7 @@
 #include <G4GenericMessenger.hh>
 #include <G4UserLimits.hh>
 #include <G4Box.hh>
+#include <G4ExtrudedSolid.hh>
 #include <G4LogicalVolume.hh>
 #include <G4NistManager.hh>
 #include <G4SubtractionSolid.hh>
@@ -1084,12 +1085,35 @@ namespace nexus{
 
     // This function is called by APEX::Construct() only if !remove_MLS_ and !detach_DF_
     
-    G4Box* MLS_half_solid = new G4Box(
-      "AUX",
-      plate_length_/2.,
-      MLS_thickn_/4.,
-      plate_width_/2.
-    );
+    G4VSolid* MLS_half_solid = nullptr;
+    if(shape_code_==0)
+    {
+      MLS_half_solid = dynamic_cast<G4VSolid*>(
+        new G4Box(
+          "AUX",
+          plate_length_/2.,
+          MLS_thickn_/4.,
+          plate_width_/2.
+        )
+      );
+    }
+    else if(shape_code_==1)
+    {
+      // Extrude the triangular
+      MLS_half_solid = dynamic_cast<G4VSolid*>(
+        new G4ExtrudedSolid(
+          "AUX",
+          this->GetTriangularPlatePrismBase(),
+          MLS_thickn_/4.
+        )
+      );
+    }
+    else
+    {
+      G4Exception("[APEX]", "ConstructAttachedDichroicFilter()",
+                  FatalException, "The given shape code is not recognized.");
+    }
+
     G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
 
     // Open issue: Some time ago, the refractive index of the opticalprops::G2P_FB118() G4MaterialPropertiesTable pointer
@@ -1132,10 +1156,20 @@ namespace nexus{
     //MLS_col.SetForceSolid(true);
     MLS_half_logic->SetVisAttributes(MLS_col);
 
+    G4RotationMatrix* rot = new G4RotationMatrix();
+    if(shape_code_==1)
+    { 
+      // In case a triangular plate (and so, a triangular MLS) is used, rotate it
+      // about the X axis so that its thickness is aligned with the Z axis. Note
+      // that this volume was the result of an extrusion, which happens along the
+      // Z axis, by definition of G4ExtrudedSolid.
+      rot->rotateX(-90.*deg);
+    }
+
     // Place the MLS
     G4VPhysicalVolume* MLS_first_half = dynamic_cast<G4VPhysicalVolume*>(   // This is the outermost one
         new G4PVPlacement(
-          nullptr,
+          rot,
           G4ThreeVector(
             0.,
             plate_thickn_/2.
@@ -1154,7 +1188,7 @@ namespace nexus{
 
     G4VPhysicalVolume* MLS_second_half = dynamic_cast<G4VPhysicalVolume*>(  // This is the internal one
         new G4PVPlacement(
-          nullptr,
+          rot,
           G4ThreeVector(
             0.,
             plate_thickn_/2.
@@ -1224,12 +1258,30 @@ namespace nexus{
     // pTP coating
     if(!remove_coating_)
     {
-        G4Box* coating_solid = new G4Box(
-          "COATING",
-          plate_length_/2.,
-          coating_thickn_/2.,
-          plate_width_/2.
-        );
+        G4VSolid* coating_solid = nullptr;
+
+        if(shape_code_==0)
+        {
+          coating_solid = dynamic_cast<G4VSolid*>(
+            new G4Box(
+              "COATING",
+              plate_length_/2.,
+              coating_thickn_/2.,
+              plate_width_/2.
+            )
+          );
+        }
+        else // It has been checked before (within this same method) that shape_code_ is either 0 or 1
+        {
+          // Extrude the same polygon (prism base) that we used for the MLS solids
+          coating_solid = dynamic_cast<G4VSolid*>(
+            new G4ExtrudedSolid(
+              "COATING",
+              this->GetTriangularPlatePrismBase(),
+              coating_thickn_/2.
+            )
+          );
+        }
 
         G4Material* coating_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TERPHENYL");
         coating_mat->SetMaterialPropertiesTable(opticalprops::PTP(coating_rindex_));
@@ -1246,7 +1298,8 @@ namespace nexus{
         // Place the coating
         G4VPhysicalVolume* coating_physical = dynamic_cast<G4VPhysicalVolume*>(
           new G4PVPlacement(
-            nullptr,
+            // Using the same rotation matrix as the one used for the MLS
+            rot,
             G4ThreeVector(
               0.,
               plate_thickn_/2.
