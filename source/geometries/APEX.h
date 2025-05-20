@@ -102,13 +102,19 @@ namespace nexus {
                                                                     ///< 4                  -> Broadcom AFBR-S4N44P044M (2x2 SiPM array)
                                                                     ///< Any other integer  -> PerfectSiPMMPPC (100% efficiency)
     G4int num_phsensors_;                                           ///< Number of photosensors per board
-    G4int board_position_code_;                                     ///< Integer signalling where to place the SiPM boards. In any case, the boards are arranged parallely to the APEX sides which are plate_length_ long.
+    G4int board_position_code_;                                     ///< Integer signalling where to place the SiPM boards. This parameter only makes a difference if shape_code_ is set to 0.
+                                                                    ///< In such case, it can take the following values:
                                                                     ///< 1                  -> One board facing the middle of one of the two largest WLS plate faces.
                                                                     ///< 2                  -> One board facing one of the smallest WLS plate faces.
                                                                     ///< Any other integer  -> One board facing each one of the smallest WLS plate faces (two boards in total).
-    G4bool align_lower_edges_of_plate_and_SiPMs_;                   ///< This parameter only makes a difference if board_position_code_ is set to 2 or 3. If set to true, the lower edges of the WLS plate and the SiPMs are aligned.
-                                                                    ///< If set to false, then the center (along the plate_thickn_ dimension) of the SiPMs is aligned with the center of the WLS plate
-    G4double gap_;                                                  ///< Gap between the photosensors and the WLS plate. A negative gap can help modelate the immersion of the SiPMs into the dimples. Be careful not to collide the SiPMs into the plate.
+                                                                    ///< In any case, the boards are arranged parallely to the APEX sides which are plate_length_ long. If shape_code_ is set
+                                                                    ///< to 1, then only one board, facing the base of the triangular WLS plate, is placed.
+    G4bool align_lower_edges_of_plate_and_SiPMs_;                   ///< If shape_code_ is set to 0, then this parameter only makes a difference if board_position_code_ is set to a value other
+                                                                    ///< than 1. If shape_code_ is set to 1, then this parameter always applies. If set to true, the lower edges of the WLS plate
+                                                                    ///< and the SiPMs are aligned. If set to false, then the center (along the plate_thickn_ dimension) of the SiPMs is aligned
+                                                                    ///< with the center of the WLS plate
+    G4double gap_;                                                  ///< Gap between the photosensors and the WLS plate. A negative gap can help modelate the immersion of the SiPMs into the dimples.
+                                                                    ///< Be careful not to collide the SiPMs into the plate.
     G4bool ref_phsensors_supports_;                                 ///< Whether photosensors supports are reflective (the FR4 box that supports the SiPM)
     /// Dimples may be used in the future, but not for now ----------------------------------------------------------------------------------------------------
     /// For the moment, APEX will use cryo glue so that SiPMs are in optical contact with the plate. ---------------------------------------------------------- 

@@ -577,7 +577,8 @@ namespace nexus{
     G4RotationMatrix* sipm_rot = new G4RotationMatrix();
     G4ThreeVector base_pos;
 
-    if(board_position_code_==1) // Board in the middle of a large face
+    // Board in the middle of a large face, only applicable to the shape_code_==0 case
+    if(board_position_code_==1 && shape_code_==0)
     {
       sipm_rot->rotateX(0.0*deg);
       base_pos.set(
@@ -633,7 +634,7 @@ namespace nexus{
         phsensor_id += 1;
       }
 
-      if(board_position_code_>=3)
+      if(board_position_code_>=3 && shape_code_==0)
       {
         G4RotationMatrix* sipm_rot_2 = new G4RotationMatrix();
         G4ThreeVector base_pos_2;
@@ -694,7 +695,8 @@ namespace nexus{
     G4RotationMatrix* board_rot = new G4RotationMatrix();
     G4ThreeVector board_pos;
 
-    if(board_position_code_==1) // Board in the middle of a large face
+    // Board in the middle of a large face, only applicable to the shape_code_==0 case
+    if(board_position_code_==1 && shape_code_==0)
     {
       board_rot->rotateX(90.0*deg);
       board_pos.set(
@@ -745,7 +747,7 @@ namespace nexus{
         true
       );
 
-      if(board_position_code_>=3)
+      if(board_position_code_>=3 && shape_code_==0)
       {
         G4RotationMatrix* board_rot_2 = new G4RotationMatrix();
         G4ThreeVector board_pos_2;
@@ -1537,7 +1539,8 @@ namespace nexus{
     G4RotationMatrix* rot = new G4RotationMatrix();
     G4ThreeVector pos;
 
-    if(board_position_code_==1) // Board in the middle of a large face
+    // Board in the middle of a large face
+    if(board_position_code_==1)
     {
       rot->rotateX(-90.0*deg);
       pos.set(
