@@ -678,7 +678,11 @@ namespace nexus{
         );
 
     G4LogicalVolume* board_logic = 
-        new G4LogicalVolume(board_solid, materials::FR4(), board_name);
+        new G4LogicalVolume(
+          board_solid,
+          materials::FR4(),
+          board_name
+        );
 
     G4VisAttributes board_col = nexus::White();
     //board_col.SetForceSolid(true);
@@ -687,10 +691,20 @@ namespace nexus{
     //VIKUITI coating for the board
     const G4String bc_name = "BOARD_COATING";
     G4OpticalSurface* board_coating = 
-      new G4OpticalSurface(bc_name, unified, ground, dielectric_metal, 1);
+      new G4OpticalSurface(
+        bc_name,
+        unified,
+        ground,
+        dielectric_metal,
+        1
+      );
     
     board_coating->SetMaterialPropertiesTable(opticalprops::Vikuiti());
-    new G4LogicalSkinSurface(bc_name, board_logic, board_coating); 
+    new G4LogicalSkinSurface(
+      bc_name,
+      board_logic,
+      board_coating
+    ); 
 
     G4RotationMatrix* board_rot = new G4RotationMatrix();
     G4ThreeVector board_pos;
