@@ -1727,6 +1727,52 @@ namespace nexus{
     return G4ThreeVector(x_pos, y_pos, z_pos);
   }
 
+  std::vector<G4TwoVector> APEX::GetTriangularPlatePrismBase() const{
+
+    std::vector<G4TwoVector> prism_base;
+    // plate_length_ (resp. plate_width_) is the base (resp. height) of
+    // the triangle. The 2D polygon which we are creating in the XY plane
+    // is the following:
+    //
+    //                            +y
+    //                            /\
+    //                            |
+    //                            |B
+    //                            x
+    //                          / | \
+    //                            |
+    //     -x <--------------/----+----\------------------> +x
+    //                            |
+    //                   /________|________\
+    //                 A          |          C
+    //                            |
+    //                            |
+    //                            v
+    //                            -y
+    //
+    // where the horizontal line (parallel to the x axis) which goes from
+    // point A to point C is, the base of the isosceles triangle. It is
+    // important to note two things:
+    //
+    //    1)  The triangle is centered about the Y-axis, while point A (or
+    //        C) is placed at a vertical distance of plate_width_/2 from
+    //        the origin of coordinates.
+    //
+    //    2)  After extrusion in the Z direction, we will need to rotate
+    //        the triangle 90º degrees about the X-axis, so that the
+    //        thickness dimension of the plate is set along the Y-axis,
+    //        as for the rectangular plate case.
+
+    // Point A of the sketch above
+    prism_base.push_back(G4TwoVector(-1.*plate_length_/2., -1.*plate_width_/2.));
+    // Point B of the sketch above
+    prism_base.push_back(G4TwoVector(0., plate_width_/2.));
+    // Point C of the sketch above
+    prism_base.push_back(G4TwoVector(plate_length_/2., -1.*plate_width_/2.));
+
+    return prism_base;
+  }
+
   G4bool APEX::GeometryIsIllFormed()                ///< The only check to make is that the sipm thickness should be bigger or equal to the 
                                                     ///< reflective foil thickness. Otherwise, the SiPM surface may not make it to the WLS 
                                                     ///< plate surface depending on whether the board height is bigger or smaller than the sipm 

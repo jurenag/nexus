@@ -2,6 +2,9 @@
 #define APEX_H
 
 #include "GeometryBase.h"
+// Forward declaration of G4TwoVector (i.e. 'class G4TwoVector;')
+// gives a compilation error which I don't know how to debug right now.
+#include <G4TwoVector.hh>
 
 class G4VPhysicalVolume;
 class G4MaterialPropertiesTable;
@@ -53,6 +56,9 @@ namespace nexus {
                                                           // reflective foil.
     
     G4ThreeVector GenerateVertex(const G4String&) const;
+    std::vector<G4TwoVector> GetTriangularPlatePrismBase() const;   ///< Returns the triangular prism base, as a function of the plate_length_ and 
+                                                                    ///< plate_width_ attributes, which could be extruded to form the triangular
+                                                                    ///< WLS plate, in case shape_code_==1.
     G4bool GeometryIsIllFormed();                                   ///< Checks whether the specified geometry, up to the given parameters, is feasible
 
   private:
