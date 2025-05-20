@@ -63,6 +63,10 @@ namespace nexus {
                                                                     ///< 'gar'  - The APEX is placed in Gaseous ARgon
                                                                     ///< 'air'  - The APEX is placed in air - ¡Note that the implemented air has no bulk-absorption length yet!
                                                                     ///< Default behaviour is that of surrounding_media_=='lar'.
+    G4int shape_code_;                                              ///< The shape of the built APEX (i.e. WLS plate and any upper layer, such as DF/no-DF substrates) depends
+                                                                    ///< on this parameter. It can take the following values:
+                                                                    ///< 0 -> Rectangular
+                                                                    ///< 1 -> Triangular
     G4bool detach_DF_;                                              ///< Whether to detach the DF from the WLS plate. If so, as a consequence, a substrate that acts as a mechanical 
                                                                     ///< support for the MLS is added. Note that, if detach_DF_ is true, the DF is floating on top of the WLS plate,
                                                                     ///< which is an unphysical situation.

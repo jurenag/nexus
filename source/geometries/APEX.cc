@@ -44,6 +44,7 @@ namespace nexus{
   APEX::APEX():
   GeometryBase(), 
   surrounding_media_                    ("lar"                        ),
+  shape_code_                           (0                            ),    
   detach_DF_                            (false                        ),
   wlsp_DF_gap_                          (1.13   *mm                   ),  // Assuming a 8.26 mm tall SiPM (that's the height of the BroadcomAFBRS4N44P044M
                                                                           // SiPMs) and a 6 mm thick WLS plate, 1.13 mm is the required gap for the DF to 
@@ -95,6 +96,13 @@ namespace nexus{
     G4GenericMessenger::Command& sm_cmd =
       msg_->DeclareProperty("surrounding_media", surrounding_media_,
 			    "Which media to place the APEX in");
+
+    G4GenericMessenger::Command& shc_cmd =
+      msg_->DeclareProperty("shape_code", shape_code_,
+			    "The shape of the built APEX depends on this parameter (0 - rectangular, 1 - triangular).");
+    shc_cmd.SetParameterName("shape_code", false);
+    shc_cmd.SetRange("shape_code>=0");
+    shc_cmd.SetRange("shape_code<=1");
 
     G4GenericMessenger::Command& ddf_cmd =
       msg_->DeclareProperty("detach_DF", detach_DF_,
