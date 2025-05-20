@@ -318,9 +318,12 @@ namespace nexus{
   {
 
     // Compute internal attributes
-    // overall_length_ = ... ;  
-    // overall_thickn_ = ... ;
-    // overall_width_  = ... ;
+    // Open issue: The overall dimensions of the APEX device as
+    // a function of its attributes are not computed here yet.
+    // They are set here to 10 meters as a quick workaround.
+    overall_length_ = 10.*m ;  
+    overall_thickn_ = 10.*m ;
+    overall_width_  = 10.*m ;
 
     board_length_ = plate_length_;
 
