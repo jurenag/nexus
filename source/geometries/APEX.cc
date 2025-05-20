@@ -1575,14 +1575,113 @@ namespace nexus{
       z_pos = gen_z_ +(random_radius*cos(random_angle));
     }
     else{ // Default behaviour is that of generation_region_=="random"
-      x_pos = UniformRandomInRange(
-        plate_length_/2.,
-        -1.*plate_length_/2.
-      );
-      z_pos = UniformRandomInRange(
-        plate_width_/2.,
-        -1.*plate_width_/2.
-      );
+
+      if(shape_code_==0)
+      {
+        x_pos = UniformRandomInRange(
+          plate_length_/2.,
+          -1.*plate_length_/2.
+        );
+        z_pos = UniformRandomInRange(
+          plate_width_/2.,
+          -1.*plate_width_/2.
+        );
+      }
+      else if(shape_code_==1)
+      {
+        // The parameterization in the body of this conditional block takes into
+        // account that the triangle point which is placed at the coordinates
+        // system origin is the point which
+        //
+        //  1) belongs to the symmetry axis of the isosceles triangle, and
+        //  2) is placed at half the triangle height (plate_width_) from the base of the triangle
+        //
+        // Note that this parameterization is different to the one used in the
+        // WLSPlate::GenerateVertex() method (at the time of writing).
+        //
+        // The situation that we got now is something like this:
+        //
+        //                            +z
+        //                            /\
+        //                            |
+        //                            |
+        //                            x   
+        //                   z_1(x) / | \ z_2(x)      
+        //                            |         
+        //     -x <--------------/----+----\------------------> +x
+        //                            |         
+        //                   /________|________\
+        //                            |
+        //                            |
+        //                            |
+        //                            v
+        //                            -z
+        //
+        // Imagine that we parameterize the left (resp. right) side of the triangle with
+        // the function z_1(x) (resp. z_2(x)). This dependency can be inverted to find
+        // x_1(z) (resp. x_2(z)). Then, after having generated a random z_pos, in the
+        // (-plate_width_/2., plate_width_/2.) range, we can calculate x_1(z_pos), which
+        // is basically the (negative) half-width of the isosceles triangle at a height
+        // given by the sampled z_pos. Now, to not bias the generation of the vertex
+        // towards the upper peak of the triangle, we need to accept the generated z_pos
+        // with a probability proportional to the ratio of the computed margin to half
+        // of the triangle base. Since the margin we computed is negative, we just invert
+        // its sign and compute its ratio to (plate_length_/2.). Note that the rejection
+        // probability approaches 0, when the generated z_pos landed very close to the
+        // triangle base, and it is almost 1 when the generated z_pos is very close to
+        // the triangle peak. This is as it should be, since the area near the base of
+        // the triangle is much bigger than the area near the peak, and a random generation
+        // should give an uniform superficial density of photon hits throughout the
+        // triangle surface.
+
+        G4double negative_margin;
+        G4bool accepted_z_pos = false;
+
+        while(!accepted_z_pos)
+        {
+          z_pos = UniformRandomInRange(
+            (plate_width_/2.)-tolerance,
+            (-1.*plate_width_/2.)+tolerance
+          );
+
+          negative_margin = ((z_pos*plate_length_)/(2.*plate_width_))-(plate_length_/4);
+
+          if(UniformRandomInRange(1., 0.) < (-1.*negative_margin)/(plate_length_/2.))
+          {
+            accepted_z_pos = true;
+          }
+        }
+
+        // Under the assumption that the triangle height (plate_width_) is
+        // bigger than the tolerance (t), i.e. plate_width_>t, and that the
+        // tolerance is smaller than 1.0, then you can prove that, for
+        //
+        //  ((z_pos*plate_length_)/(2.*plate_width_))-(plate_length_/4)+(k*tolerance) < 0     (1)
+        //
+        // to hold in the whole range of
+        //
+        //    z_pos \in [(-plate_width_/2.)+tolerance, (plate_width_/2.)-tolerance],
+        //
+        // (which is the range of random generation of z_pos), it is needed
+        // that k < plate_length_/(2*plate_width_). The reason why we need
+        // the inequality (1) above is that UniformRandomInRange(x, y) works
+        // for x>y (otherwise we are inverting the range, which makes no sense).
+        // That's why we are introducing the factor k in the range limits of
+        // the x_pos random generation.
+
+        G4double k = 0.5 * plate_length_/(2.*plate_width_); // Smaller than plate_length_/(2*plate_width_)
+        negative_margin += k*tolerance;
+
+        x_pos = UniformRandomInRange(
+          -1.*negative_margin,
+          negative_margin
+        );
+      }
+      else
+      {
+        G4Exception("[APEX]", "GenerateVertex()",
+                    FatalException, "The given shape code is not recognized.");
+      }
     }
     return G4ThreeVector(x_pos, y_pos, z_pos);
   }
