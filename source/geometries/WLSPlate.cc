@@ -706,6 +706,15 @@ namespace nexus{
       }
       else if(shape_code_==1)
       {
+        // Open issue: When implementing the triangular generation in
+        // APEX::GenerateVertex(), you noticed that, as it is coded here,
+        // the vertex generation is biased towards x_pos for which the
+        // width of the triangle is smaller. It is biased in the sense
+        // that, those areas, have a bigger superficial density of vertices
+        // generation. To overcome this, you implemented a rejection
+        // sampling method in APEX::GenerateVertex(). You may check it
+        // and implement it here as well.
+
         // This parameterization takes into account that its the centroid
         // of the triangle which is at the origin of the coordinate system
         x_pos = UniformRandomInRange(
