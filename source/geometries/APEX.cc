@@ -1387,12 +1387,34 @@ namespace nexus{
     
 
     // DF substrate
-    G4Box* DF_substrate_solid = new G4Box(
-      "DICHROIC_FILTER_SUBSTRATE", 
-      plate_length_/2., 
-      DF_substrate_thickn_/2., 
-      plate_width_/2.
-    );
+    G4VSolid* DF_substrate_solid = nullptr;
+    if(shape_code_==0)
+    {
+      DF_substrate_solid = dynamic_cast<G4VSolid*>(
+        new G4Box(
+          "DICHROIC_FILTER_SUBSTRATE", 
+          plate_length_/2.,
+          DF_substrate_thickn_/2.,
+          plate_width_/2.
+        )
+      );
+    }
+    else if(shape_code_==1)
+    {
+      // Extrude the triangular
+      DF_substrate_solid = dynamic_cast<G4VSolid*>(
+        new G4ExtrudedSolid(
+          "DICHROIC_FILTER_SUBSTRATE",
+          this->GetTriangularPlatePrismBase(),
+          DF_substrate_thickn_/2.
+        )
+      );
+    }
+    else
+    {
+      G4Exception("[APEX]", "ConstructAttachedDichroicFilter()",
+                  FatalException, "The given shape code is not recognized.");
+    }
 
     G4Material* DF_substrate_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
     DF_substrate_mat->SetMaterialPropertiesTable(DF_substrate_mpt_);
@@ -1403,9 +1425,19 @@ namespace nexus{
       "DICHROIC_FILTER_SUBSTRATE"
     );
 
+    G4RotationMatrix* rot = new G4RotationMatrix();
+    if(shape_code_==1)
+    { 
+      // In case a triangular plate (and so, a triangular DF) is used, rotate it
+      // about the X axis so that its thickness is aligned with the Z axis. Note
+      // that this volume was the result of an extrusion, which happens along the
+      // Z axis, by definition of G4ExtrudedSolid.
+      rot->rotateX(-90.*deg);
+    }
+
     G4VPhysicalVolume* DF_substrate_physical = dynamic_cast<G4VPhysicalVolume*>(
       new G4PVPlacement(
-        nullptr,
+        rot,
         G4ThreeVector(
           0.,
           plate_thickn_/2.
@@ -1424,12 +1456,29 @@ namespace nexus{
     );
 
     // DF MLS
-    G4Box* MLS_solid = new G4Box(
-      "MLS",
-      plate_length_/2.,
-      MLS_thickn_/2.,
-      plate_width_/2.
-    );
+    G4VSolid* MLS_solid = nullptr;
+    if(shape_code_==0)
+    {
+      MLS_solid = dynamic_cast<G4VSolid*>(
+        new G4Box(
+          "MLS",
+          plate_length_/2.,
+          MLS_thickn_/2.,
+          plate_width_/2.
+        )
+      );
+    }
+    else  // It has been checked before (within this same method) that shape_code_ is either 0 or 1
+    {
+      // Extrude the triangular
+      MLS_solid = dynamic_cast<G4VSolid*>(
+        new G4ExtrudedSolid(
+          "MLS",
+          this->GetTriangularPlatePrismBase(),
+          MLS_thickn_/2.
+        )
+      );
+    }
 
     G4LogicalVolume* MLS_logic = new G4LogicalVolume(
       MLS_solid, 
@@ -1443,7 +1492,7 @@ namespace nexus{
 
     G4VPhysicalVolume* MLS_physical = dynamic_cast<G4VPhysicalVolume*>(
       new G4PVPlacement(
-        nullptr,
+        rot,
         G4ThreeVector(
           0.,
           plate_thickn_/2.
@@ -1514,12 +1563,29 @@ namespace nexus{
     // pTP coating
     if(!remove_coating_)
     {
-        G4Box* coating_solid = new G4Box(
-          "COATING", 
-          plate_length_/2.,
-          coating_thickn_/2.,
-          plate_width_/2.
-        );
+        G4VSolid* coating_solid = nullptr;
+        if(shape_code_==0)
+        {
+          coating_solid = dynamic_cast<G4VSolid*>(
+            new G4Box(
+              "COATING",
+              plate_length_/2.,
+              coating_thickn_/2.,
+              plate_width_/2.
+            )
+          );
+        }
+        else  // It has been checked before (within this same method) that shape_code_ is either 0 or 1
+        {
+          // Extrude the triangular
+          coating_solid = dynamic_cast<G4VSolid*>(
+            new G4ExtrudedSolid(
+              "MLS",
+              this->GetTriangularPlatePrismBase(),
+              coating_thickn_/2.
+            )
+          );
+        }
 
         G4Material* coating_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TERPHENYL");
         coating_mat->SetMaterialPropertiesTable(opticalprops::PTP(coating_rindex_));
@@ -1536,7 +1602,7 @@ namespace nexus{
         // Place the coating
         G4VPhysicalVolume* coating_physical = dynamic_cast<G4VPhysicalVolume*>(
           new G4PVPlacement(
-            nullptr,
+            rot,
             G4ThreeVector(
               0.,
               plate_thickn_/2.
