@@ -100,7 +100,10 @@ namespace nexus {
                                                                     ///< is the attenuation length for the WLS plate (WLS fibers).
     G4double cromophore_concentration_;                             ///< Cromophore concentration (in miligrams of cromophore per kilogram of PMMA) of the secondary WLShifter (the WLS plate), in case G2P_FB118 is used.
     G4bool cryogenic_temperature_;                                  ///< Whether the secondary WLShifter is at cryogenic temperature or not. It only makes a difference if G2P_FB118 is used.
-    G4double reflective_foil_thickn_;                               ///< Reflective foil thickness
+    G4double reflective_foil_thickn_;                               ///< Reflective foil thickness. For the case of shape_code_==0 (rectangular APEX), this foil thickness is exact. For the case of shape_code_==1
+                                                                    ///< (triangular APEX), the foil thickness is only exact for the edge of the triangle which is aligned with the X-axis. For the other two (oblique)
+                                                                    ///< edges, the foil thickness is approximately equal to this value. N.B.: The exact value of this parameter for such oblique sides is not important.
+                                                                    ///< Exactly implementing it may not be worth it.
     G4int SiPM_code_;                                               ///< Integer signalling which SiPM to construct
                                                                     ///< 1                  -> Hamamatsu S13360-6050VE
                                                                     ///< 2                  -> Hamamatsu S13360-5075HD-HQR

@@ -792,28 +792,103 @@ namespace nexus{
 
   void APEX::ConstructReflectiveFoil(G4VPhysicalVolume* mother_physical) const
   {
+    // I probably introduced some technical debt here when extending this
+    // method to support the triangular-APEX case. This method should be
+    // revised and refactored. 
+
     const G4String ref_foil_name = "REF_FOIL";
 
     // The reflective foil covers every face of the plate but one
     // Get its volume as a subtraction solid from two boxes
-
-    G4Box* aux_outer_box = new G4Box(
-      "AUX_OUTER_BOX", 
-      (plate_length_  + (2.*reflective_foil_thickn_))/2., 
-      (plate_thickn_+reflective_foil_thickn_)/2., 
-      (plate_width_  + (2.*reflective_foil_thickn_))/2.
-    );
+    G4double tolerance = 1.*mm; // To prevent matching surfaces in the boolean subtraction
+    G4double outer_box_half_thickn = (plate_thickn_+reflective_foil_thickn_)/2.;
 
     // Extra thickness to prevent boolean subtraction of solids with matching surfaces
     // See geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/Detector/Geometry/geomSolids.html#solids-made-by-boolean-operations
+    G4double inner_box_half_thickn = (plate_thickn_/2.)+tolerance;
 
-    G4double tolerance = 1.*mm; // To prevent matching surfaces in the boolean subtraction
-    G4Box* aux_inner_box =  new G4Box(
-      "AUX_INNER_BOX",
-      plate_length_/2.,
-      (plate_thickn_/2.)+tolerance,
-      plate_width_/2.
-    );
+    G4VSolid* aux_outer_box = nullptr;
+    G4VSolid* aux_inner_box = nullptr;
+
+    if(shape_code_==0){
+      aux_outer_box = dynamic_cast<G4VSolid*>(
+        new G4Box(
+          "AUX_OUTER_BOX", 
+          (plate_length_  + (2.*reflective_foil_thickn_))/2., 
+          outer_box_half_thickn,
+          (plate_width_  + (2.*reflective_foil_thickn_))/2.
+        )
+      );
+
+      aux_inner_box = dynamic_cast<G4VSolid*>(
+        new G4Box(
+          "AUX_INNER_BOX",
+          plate_length_/2.,
+          inner_box_half_thickn,
+          plate_width_/2.
+        )
+      );
+    }
+    else if(shape_code_==1)
+    {
+      std::vector<G4TwoVector> outer_prism_base;
+
+      // Point A of sketch of the APEX::GetTriangularPlatePrismBase() method, but
+      // displaced in X and Y axes by one or two times the thickness of the
+      // reflective foil. Displacing all of them at the same time by one (or two)
+      // times the thickness of the reflective foil gives visualization problems,
+      // and we would not get the exact specified thickness of the reflective foil,
+      // anyway. I.e. implementing such foil thickness exactly for the two edges
+      // which are not aligned with any axes, would involve some geometric calculations.
+      // It is important, though, that the Y-points are only displaced by one
+      // thickness of the reflective foil, since that's the side on which the
+      // windows for the SiPMs are carved (and such carvings are computed, further
+      // in the code, assuming that the reflective foil is exactly
+      // reflective_foil_thickn_ thick).
+      outer_prism_base.push_back(
+        G4TwoVector(
+          -1.*plate_length_/2. -(2.*reflective_foil_thickn_),
+          -1.*plate_width_/2. -reflective_foil_thickn_
+        )
+      );
+      
+      // Point B
+      outer_prism_base.push_back(
+        G4TwoVector(
+          0.,
+          plate_width_/2. +(2.*reflective_foil_thickn_)
+        )
+      );
+
+      // Point C
+      outer_prism_base.push_back(
+        G4TwoVector(
+          plate_length_/2. +(2.*reflective_foil_thickn_),
+          -1.*plate_width_/2. -reflective_foil_thickn_
+        )
+      );
+
+      aux_outer_box = dynamic_cast<G4VSolid*>(
+        new G4ExtrudedSolid(
+          "AUX_OUTER_BOX",
+          outer_prism_base,
+          outer_box_half_thickn
+        )
+      );
+
+      aux_inner_box = dynamic_cast<G4VSolid*>(
+        new G4ExtrudedSolid(
+          "AUX_INNER_BOX",
+          this->GetTriangularPlatePrismBase(),
+          inner_box_half_thickn
+        )
+      );
+    }
+    else
+    {
+      G4Exception("[APEX]", "ConstructReflectiveFoil()",
+                  FatalException, "The given shape code is not recognized.");
+    }
 
     G4SubtractionSolid* ref_foil_solid = new G4SubtractionSolid(
       ref_foil_name,
@@ -822,8 +897,11 @@ namespace nexus{
       nullptr,
       G4ThreeVector(
         0.,
-        (reflective_foil_thickn_/2.)+tolerance,
-        0.
+        // The thickness of the rectangular-APEX solids are already aligned
+        // with the Y axis, but the triangular-APEX solids are aligned with
+        // with the extrusion direction (i.e. the Z axis).
+        shape_code_==0 ? (reflective_foil_thickn_/2.)+tolerance : 0.,
+        shape_code_==0 ? 0. : -(reflective_foil_thickn_/2.)-tolerance
       )
     );
 
@@ -865,7 +943,11 @@ namespace nexus{
     G4double pos;
     G4Transform3D* transform_ptr = nullptr;
     G4RotationMatrix* rot = new G4RotationMatrix();
-    if(board_position_code_!=1){
+
+    // The only case where the rotation is not needed is for
+    // the rectangular APEX when the board_position_code_ is 1.
+    if(board_position_code_!=1 || shape_code_==1)
+    {
       rot->rotateX(90.0*deg);
     }
 
@@ -900,24 +982,39 @@ namespace nexus{
       sipms_y_pos = (-1.*plate_thickn_/2.)+(sipm_transverse_dim/2.);
     }
 
-    if(board_position_code_!=1){
+    G4RotationMatrix* rot2 = new G4RotationMatrix();
+
+    if(board_position_code_!=1 && shape_code_==0)
+    {
       vec = G4ThreeVector(
         0.,
         sipms_y_pos,
         -1.*(plate_width_/2.)-1.*(reflective_foil_thickn_/2.)     // Minus half the width of the plate
       );                                                          // minus half the reflective-foil thickness
     }
+    else if(shape_code_==1)
+    {
+      vec = G4ThreeVector(
+        0.,
+        -1.*(plate_width_/2.)-1.*(reflective_foil_thickn_/2.),    // Same coordinates as for the rectangular case,
+        -sipms_y_pos                                              // but inverting Y and Z since the reflective foil
+      );                                                          // is not rotated until its placement.
+
+      rot2->rotateX(-90.*deg);
+    }
 
     ref_foil_solid = new G4SubtractionSolid(
       ref_foil_name, 
       ref_foil_solid,
       reflective_foil_holes, 
-      nullptr,
+      rot2,
       vec
     );
 
-    if(board_position_code_>=3){
-                                              // If board_position_code_ is 3, then also carve the holes for a second strip of SiPMs
+    // If board_position_code_ is 3 for the rectangular APEX
+    // case, then also carve the holes for a second strip of SiPMs
+    if(shape_code_==0 && board_position_code_>=3){
+      
       G4ThreeVector vec_2 = G4ThreeVector(
         0.,
         sipms_y_pos,
@@ -973,10 +1070,24 @@ namespace nexus{
       ref_case_logic,
       refsurf_opsurf
     );
+
+    G4RotationMatrix* rot3 = new G4RotationMatrix();
+    if(shape_code_==1)
+    { 
+      // In case a triangular plate (and so, a triangular relfective foil) is used,
+      // rotate it about the X axis so that its thickness is aligned with the Z axis.
+      // Note that this volume was the result of an extrusion, which happens along
+      // the Z axis, by definition of G4ExtrudedSolid.
+      rot3->rotateX(-90.*deg);
+    }  
     
     new G4PVPlacement(
-      nullptr,
-      G4ThreeVector(0., -1.*reflective_foil_thickn_/2., 0.),
+      rot3,
+      G4ThreeVector(
+        0.,
+        -1.*reflective_foil_thickn_/2.,
+        0.
+      ),
       ref_foil_name,
       ref_case_logic,
       mother_physical,
