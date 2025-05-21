@@ -429,7 +429,7 @@ namespace nexus{
 
     ConstructWLSPlate(mother_physical);
     ConstructSiPMSAndBoard(mother_physical);
-    ConstructReflectiveFoil(mother_physical);         
+    ConstructReflectiveFoil(mother_physical);
     if(!remove_MLS_)
     {
       if(!detach_DF_)
@@ -440,7 +440,7 @@ namespace nexus{
       {
         ConstructDetachedDichroicFilter(mother_physical);
       }
-    } 
+    }
 
     return;
   }
