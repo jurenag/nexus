@@ -127,10 +127,18 @@ namespace nexus {
     G4bool ref_phsensors_supports_;                                 ///< Whether photosensors supports are reflective (the FR4 box that supports the SiPM)
     /// Dimples may be used in the future, but not for now ----------------------------------------------------------------------------------------------------
     /// For the moment, APEX will use cryo glue so that SiPMs are in optical contact with the plate. ---------------------------------------------------------- 
-    G4bool with_dimples_;                                           ///< Whether the plate has carved dimples on it.
-    G4String dimple_type_;                                          ///< Dimple type. Might be 'flat', 'cylindrical' or 'spherical'.
-    G4double flat_dimple_width_, flat_dimple_depth_;                ///< Used for flat dimples. The width of the dimple (along the board direction) and its depth, perpendicular to the plate surface.
-    G4double curvy_dimple_radius_;                                  ///< Used for cylindrical or spherical dimples. Radius of the dimple.
+    G4bool with_dimples_;                                           ///< This parameter only makes a difference if shape_code_ is equal to 0. Whether the plate
+                                                                    ///< has carved dimples on it.
+    G4String dimple_type_;                                          ///< This parameter only makes a difference if shape_code_ is equal to 0. Dimple type. Might
+                                                                    ///< be 'flat', 'cylindrical' or 'spherical'.
+    G4double flat_dimple_width_, flat_dimple_depth_;                ///< This parameter only makes a difference if shape_code_ is equal to 0. Used for flat
+                                                                    ///< dimples. The width of the dimple (along the board direction) and its depth, perpendicular
+                                                                    ///< to the plate surface.
+    G4double curvy_dimple_radius_;                                  ///< This parameter only makes a difference if shape_code_ is equal to 0. Used for cylindrical
+                                                                    ///< or spherical dimples. Radius of the dimple.
+    // N.B.: Note that, if at some point dimples should be simulated with a triangular APEX (i.e. with shape_code_==1), then such feature should be added first to
+    // the WLSPlate class, which is called by APEX::ConstructWLSPlate. I.e. the WLSPlate class does not allow, at the moment of writing, to simulate dimples on a
+    // triangular WLS plate.
     /// -------------------------------------------------------------------------------------------------------------------------------------------------------
 
     G4String generation_region_;                                    ///< Where to place the generation vertex (GV).
