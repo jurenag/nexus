@@ -72,6 +72,7 @@ namespace nexus{
   cromophore_concentration_             (40.                          ),
   cryogenic_temperature_                (false                        ),
   reflective_foil_thickn_               (0.065  *mm                   ),   /// Got foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
+  remove_reflective_foil_               (false                        ),
   SiPM_code_                            (1                            ),
   num_phsensors_                        (30                           ),   /// This is seemingly the APEX baseline
   board_position_code_                  (1                            ),
@@ -207,6 +208,10 @@ namespace nexus{
     rft_cmd.SetUnitCategory("Length");
     rft_cmd.SetParameterName("reflective_foil_thickn", false);
     rft_cmd.SetRange("reflective_foil_thickn>0.");
+
+    G4GenericMessenger::Command& rrf_cmd =
+      msg_->DeclareProperty("remove_reflective_foil", remove_reflective_foil_,
+			    "If true, the reflective foil is not constructed.");
 
     G4GenericMessenger::Command& sc_cmd =
       msg_->DeclareProperty("SiPM_code", SiPM_code_,
@@ -429,7 +434,7 @@ namespace nexus{
 
     ConstructWLSPlate(mother_physical);
     ConstructSiPMSAndBoard(mother_physical);
-    ConstructReflectiveFoil(mother_physical);
+    if(!remove_reflective_foil_) ConstructReflectiveFoil(mother_physical);
     if(!remove_MLS_)
     {
       if(!detach_DF_)
