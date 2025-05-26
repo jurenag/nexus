@@ -104,6 +104,7 @@ namespace nexus {
                                                                     ///< (triangular APEX), the foil thickness is only exact for the edge of the triangle which is aligned with the X-axis. For the other two (oblique)
                                                                     ///< edges, the foil thickness is approximately equal to this value. N.B.: The exact value of this parameter for such oblique sides is not important.
                                                                     ///< Exactly implementing it may not be worth it.
+    G4bool remove_back_plane_foil_;                                 ///< If true, the WLS plate back plane (i.e. the plane which is parallel to the plane where the generated photons impinge) is not lined with reflective foil.
     G4bool remove_reflective_foil_;                                 ///< Whether to remove the reflective foil that covers the WLS plate.
     G4int SiPM_code_;                                               ///< Integer signalling which SiPM to construct
                                                                     ///< 1                  -> Hamamatsu S13360-6050VE

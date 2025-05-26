@@ -72,6 +72,7 @@ namespace nexus{
   cromophore_concentration_             (40.                          ),
   cryogenic_temperature_                (false                        ),
   reflective_foil_thickn_               (0.065  *mm                   ),   /// Got foil thickness from isoltronic.ch/assets/of-m-vikuiti-esr-app-guide.pdf
+  remove_back_plane_foil_               (false                        ),
   remove_reflective_foil_               (false                        ),
   SiPM_code_                            (1                            ),
   num_phsensors_                        (30                           ),   /// This is seemingly the APEX baseline
@@ -208,6 +209,10 @@ namespace nexus{
     rft_cmd.SetUnitCategory("Length");
     rft_cmd.SetParameterName("reflective_foil_thickn", false);
     rft_cmd.SetRange("reflective_foil_thickn>0.");
+
+    G4GenericMessenger::Command& rfipt_cmd =
+      msg_->DeclareProperty("remove_back_plane_foil", remove_back_plane_foil_,
+			    "If true, only the sides of the WLS plate are covered by the foil.");
 
     G4GenericMessenger::Command& rrf_cmd =
       msg_->DeclareProperty("remove_reflective_foil", remove_reflective_foil_,
@@ -829,7 +834,9 @@ namespace nexus{
         new G4Box(
           "AUX_INNER_BOX",
           plate_length_/2.,
-          inner_box_half_thickn,
+          // If the reflective foil should only cover the sides of the plate, then
+          // the make the inner box twice as thick as the outer box.
+          remove_back_plane_foil_ ? 2.*outer_box_half_thickn : inner_box_half_thickn,
           plate_width_/2.
         )
       );
@@ -885,7 +892,7 @@ namespace nexus{
         new G4ExtrudedSolid(
           "AUX_INNER_BOX",
           this->GetTriangularPlatePrismBase(),
-          inner_box_half_thickn
+          remove_back_plane_foil_ ? 2.*outer_box_half_thickn : inner_box_half_thickn
         )
       );
     }
