@@ -7,7 +7,11 @@
 #---- Parameters used for every configuration ----#
 
 /Geometry/APEX/surrounding_media                    lar
-/Geometry/APEX/MLS_thickn                           1.0     mm
+/Geometry/APEX/shape_code                           0
+/Geometry/APEX/detach_DF                            true
+/Geometry/APEX/wlsp_DF_gap                          1.      mm
+/Geometry/APEX/DF_substrate_thickn                  2.      mm
+/Geometry/APEX/MLS_thickn                           0.01    mm
 /Geometry/APEX/MLS_rindex                           1.68
 /Geometry/APEX/coating_thickn                       3.226   um
 /Geometry/APEX/coating_rindex                       1.65
