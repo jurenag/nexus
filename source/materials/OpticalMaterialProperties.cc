@@ -137,29 +137,55 @@ namespace opticalprops {
     // the real and the imaginary part) are shown. The absorption length is computed
     // out of such data as vacuum_wavelength_cm/(4*pi*k), where k is the imaginary
     // part of the refractive index.
+    // std::vector<G4double> abs_energy = {
+    //   optPhotMinE_,
+    //   h_Planck * c_light / (880.0 * nm), h_Planck * c_light / (840.0 * nm), h_Planck * c_light / (800.0 * nm),
+    //   h_Planck * c_light / (780.0 * nm), h_Planck * c_light / (760.0 * nm), h_Planck * c_light / (740.0 * nm),
+    //   h_Planck * c_light / (720.0 * nm), h_Planck * c_light / (700.0 * nm), h_Planck * c_light / (680.0 * nm),
+    //   h_Planck * c_light / (660.0 * nm), h_Planck * c_light / (640.0 * nm), h_Planck * c_light / (620.0 * nm),
+    //   h_Planck * c_light / (600.0 * nm), h_Planck * c_light / (580.0 * nm), h_Planck * c_light / (560.0 * nm),
+    //   h_Planck * c_light / (540.0 * nm), h_Planck * c_light / (520.0 * nm), h_Planck * c_light / (500.0 * nm),
+    //   h_Planck * c_light / (480.0 * nm), h_Planck * c_light / (460.0 * nm), h_Planck * c_light / (440.0 * nm),
+    //   h_Planck * c_light / (420.0 * nm), h_Planck * c_light / (400.0 * nm), h_Planck * c_light / (380.0 * nm),
+    //   h_Planck * c_light / (360.0 * nm), h_Planck * c_light / (340.0 * nm), h_Planck * c_light / (320.0 * nm),
+    //   h_Planck * c_light / (300.0 * nm), h_Planck * c_light / (280.0 * nm), h_Planck * c_light / (260.0 * nm),
+    //   h_Planck * c_light / (240.0 * nm), h_Planck * c_light / (220.0 * nm), h_Planck * c_light / (200.0 * nm),
+    //   optPhotMaxE_
+    // };
+
+    // std::vector<G4double> absLength = {
+    //   noAbsLength_,
+    //   140.056 * cm, 83.556 * cm, 48.97 * cm, 47.746 * cm, 50.399 * cm, 49.072 * cm, 47.746 * cm, 50.64 * cm,
+    //   54.112 * cm, 47.746 * cm, 56.588 * cm, 61.672 * cm, 59.683 * cm, 57.693 * cm, 55.704 * cm, 53.714 * cm,
+    //   59.114 * cm, 49.735 * cm, 47.746 * cm, 52.293 * cm, 50.02 * cm, 47.746 * cm, 45.472 * cm, 27.49 * cm,
+    //   19.098 * cm, 6.937 * cm, 1.571 * cm, 0.356 * cm, 0.096 * cm, 0.099 * cm, 0.097 * cm, 0.096 * cm,
+    //   0.117 * cm,
+    //   0.0
+    // };
+
+    // ABSORPTION LENGTH
+    // The data above may not apply for the JGS2 fused silica (FS), which is particularly good for UV
+    // transmission (although worse than JGS3). This, together with the fact that I did not find a
+    // reliable measurement of the JGS2 FS absorption length, are the reasons why I've decided to use
+    // just a constant 1 meter absorption length for fused silica in the [280-700] nm band. The lower
+    // limit (280 nm) follows from the fact that, in
+    // https://www.universitywafer.com/Wafers_Services/Fused_Silica/fused_silica.html?srsltid=AfmBOormBlC3IKATTTE3NcN2hOikdPNQZNkvhmniTkROvvpfIFe1umSx ,
+    // the JGS2 transmitance as of 280 nm is >~90% which is basically the Fresnel transmitance. I.e.
+    // as of 280 nm, the absorption length must be >>1mm, which is the typical thickness of the wafers
+    // for which these plots apply.
     std::vector<G4double> abs_energy = {
       optPhotMinE_,
-      h_Planck * c_light / (880.0 * nm), h_Planck * c_light / (840.0 * nm), h_Planck * c_light / (800.0 * nm),
-      h_Planck * c_light / (780.0 * nm), h_Planck * c_light / (760.0 * nm), h_Planck * c_light / (740.0 * nm),
-      h_Planck * c_light / (720.0 * nm), h_Planck * c_light / (700.0 * nm), h_Planck * c_light / (680.0 * nm),
-      h_Planck * c_light / (660.0 * nm), h_Planck * c_light / (640.0 * nm), h_Planck * c_light / (620.0 * nm),
-      h_Planck * c_light / (600.0 * nm), h_Planck * c_light / (580.0 * nm), h_Planck * c_light / (560.0 * nm),
-      h_Planck * c_light / (540.0 * nm), h_Planck * c_light / (520.0 * nm), h_Planck * c_light / (500.0 * nm),
-      h_Planck * c_light / (480.0 * nm), h_Planck * c_light / (460.0 * nm), h_Planck * c_light / (440.0 * nm),
-      h_Planck * c_light / (420.0 * nm), h_Planck * c_light / (400.0 * nm), h_Planck * c_light / (380.0 * nm),
-      h_Planck * c_light / (360.0 * nm), h_Planck * c_light / (340.0 * nm), h_Planck * c_light / (320.0 * nm),
-      h_Planck * c_light / (300.0 * nm), h_Planck * c_light / (280.0 * nm), h_Planck * c_light / (260.0 * nm),
-      h_Planck * c_light / (240.0 * nm), h_Planck * c_light / (220.0 * nm), h_Planck * c_light / (200.0 * nm),
+      // Fixing the absorption length at 700 nm
+      h_Planck * c_light / (701.0 * nm), h_Planck * c_light / (700.0 * nm), h_Planck * c_light / (699.0 * nm),
+      // Fixing the absorption length at 220 nm
+      h_Planck * c_light / (221.0 * nm), h_Planck * c_light / (220.0 * nm), h_Planck * c_light / (219.0 * nm),
       optPhotMaxE_
     };
 
     std::vector<G4double> absLength = {
-      noAbsLength_,
-      140.056 * cm, 83.556 * cm, 48.97 * cm, 47.746 * cm, 50.399 * cm, 49.072 * cm, 47.746 * cm, 50.64 * cm,
-      54.112 * cm, 47.746 * cm, 56.588 * cm, 61.672 * cm, 59.683 * cm, 57.693 * cm, 55.704 * cm, 53.714 * cm,
-      59.114 * cm, 49.735 * cm, 47.746 * cm, 52.293 * cm, 50.02 * cm, 47.746 * cm, 45.472 * cm, 27.49 * cm,
-      19.098 * cm, 6.937 * cm, 1.571 * cm, 0.356 * cm, 0.096 * cm, 0.099 * cm, 0.097 * cm, 0.096 * cm,
-      0.117 * cm,
+      1. * m,
+      1. * m, 1. * m, 1. * m,
+      1. * m, 1. * m, 1. * m,
       0.0
     };
 
