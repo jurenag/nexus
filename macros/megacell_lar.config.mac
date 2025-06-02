@@ -36,6 +36,7 @@
 /Geometry/XArapuca/secondary_wls_attlength              -1.5    m
 /Geometry/XArapuca/cromophore_concentration             80.0
 /Geometry/XArapuca/remove_reflective_case               false
+/Geometry/XArapuca/cryogenic_temperature                true
 # The following value is set to make the DFs be 143.75 mm
 # x 143.75 mm given that the internal_length is set to 613
 /Geometry/XArapuca/case_thickn                          20.9    mm
@@ -53,8 +54,8 @@
 # Check that you are setting a DF_substrate_mpt that is in agreement with the following value
 #/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
 #/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/opto/ific_meas/g4_dichroic_data_from_SCHOTTB270
-/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
-/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/photonexport/15x15v1/ific/g4_dichroic_data_from_quartz
+/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/zaot/november_22_production/shifted_g4like_transmitance_files/CP407.5
+/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/zaot/november_22_production/shifted_g4like_transmitance_files/CP407.5
 #/Geometry/XArapuca/path_to_inwards_dichroic_data        data/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
 #/Geometry/XArapuca/path_to_outwards_dichroic_data       data/filters_data/photonexport/tentative_fourth_batch/definitive/shifted_g4like_transmitance_files/CP700.0
 
@@ -62,7 +63,7 @@
 /Geometry/XArapuca/plate_length                         605. mm
 /Geometry/XArapuca/plate_width                          605. mm
 /Geometry/XArapuca/plate_thickn                         3.8 mm
-/Geometry/XArapuca/tunneling_probability                0.01
+/Geometry/XArapuca/tunneling_probability                0.0
 /Geometry/XArapuca/sipms_at_x_plus                      true
 /Geometry/XArapuca/sipms_at_x_minus                     true
 /Geometry/XArapuca/sipms_at_z_plus                      true
